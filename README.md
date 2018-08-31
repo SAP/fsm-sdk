@@ -11,10 +11,12 @@ Find more documentation and related information at https://docs.coresystems.net
     + [Update object (providing only fields to change)](#update-object--providing-only-fields-to-change-)
     + [Delete object](#delete-object)
       - [lastChanged](#lastchanged)
-      
+
 ---
 
 ## Getting started
+
+[![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk)
 
 ```
 npm i fsm-sdk --save
@@ -50,7 +52,7 @@ related:
 
 The CoreAPIClient will return a Promise and is asynchronous by default.
 
-### Query for objects using CoreSQL 
+### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
 see [https://docs.coresystems.net/api/query-api.html](https://docs.coresystems.net/api/query-api.html)
@@ -77,9 +79,9 @@ Refer to [https://docs.coresystems.net/api/data-model.html](https://docs.coresys
 #### Create a new object
 
 ```typescript
-const serviceCall = { 
+const serviceCall = {
    id: fsm.CoreAPIClient.createUUID(), // => 36A5626F65A54FE7911F536C501D151A
-   ... 
+   ...
 };
 
 await client.post('ServiceCall', serviceCall);
