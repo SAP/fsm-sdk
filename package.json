@@ -1,0 +1,77 @@
+{
+  "name": "fsm-sdk",
+  "version": "1.0.0-rc1",
+  "description": "node sdk to interface with coresystems apis. Find more docs at https://docs.coresystems.net",
+  "main": "release/CoreAPIClient.js",
+  "types": "release/CoreAPIClient.d.ts",
+  "scripts": {
+    "prestart": "npm run build",
+    "start": "node release/index.js",
+    "prestart:examples": "npm run build",
+    "start:examples": "node -r dotenv/config examples/index.js",
+    "prebuild": "npm run clean",
+    "build": "tsc -p . --pretty",
+    "clean": "rm -rf release",
+    "test": "nyc mocha --opts mocha.opts",
+    "prepublish": "npm run test && npm run clean && npm run build"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": false,
+    "statements": 44,
+    "branches": 49,
+    "functions": 38,
+    "lines": 43,
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "include": [
+      "**/*.ts"
+    ],
+    "exclude": [
+      "**/model/*.*",
+      "**/test/*.*",
+      "**/*.d.ts",
+      "**/*.js",
+      "**/*.spec.ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "all": true,
+    "reporter": [
+      "text-summary",
+      "text",
+      "html",
+      "lcovonly"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coresystemsFSM/fsm-sdk.git"
+  },
+  "author": "Simon Gausmann / SAP SE",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coresystemsFSM/fsm-sdk/issues"
+  },
+  "homepage": "https://github.com/coresystemsFSM/fsm-sdk#readme",
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.9.3",
+    "@types/request": "^2.47.1",
+    "@types/request-promise-native": "^1.0.15",
+    "@types/uuid": "^3.4.4",
+    "dotenv": "^6.0.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.1",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.1"
+  }
+}
