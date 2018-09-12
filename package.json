@@ -13,6 +13,7 @@
     "build": "tsc -p . --pretty",
     "clean": "rm -rf release",
     "test": "nyc mocha --opts mocha.opts",
+    "posttest": "cat ./coverage/lcov.info | COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN COVERALLS_SERVICE_NAME=travis-pro ./node_modules/coveralls/bin/coveralls.js",
     "beforepublish": "npm run test && npm run clean && npm run build"
   },
   "nyc": {
@@ -34,7 +35,8 @@
       "**/test/*.*",
       "**/*.d.ts",
       "**/*.js",
-      "**/*.spec.ts"
+      "**/*.spec.ts",
+      "src/index.ts"
     ],
     "require": [
       "ts-node/register"
@@ -68,6 +70,7 @@
     "@types/request": "^2.47.1",
     "@types/request-promise-native": "^1.0.15",
     "@types/uuid": "^3.4.4",
+    "coveralls": "^3.0.2",
     "dotenv": "^6.0.0",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",

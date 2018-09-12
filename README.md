@@ -1,5 +1,5 @@
-# Node FSM-SDK to Interface with Coresystems APIs and Services.
-Find more documentation and related information at https://docs.coresystems.net
+# NodeJS FSM-SDK to Interface with Coresystems APIs and Services.
+Find more documentation and related information at [Coresystems API Documentation](https://docs.coresystems.net/dev-index.html)
 
 - [Getting started](#getting-started)
 - [CoreAPIClient](#coreapiclient)
@@ -16,22 +16,25 @@ Some illustrative cases are provided in the [examples](https://github.com/coresy
 
 ---
 
-## Getting started
+[![Build Status](https://travis-ci.org/coresystemsFSM/fsm-sdk.svg?branch=master)](https://travis-ci.org/coresystemsFSM/fsm-sdk) [![Coverage Status](https://coveralls.io/repos/github/coresystemsFSM/fsm-sdk/badge.svg?branch=master)](https://coveralls.io/github/coresystemsFSM/fsm-sdk?branch=master)
+
 
 [![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk)
 
-[![Build Status](https://travis-ci.org/coresystemsFSM/fsm-sdk.svg?branch=master)](https://travis-ci.org/coresystemsFSM/fsm-sdk)
+## Getting started
 
-```
+install from NPM
+```bash
 npm i fsm-sdk --save
 ```
 
+using the sdk with credentials:
 ```typescript
 const fsm = require('fsm-sdk');
 
 const client = new fsm.CoreAPIClient({
 
-  // debug: true  /* write oauth token to disk & provide verbose logs */
+  // debug: true  /* provide verbose logs */
 
   // put your client config here
   clientIdentifier: '<your-clientIdentifier>',
@@ -46,9 +49,10 @@ const client = new fsm.CoreAPIClient({
 });
 ```
 
-related:
-- https://docs.coresystems.net/api/oauth.html
-- https://docs.coresystems.net/admin/account.html#wow6
+related doc's:
+- [Generating Client ID and Secret](https://docs.coresystems.net/admin/account.html#wow7)
+- [OAuth API Documentation](https://docs.coresystems.net/api/oauth.html#wow1)
+
 
 ---
 
@@ -59,7 +63,7 @@ The CoreAPIClient will return a Promise and is asynchronous by default.
 ### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
-see [https://docs.coresystems.net/api/query-api.html](https://docs.coresystems.net/api/query-api.html)
+see [Query API Documentation](https://docs.coresystems.net/api/query-api.html)
 
 ```typescript
 
@@ -78,7 +82,8 @@ await client.query(coreSQL, ['ServiceCall']);
 
 ### CRUD object
 
-Refer to [https://docs.coresystems.net/api/data-model.html](https://docs.coresystems.net/api/data-model.html)
+related doc's:
+- [Data Model Documentation](https://docs.coresystems.net/api/data-model.html)
 
 #### Create a new object
 
