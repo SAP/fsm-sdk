@@ -18,6 +18,8 @@ Find more documentation and related information at https://docs.coresystems.net
 
 [![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk)
 
+[![Build Status](https://travis-ci.org/coresystemsFSM/fsm-sdk.svg?branch=master)](https://travis-ci.org/coresystemsFSM/fsm-sdk)
+
 ```
 npm i fsm-sdk --save
 ```
