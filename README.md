@@ -12,6 +12,8 @@ Find more documentation and related information at https://docs.coresystems.net
     + [Delete object](#delete-object)
       - [lastChanged](#lastchanged)
 
+Some illustrative cases are provided in the [examples](https://github.com/coresystemsFSM/fsm-sdk/tree/master/examples) folder.
+
 ---
 
 ## Getting started
