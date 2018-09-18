@@ -16,6 +16,17 @@ describe('DataApi', () => {
 
   const THE_ID = CoreAPIClient.createUUID();
 
+
+  it('should throw on unknown DTOs', done => {
+    client.getById('THIS_IS_NOT_A_DTO' as any, 'SOME-ID')
+      .catch(error => {
+        assert(error instanceof Error)
+        assert.deepEqual((error as Error).message, 'no DTO version found for THIS_IS_NOT_A_DTO')
+      })
+      .then(_ => done())
+      .catch(error => done(error));
+  });
+
   it('POST serviceCall', done => {
 
     const serviceCall = {

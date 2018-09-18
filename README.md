@@ -34,17 +34,24 @@ const fsm = require('fsm-sdk');
 
 const client = new fsm.CoreAPIClient({
 
-  // debug: true  /* provide verbose logs */
-
-  // put your client config here
+  // [mandatory] your client configuration
   clientIdentifier: '<your-clientIdentifier>',
   clientSecret: '<your-clientSecret>',
   clientVersion: '<your-clientVersion>',
 
-  // put your auth config here
+  // [mandatory] your auth & account configuration
   authAccountName: '<your-authAccountName>',
   authUserName: '<your-authUserName>',
   authPassword: '<your-authPassword>',
+
+  // [optional] provide verbose logs
+  debug: true,
+
+  // [optional] enable using custom oauthEndpoints
+  oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
+
+  // [optional] client will cache token (helpful for writing integration tests)
+  tokenCacheFilePath: './.myToken.json'
 
 });
 ```

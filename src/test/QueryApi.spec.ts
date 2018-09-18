@@ -18,7 +18,7 @@ describe('QueryApi', () => {
   let client: CoreAPIClient
 
   beforeEach(() => {
-    client = new CoreAPIClient(integrationTestConfig);
+    client = new CoreAPIClient({ ...integrationTestConfig, debug: true });
   });
 
   describe('without token', () => {
@@ -30,13 +30,13 @@ describe('QueryApi', () => {
 
       client.query(
         `SELECT
-      bp.id,
-      bp.name,
-      sc.id
-    FROM
-      BusinessPartner bp
-      JOIN ServiceCall sc ON bp=sc.businessPartner
-    LIMIT 3`,
+          bp.id,
+          bp.name,
+          sc.id
+        FROM
+          BusinessPartner bp
+          JOIN ServiceCall sc ON bp=sc.businessPartner
+        LIMIT 3`,
         ['BusinessPartner', 'ServiceCall'])
         .then(result => assert.deepEqual(result.data, []))
         .then(_ => done())

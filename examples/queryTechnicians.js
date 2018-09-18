@@ -6,8 +6,6 @@
 const fsm = require('../release');
 const client = new fsm.CoreAPIClient({
 
-  // debug: true,
-
   // put your client config here
   clientIdentifier: process.env.CLIENT_IDENTIFIER,
   clientSecret: process.env.CLIENT_SECRET,
@@ -21,23 +19,26 @@ const client = new fsm.CoreAPIClient({
 
 (async () => {
   // select the data we need regarding technicians. It can be filtered by job title and external resource flag
-  const coreSQL =
-    `SELECT
-    unifiedPerson.id,
-    unifiedPerson.userName,
-    unifiedPerson.firstName,
-    unifiedPerson.lastName,
-    unifiedPerson.externalResource,
-    unifiedPerson.jobTitle
-  FROM
-   UnifiedPerson unifiedPerson
-  WHERE
-  unifiedPerson.plannableResource = true
-  `;
+  const coreSQL = `
+    SELECT
+      unifiedPerson.id,
+      unifiedPerson.userName,
+      unifiedPerson.firstName,
+      unifiedPerson.lastName,
+      unifiedPerson.externalResource,
+      unifiedPerson.jobTitle
+    FROM
+      UnifiedPerson unifiedPerson
+    WHERE
+      unifiedPerson.plannableResource = true
+    `;
 
   const result = await client.query(coreSQL, ['UnifiedPerson']);
-  console.log(`Total ${result.data.length} technicians found:`);
+
+  console.log(`Total ${result.data.length} technicians found`);
+
   result.data.forEach(el => {
     console.log(`username: ${el.unifiedPerson.userName}\tname: ${el.unifiedPerson.firstName} ${el.unifiedPerson.lastName}\tid: ${el.unifiedPerson.id}\texternal: ${el.unifiedPerson.externalResource}\ttitle: ${el.unifiedPerson.jobTitle}`);
   });
+
 })();
