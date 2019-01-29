@@ -15,16 +15,11 @@ describe('QueryApi', () => {
     } catch (error) { }
   }
 
-  let client: CoreAPIClient
-
-  beforeEach(() => {
-    client = new CoreAPIClient({ ...integrationTestConfig, debug: true });
-  });
-
   describe('without token', () => {
 
     // ensure token is fetched
     removeTokenFile();
+    const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
 
     it('should execute query with auth context', done => {
 
