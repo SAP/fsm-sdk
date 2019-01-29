@@ -78,6 +78,6 @@ const serviceCall = {
 (async () => {
 
   const result = await client.post('ServiceCall', serviceCall);
-  console.log(result);  // => { data: [ { serviceCall: [Object] } ] }
-
+  console.log(JSON.stringify(result, null, 2));  // => { data: [ { serviceCall: [Object] } ] }
+    
 })();
