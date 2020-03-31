@@ -22,6 +22,8 @@ export class CoreAPIClient {
     clientSecret: '<your-clientSecret>',
     clientVersion: '<your-clientVersion>',
 
+    authGrantType: 'password',
+
     authAccountName: '<your-authAccountName>',
     authUserName: '<your-authUserName>',
     authPassword: '<your-authPassword>',
@@ -39,6 +41,8 @@ export class CoreAPIClient {
    *   clientSecret: string;
    *   clientVersion: string;
    *
+   *   authGrantType: 'password' | 'client_credentials' | undefined
+   * 
    *   authAccountName: string;
    *   authUserName: string;
    *   authPassword: string;
@@ -52,8 +56,8 @@ export class CoreAPIClient {
    *  https://docs.coresystems.net/api/oauth.html
    */
   private _fetchAndSaveToken() {
-    const basicAuth = new Buffer(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
-    return this._httpCRUDRequest({
+    const basicAuth = Buffer.from(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
+    return this._httpCRUDRequest<string>({
       method: 'POST',
       uri: `${this._config.oauthEndpoint}/token`,
       headers: {
@@ -63,9 +67,15 @@ export class CoreAPIClient {
         ...this._getRequestXHeaders()
       },
       form: {
-        grant_type: 'password',
-        username: `${this._config.authAccountName}/${this._config.authUserName}`,
-        password: this._config.authPassword
+        grant_type: this._config.authGrantType,
+
+        ...(this._config.authGrantType === 'password'
+          ? {
+            username: `${this._config.authAccountName}/${this._config.authUserName}`,
+            password: this._config.authPassword
+          }
+          : {}
+        )
       }
     })
       .then((response: string) => {
@@ -77,7 +87,7 @@ export class CoreAPIClient {
   };
 
   private _readToken(): Promise<OauthTokenResponse> {
-    return new Promise((resolve, fail) => {
+    return new Promise<OauthTokenResponse>((resolve, fail) => {
       if (this._config.debug && this._config.tokenCacheFilePath) {
         return resolve(require(path.resolve(this._config.tokenCacheFilePath)))
       }
@@ -96,6 +106,11 @@ export class CoreAPIClient {
       ? Promise.resolve(this._token)
       : this._readToken()
         .then(token => {
+
+          if (!token.account || token.account.toLowerCase() !== this._config.authAccountName.toLowerCase()) {
+            throw new Error('invalid token');
+          }
+
           this._token = token;
           return this._token;
         });
@@ -221,7 +236,9 @@ export class CoreAPIClient {
     if (!token.companies || !token.companies.length) {
       throw new Error('no compnay found on given account');
     }
+
     const [selectedCompany] = token.companies;
+
     return {
       account: this._config.authAccountName,
       user: this._config.authUserName,
@@ -230,7 +247,7 @@ export class CoreAPIClient {
   }
 
 
-  private _httpCRUDRequest(opt: request.Options) {
+  private _httpCRUDRequest<T>(opt: request.Options) {
     if (this._config.debug) {
       console.log(`[httpRequest] outgoing options[${JSON.stringify(opt, null, 2)}]`);
     }
@@ -239,7 +256,7 @@ export class CoreAPIClient {
         if (this._config.debug) {
           console.log(`[httpRequest] incoming going options[${JSON.stringify(opt, null, 2)}] response[${JSON.stringify(response, null, 2)}]`);
         }
-        return response;
+        return response as T;
       });
   }
 
@@ -289,7 +306,7 @@ export class CoreAPIClient {
             dtos: this._getVersionsParam(resourceNames)
           },
           json: { query: coreSQL }
-        }));
+        })) as Promise<ClientResponse<T>>;
   }
 
   /**
@@ -305,7 +322,7 @@ export class CoreAPIClient {
 
   public deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {
     const { id, lastChanged } = resource;
-    return this._DataApiCRUDRequest('DELETE', resourceName, null, id, { lastChanged });
+    return this._DataApiCRUDRequest('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
   }
 
   /**
@@ -315,7 +332,7 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    */
   public post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._DataApiCRUDRequest('POST', resourceName, resource);
+    return this._DataApiCRUDRequest('POST', resourceName, resource) as Promise<ClientResponse<T>>;
   }
 
   /**
@@ -326,7 +343,7 @@ export class CoreAPIClient {
    */
   public put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
     const { id } = resource;
-    return this._DataApiCRUDRequest('PUT', resourceName, resource, id);
+    return this._DataApiCRUDRequest('PUT', resourceName, resource, id) as Promise<ClientResponse<T>>;
   }
 
   /**
@@ -338,7 +355,11 @@ export class CoreAPIClient {
    */
   public patch<T extends Partial<DTOModels>>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
     const { id } = resource;
-    return this._DataApiCRUDRequest('PATCH', resourceName, resource, id);
+    return this._DataApiCRUDRequest('PATCH', resourceName, resource, id) as Promise<ClientResponse<T>>;
+  }
+
+  public getToken(): Readonly<OauthTokenResponse> | undefined {
+    return this._token;
   }
 
 }

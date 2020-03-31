@@ -8,6 +8,8 @@ export type ClientConfig = {
   clientSecret: string;
   clientVersion: string;
 
+  authGrantType: 'password' | 'client_credentials' | undefined;
+
   authAccountName: string;
   authUserName: string;
   authPassword: string;
