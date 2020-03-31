@@ -65,3 +65,6 @@ coresystems-oauth2-token.json
 
 # Compiled src
 release
+
+# More
+.DS_Store
