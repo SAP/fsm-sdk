@@ -25,8 +25,8 @@ export class CoreAPIClient {
     authGrantType: 'password',
 
     authAccountName: '<your-authAccountName>',
-    authUserName: '<your-authUserName>',
-    authPassword: '<your-authPassword>',
+    authUserName: undefined,
+    authPassword: undefined,
   }
 
   /**
