@@ -17,6 +17,7 @@ export const integrationTestConfig: ClientConfig = {
 
   authAccountName: process.env.AUTH_ACCOUNTNAME as string,
   authUserName: process.env.AUTH_USERNAME as string,
-  authPassword: process.env.AUTH_PASSWORD as string
+  authPassword: process.env.AUTH_PASSWORD as string,
+  authCompany: undefined // use first 
 
 };

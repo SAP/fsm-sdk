@@ -24,9 +24,10 @@ export class CoreAPIClient {
 
     authGrantType: 'password',
 
-    authAccountName: '<your-authAccountName>',
+    authAccountName: undefined,
     authUserName: undefined,
     authPassword: undefined,
+    authCompany: undefined
   }
 
   /**
@@ -43,9 +44,11 @@ export class CoreAPIClient {
    *
    *   authGrantType: 'password' | 'client_credentials' | undefined
    * 
-   *   authAccountName: string;
-   *   authUserName: string;
-   *   authPassword: string;
+   *   authAccountName: string | undefined;
+   *   authUserName: string | undefined;
+   *   authPassword: string | undefined;
+   *   authCompany: string | undefined;
+   * 
    *  }
    */
   constructor(config: ClientConfig) {
@@ -107,7 +110,7 @@ export class CoreAPIClient {
       : this._readToken()
         .then(token => {
 
-          if (!token.account || token.account.toLowerCase() !== this._config.authAccountName.toLowerCase()) {
+          if (!token || !token.account) {
             throw new Error('invalid token');
           }
 
@@ -116,103 +119,102 @@ export class CoreAPIClient {
         });
   };
 
+  private ALL_DTO_VERSIONS: { [name: string]: number } = {
+    'Activity': 31,
+    'ActivitySubType': 14,
+    'Approval': 13,
+    'Attachment': 16,
+    'Address': 17,
+    'BusinessPartner': 20,
+    'BusinessPartnerGroup': 14,
+    'BusinessProcessStepDefinition': 15,
+    'ChecklistInstance': 17,
+    'ChecklistInstanceElement': 13,
+    'ChecklistCategory': 10,
+    'ChecklistTemplate': 17,
+    'ChecklistTag': 8,
+    'ChecklistVariable': 8,
+    'Currency': 11,
+    'CustomRule': 8,
+    'Contact': 16,
+    'CompanyInfo': 15,
+    'CompanySettings': 11,
+    'EmployeeBranch': 9,
+    'EmployeeDepartment': 9,
+    'EmployeePosition': 9,
+    'Enumeration': 11,
+    'Equipment': 18,
+    'Expense': 15,
+    'ExpenseType': 15,
+    'FieldConfiguration': 8,
+    'Filter': 12,
+    'Function': 8,
+    'Group': 13,
+    'Icon': 8,
+    'Item': 21,
+    'ItemGroup': 10,
+    'ItemPriceListAssignment': 14,
+    'Material': 18,
+    'Mileage': 16,
+    'MileageType': 14,
+    'PaymentTerm': 14,
+    'Person': 18,
+    'PersonReservation': 15,
+    'PersonReservationType': 15,
+    'PersonWorkTimePattern': 8,
+    'Plugin': 8,
+    'Project': 10,
+    'ProjectPhase': 10,
+    'PriceList': 14,
+    'ProfileObject': 22,
+    'ReportTemplate': 15,
+    'Requirement': 8,
+    'ReservedMaterial': 16,
+    'ScreenConfiguration': 8,
+    'ServiceAssignment': 25,
+    'ServiceAssignmentStatus': 12,
+    'ServiceAssignmentStatusDefinition': 14,
+    'ServiceCall': 24,
+    'ServiceCallProblemType': 13,
+    'ServiceCallStatus': 13,
+    'ServiceCallType': 12,
+    'ServiceCallSubject': 12,
+    'ServiceCallCode': 12,
+    'ServiceCallResponsible': 12,
+    'ServiceCallOrigin': 13,
+    'Shift': 8,
+    'ShiftTechnician': 8,
+    'Skill': 8,
+    'Team': 8,
+    'TeamTimeFrame': 8,
+    'Tag': 8,
+    'Tax': 9,
+    'TimeEffort': 15,
+    'TimeTask': 16,
+    'TimeSubTask': 14,
+    'Translation': 8,
+    'UdfMeta': 13,
+    'UdfMetaGroup': 10,
+    'UserSyncConfirmation': 13,
+    'Warehouse': 15,
+    'WorkTimeTask': 15,
+    'WorkTimePattern': 8,
+    'WorkTime': 15,
+    'CrowdBusinessPartner': 8,
+    'CrowdAssignment': 8,
+    'Notification': 8,
+    'CrowdExecutionRecord': 8,
+    'CrowdPerson': 8,
+    'UnifiedPerson': 8
+  };
+
   private _getVersionsParam(DTONames: DTOName[]): string {
-
-    const ALL_DTO_VERSIONS: { [name: string]: number } = {
-      'Activity': 24,
-      'ActivitySubType': 14,
-      'Approval': 13,
-      'Attachment': 16,
-      'Address': 17,
-      'BusinessPartner': 20,
-      'BusinessPartnerGroup': 14,
-      'BusinessProcessStepDefinition': 15,
-      'ChecklistInstance': 17,
-      'ChecklistInstanceElement': 13,
-      'ChecklistCategory': 10,
-      'ChecklistTemplate': 17,
-      'ChecklistTag': 8,
-      'ChecklistVariable': 8,
-      'Currency': 11,
-      'CustomRule': 8,
-      'Contact': 16,
-      'CompanyInfo': 15,
-      'CompanySettings': 11,
-      'EmployeeBranch': 9,
-      'EmployeeDepartment': 9,
-      'EmployeePosition': 9,
-      'Enumeration': 11,
-      'Equipment': 18,
-      'Expense': 15,
-      'ExpenseType': 15,
-      'FieldConfiguration': 8,
-      'Filter': 12,
-      'Function': 8,
-      'Group': 13,
-      'Icon': 8,
-      'Item': 21,
-      'ItemGroup': 10,
-      'ItemPriceListAssignment': 14,
-      'Material': 18,
-      'Mileage': 16,
-      'MileageType': 14,
-      'PaymentTerm': 14,
-      'Person': 18,
-      'PersonReservation': 15,
-      'PersonReservationType': 15,
-      'PersonWorkTimePattern': 8,
-      'Plugin': 8,
-      'Project': 10,
-      'ProjectPhase': 10,
-      'PriceList': 14,
-      'ProfileObject': 22,
-      'ReportTemplate': 15,
-      'Requirement': 8,
-      'ReservedMaterial': 16,
-      'ScreenConfiguration': 8,
-      'ServiceAssignment': 25,
-      'ServiceAssignmentStatus': 12,
-      'ServiceAssignmentStatusDefinition': 14,
-      'ServiceCall': 24,
-      'ServiceCallProblemType': 13,
-      'ServiceCallStatus': 13,
-      'ServiceCallType': 12,
-      'ServiceCallSubject': 12,
-      'ServiceCallCode': 12,
-      'ServiceCallResponsible': 12,
-      'ServiceCallOrigin': 13,
-      'Shift': 8,
-      'ShiftTechnician': 8,
-      'Skill': 8,
-      'Team': 8,
-      'TeamTimeFrame': 8,
-      'Tag': 8,
-      'Tax': 9,
-      'TimeEffort': 15,
-      'TimeTask': 16,
-      'TimeSubTask': 14,
-      'Translation': 8,
-      'UdfMeta': 13,
-      'UdfMetaGroup': 10,
-      'UserSyncConfirmation': 13,
-      'Warehouse': 15,
-      'WorkTimeTask': 15,
-      'WorkTimePattern': 8,
-      'WorkTime': 15,
-      'CrowdBusinessPartner': 8,
-      'CrowdAssignment': 8,
-      'Notification': 8,
-      'CrowdExecutionRecord': 8,
-      'CrowdPerson': 8,
-      'UnifiedPerson': 8
-    };
-
     return DTONames
       .map(name => {
-        if (!ALL_DTO_VERSIONS[name]) {
+        if (!this.ALL_DTO_VERSIONS[name]) {
           throw new Error(`no DTO version found for ${name}`);
         }
-        return `${name}.${ALL_DTO_VERSIONS[name]}`;
+        return `${name}.${this.ALL_DTO_VERSIONS[name]}`;
       }).join(';');
   }
 
@@ -242,7 +244,7 @@ export class CoreAPIClient {
     return {
       account: this._config.authAccountName,
       user: this._config.authUserName,
-      company: selectedCompany.name,
+      company: this._config.authCompany ? this._config.authCompany : selectedCompany.name,
     }
   }
 

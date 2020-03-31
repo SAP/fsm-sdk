@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "1.0.0-rc8",
+  "version": "1.0.0-rc10",
   "description": "node sdk to interface with coresystems apis. Find more docs at https://docs.coresystems.net",
   "main": "release/CoreAPIClient.js",
   "types": "release/CoreAPIClient.d.ts",

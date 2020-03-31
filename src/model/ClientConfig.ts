@@ -10,7 +10,8 @@ export type ClientConfig = {
 
   authGrantType?: 'password' | 'client_credentials' | undefined;
 
-  authAccountName: string;
+  authAccountName?: string | undefined;
   authUserName?: string | undefined;
   authPassword?: string | undefined;
+  authCompany?: string | undefined;
 }
