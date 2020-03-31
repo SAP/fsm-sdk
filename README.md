@@ -60,7 +60,6 @@ related doc's:
 - [Generating Client ID and Secret](https://docs.coresystems.net/admin/account.html#wow7)
 - [OAuth API Documentation](https://docs.coresystems.net/api/oauth.html#wow1)
 
-
 ---
 
 ## CoreAPIClient
@@ -138,3 +137,14 @@ await client.deleteById('ServiceCall', {
 
 The `lastChanged` field is used for optimistic locking.
 It's like a version-key you have to provide in order to update an object.
+
+
+
+## Support
+
+In case you need further help, check out the [SAP Field Service Management Help Portal](https://docs.coresystems.net/) or report and incident in [SAP Support Portal](https://support.sap.com) with the component "CEC-SRV-FSM".
+
+## License
+
+Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE](./LICENSE) file.
