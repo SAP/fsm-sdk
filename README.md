@@ -39,10 +39,20 @@ const client = new fsm.CoreAPIClient({
   clientSecret: '<your-clientSecret>',
   clientVersion: '<your-clientVersion>',
 
-  // [mandatory] your auth & account configuration
+  // [optional] oauth grant type, default=password
+  authGrantType: 'password' | 'client_credentials' | undefined
+
+  // [optional] | [mandatory] if oauth grant type password
   authAccountName: '<your-authAccountName>',
+
+  // [optional] | [mandatory] if oauth grant type password
   authUserName: '<your-authUserName>',
+
+  // [optional] | [mandatory] if oauth grant type password
   authPassword: '<your-authPassword>',
+
+  // [optional] or default=FIRST
+  authCompany: '<your-authCompany>',
 
   // [optional] provide verbose logs
   debug: true,

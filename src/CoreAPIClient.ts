@@ -22,9 +22,12 @@ export class CoreAPIClient {
     clientSecret: '<your-clientSecret>',
     clientVersion: '<your-clientVersion>',
 
-    authAccountName: '<your-authAccountName>',
-    authUserName: '<your-authUserName>',
-    authPassword: '<your-authPassword>',
+    authGrantType: 'password',
+
+    authAccountName: undefined,
+    authUserName: undefined,
+    authPassword: undefined,
+    authCompany: undefined
   }
 
   /**
@@ -39,9 +42,13 @@ export class CoreAPIClient {
    *   clientSecret: string;
    *   clientVersion: string;
    *
-   *   authAccountName: string;
-   *   authUserName: string;
-   *   authPassword: string;
+   *   authGrantType: 'password' | 'client_credentials' | undefined
+   * 
+   *   authAccountName: string | undefined;
+   *   authUserName: string | undefined;
+   *   authPassword: string | undefined;
+   *   authCompany: string | undefined;
+   * 
    *  }
    */
   constructor(config: ClientConfig) {
@@ -52,8 +59,8 @@ export class CoreAPIClient {
    *  https://docs.coresystems.net/api/oauth.html
    */
   private _fetchAndSaveToken() {
-    const basicAuth = new Buffer(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
-    return this._httpCRUDRequest({
+    const basicAuth = Buffer.from(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
+    return this._httpCRUDRequest<string>({
       method: 'POST',
       uri: `${this._config.oauthEndpoint}/token`,
       headers: {
@@ -63,9 +70,15 @@ export class CoreAPIClient {
         ...this._getRequestXHeaders()
       },
       form: {
-        grant_type: 'password',
-        username: `${this._config.authAccountName}/${this._config.authUserName}`,
-        password: this._config.authPassword
+        grant_type: this._config.authGrantType,
+
+        ...(this._config.authGrantType === 'password'
+          ? {
+            username: `${this._config.authAccountName}/${this._config.authUserName}`,
+            password: this._config.authPassword
+          }
+          : {}
+        )
       }
     })
       .then((response: string) => {
@@ -77,7 +90,7 @@ export class CoreAPIClient {
   };
 
   private _readToken(): Promise<OauthTokenResponse> {
-    return new Promise((resolve, fail) => {
+    return new Promise<OauthTokenResponse>((resolve, fail) => {
       if (this._config.debug && this._config.tokenCacheFilePath) {
         return resolve(require(path.resolve(this._config.tokenCacheFilePath)))
       }
@@ -96,108 +109,112 @@ export class CoreAPIClient {
       ? Promise.resolve(this._token)
       : this._readToken()
         .then(token => {
+
+          if (!token || !token.account) {
+            throw new Error('invalid token');
+          }
+
           this._token = token;
           return this._token;
         });
   };
 
+  private ALL_DTO_VERSIONS: { [name: string]: number } = {
+    'Activity': 31,
+    'ActivitySubType': 14,
+    'Approval': 13,
+    'Attachment': 16,
+    'Address': 17,
+    'BusinessPartner': 20,
+    'BusinessPartnerGroup': 14,
+    'BusinessProcessStepDefinition': 15,
+    'ChecklistInstance': 17,
+    'ChecklistInstanceElement': 13,
+    'ChecklistCategory': 10,
+    'ChecklistTemplate': 17,
+    'ChecklistTag': 8,
+    'ChecklistVariable': 8,
+    'Currency': 11,
+    'CustomRule': 8,
+    'Contact': 16,
+    'CompanyInfo': 15,
+    'CompanySettings': 11,
+    'EmployeeBranch': 9,
+    'EmployeeDepartment': 9,
+    'EmployeePosition': 9,
+    'Enumeration': 11,
+    'Equipment': 18,
+    'Expense': 15,
+    'ExpenseType': 15,
+    'FieldConfiguration': 8,
+    'Filter': 12,
+    'Function': 8,
+    'Group': 13,
+    'Icon': 8,
+    'Item': 21,
+    'ItemGroup': 10,
+    'ItemPriceListAssignment': 14,
+    'Material': 18,
+    'Mileage': 16,
+    'MileageType': 14,
+    'PaymentTerm': 14,
+    'Person': 18,
+    'PersonReservation': 15,
+    'PersonReservationType': 15,
+    'PersonWorkTimePattern': 8,
+    'Plugin': 8,
+    'Project': 10,
+    'ProjectPhase': 10,
+    'PriceList': 14,
+    'ProfileObject': 22,
+    'ReportTemplate': 15,
+    'Requirement': 8,
+    'ReservedMaterial': 16,
+    'ScreenConfiguration': 8,
+    'ServiceAssignment': 25,
+    'ServiceAssignmentStatus': 12,
+    'ServiceAssignmentStatusDefinition': 14,
+    'ServiceCall': 24,
+    'ServiceCallProblemType': 13,
+    'ServiceCallStatus': 13,
+    'ServiceCallType': 12,
+    'ServiceCallSubject': 12,
+    'ServiceCallCode': 12,
+    'ServiceCallResponsible': 12,
+    'ServiceCallOrigin': 13,
+    'Shift': 8,
+    'ShiftTechnician': 8,
+    'Skill': 8,
+    'Team': 8,
+    'TeamTimeFrame': 8,
+    'Tag': 8,
+    'Tax': 9,
+    'TimeEffort': 15,
+    'TimeTask': 16,
+    'TimeSubTask': 14,
+    'Translation': 8,
+    'UdfMeta': 13,
+    'UdfMetaGroup': 10,
+    'UserSyncConfirmation': 13,
+    'Warehouse': 15,
+    'WorkTimeTask': 15,
+    'WorkTimePattern': 8,
+    'WorkTime': 15,
+    'CrowdBusinessPartner': 8,
+    'CrowdAssignment': 8,
+    'Notification': 8,
+    'CrowdExecutionRecord': 8,
+    'CrowdPerson': 8,
+    'UnifiedPerson': 8
+  };
+
   private _getVersionsParam(DTONames: DTOName[]): string {
-
-    const ALL_DTO_VERSIONS: { [name: string]: number } = {
-      'Activity': 24,
-      'ActivitySubType': 14,
-      'Approval': 13,
-      'Attachment': 16,
-      'Address': 17,
-      'BusinessPartner': 20,
-      'BusinessPartnerGroup': 14,
-      'BusinessProcessStepDefinition': 15,
-      'ChecklistInstance': 17,
-      'ChecklistInstanceElement': 13,
-      'ChecklistCategory': 10,
-      'ChecklistTemplate': 17,
-      'ChecklistTag': 8,
-      'ChecklistVariable': 8,
-      'Currency': 11,
-      'CustomRule': 8,
-      'Contact': 16,
-      'CompanyInfo': 15,
-      'CompanySettings': 11,
-      'EmployeeBranch': 9,
-      'EmployeeDepartment': 9,
-      'EmployeePosition': 9,
-      'Enumeration': 11,
-      'Equipment': 18,
-      'Expense': 15,
-      'ExpenseType': 15,
-      'FieldConfiguration': 8,
-      'Filter': 12,
-      'Function': 8,
-      'Group': 13,
-      'Icon': 8,
-      'Item': 21,
-      'ItemGroup': 10,
-      'ItemPriceListAssignment': 14,
-      'Material': 18,
-      'Mileage': 16,
-      'MileageType': 14,
-      'PaymentTerm': 14,
-      'Person': 18,
-      'PersonReservation': 15,
-      'PersonReservationType': 15,
-      'PersonWorkTimePattern': 8,
-      'Plugin': 8,
-      'Project': 10,
-      'ProjectPhase': 10,
-      'PriceList': 14,
-      'ProfileObject': 22,
-      'ReportTemplate': 15,
-      'Requirement': 8,
-      'ReservedMaterial': 16,
-      'ScreenConfiguration': 8,
-      'ServiceAssignment': 25,
-      'ServiceAssignmentStatus': 12,
-      'ServiceAssignmentStatusDefinition': 14,
-      'ServiceCall': 24,
-      'ServiceCallProblemType': 13,
-      'ServiceCallStatus': 13,
-      'ServiceCallType': 12,
-      'ServiceCallSubject': 12,
-      'ServiceCallCode': 12,
-      'ServiceCallResponsible': 12,
-      'ServiceCallOrigin': 13,
-      'Shift': 8,
-      'ShiftTechnician': 8,
-      'Skill': 8,
-      'Team': 8,
-      'TeamTimeFrame': 8,
-      'Tag': 8,
-      'Tax': 9,
-      'TimeEffort': 15,
-      'TimeTask': 16,
-      'TimeSubTask': 14,
-      'Translation': 8,
-      'UdfMeta': 13,
-      'UdfMetaGroup': 10,
-      'UserSyncConfirmation': 13,
-      'Warehouse': 15,
-      'WorkTimeTask': 15,
-      'WorkTimePattern': 8,
-      'WorkTime': 15,
-      'CrowdBusinessPartner': 8,
-      'CrowdAssignment': 8,
-      'Notification': 8,
-      'CrowdExecutionRecord': 8,
-      'CrowdPerson': 8,
-      'UnifiedPerson': 8
-    };
-
     return DTONames
       .map(name => {
-        if (!ALL_DTO_VERSIONS[name]) {
+        if (!this.ALL_DTO_VERSIONS[name]) {
           throw new Error(`no DTO version found for ${name}`);
         }
-        return `${name}.${ALL_DTO_VERSIONS[name]}`;
+        return `${name}.${this.ALL_DTO_VERSIONS[name]}`;
       }).join(';');
   }
 
@@ -221,16 +238,18 @@ export class CoreAPIClient {
     if (!token.companies || !token.companies.length) {
       throw new Error('no compnay found on given account');
     }
+
     const [selectedCompany] = token.companies;
+
     return {
       account: this._config.authAccountName,
       user: this._config.authUserName,
-      company: selectedCompany.name,
+      company: this._config.authCompany ? this._config.authCompany : selectedCompany.name,
     }
   }
 
 
-  private _httpCRUDRequest(opt: request.Options) {
+  private _httpCRUDRequest<T>(opt: request.Options) {
     if (this._config.debug) {
       console.log(`[httpRequest] outgoing options[${JSON.stringify(opt, null, 2)}]`);
     }
@@ -239,7 +258,7 @@ export class CoreAPIClient {
         if (this._config.debug) {
           console.log(`[httpRequest] incoming going options[${JSON.stringify(opt, null, 2)}] response[${JSON.stringify(response, null, 2)}]`);
         }
-        return response;
+        return response as T;
       });
   }
 
@@ -289,7 +308,7 @@ export class CoreAPIClient {
             dtos: this._getVersionsParam(resourceNames)
           },
           json: { query: coreSQL }
-        }));
+        })) as Promise<ClientResponse<T>>;
   }
 
   /**
@@ -305,7 +324,7 @@ export class CoreAPIClient {
 
   public deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {
     const { id, lastChanged } = resource;
-    return this._DataApiCRUDRequest('DELETE', resourceName, null, id, { lastChanged });
+    return this._DataApiCRUDRequest('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
   }
 
   /**
@@ -315,7 +334,7 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    */
   public post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._DataApiCRUDRequest('POST', resourceName, resource);
+    return this._DataApiCRUDRequest('POST', resourceName, resource) as Promise<ClientResponse<T>>;
   }
 
   /**
@@ -326,7 +345,7 @@ export class CoreAPIClient {
    */
   public put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
     const { id } = resource;
-    return this._DataApiCRUDRequest('PUT', resourceName, resource, id);
+    return this._DataApiCRUDRequest('PUT', resourceName, resource, id) as Promise<ClientResponse<T>>;
   }
 
   /**
@@ -338,7 +357,11 @@ export class CoreAPIClient {
    */
   public patch<T extends Partial<DTOModels>>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
     const { id } = resource;
-    return this._DataApiCRUDRequest('PATCH', resourceName, resource, id);
+    return this._DataApiCRUDRequest('PATCH', resourceName, resource, id) as Promise<ClientResponse<T>>;
+  }
+
+  public getToken(): Readonly<OauthTokenResponse> | undefined {
+    return this._token;
   }
 
 }
