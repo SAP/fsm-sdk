@@ -12,7 +12,7 @@ Find more documentation and related information at [Coresystems API Documentatio
     + [Delete object](#delete-object)
       - [lastChanged](#lastchanged)
 
-Some illustrative cases are provided in the [examples](https://github.com/coresystemsFSM/fsm-sdk/tree/master/examples) folder.
+Some illustrative cases are provided in the [examples](./examples) folder.
 
 ---
 
