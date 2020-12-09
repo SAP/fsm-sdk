@@ -19,7 +19,7 @@ describe('QueryApi', () => {
 
     // ensure token is fetched
     removeTokenFile();
-    const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
+    const client = new CoreAPIClient({ ...integrationTestConfig, debug: true });
 
     it('should execute query with auth context', done => {
 

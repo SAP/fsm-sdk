@@ -1,7 +1,7 @@
 {
   "name": "fsm-sdk",
-  "version": "1.0.0-rc10",
-  "description": "node sdk to interface with coresystems apis. Find more docs at https://docs.coresystems.net",
+  "version": "1.0.1",
+  "description": "node sdk to interface with SAP Field Service Management APIs.",
   "main": "release/CoreAPIClient.js",
   "types": "release/CoreAPIClient.d.ts",
   "scripts": {
@@ -51,14 +51,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coresystemsFSM/fsm-sdk.git"
+    "url": "git+https://github.com/sap/fsm-sdk.git"
   },
   "author": "Simon Gausmann / SAP SE",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/coresystemsFSM/fsm-sdk/issues"
+    "url": "https://github.com/sap/fsm-sdk/issues"
   },
-  "homepage": "https://github.com/coresystemsFSM/fsm-sdk#readme",
+  "homepage": "https://github.com/sap/fsm-sdk#readme",
   "dependencies": {
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",

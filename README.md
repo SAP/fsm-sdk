@@ -1,16 +1,19 @@
-# NodeJS FSM-SDK to Interface with Coresystems APIs and Services.
-Find more documentation and related information at [Coresystems API Documentation](https://docs.coresystems.net/dev-index.html)
+# NodeJS FSM-SDK to Interface with SAP Field Service Management APIs and Services.
+Find more documentation and related information at [SAP Field Service Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
 
-- [Getting started](#getting-started)
-- [CoreAPIClient](#coreapiclient)
-  * [Query for objects using CoreSQL](#query-for-objects-using-coresql)
-  * [CRUD object](#crud-object)
-    + [Create a new object](#create-a-new-object)
-    + [Read object by id](#read-object-by-id)
-    + [Update object (providing full new version)](#update-object--providing-full-new-version-)
-    + [Update object (providing only fields to change)](#update-object--providing-only-fields-to-change-)
-    + [Delete object](#delete-object)
-      - [lastChanged](#lastchanged)
+- [NodeJS FSM-SDK to Interface with SAP Field Service Management APIs and Services.](#nodejs-fsm-sdk-to-interface-with-sap-field-service-management-apis-and-services)
+  - [Getting started](#getting-started)
+  - [CoreAPIClient](#coreapiclient)
+    - [Query for objects using CoreSQL](#query-for-objects-using-coresql)
+    - [CRUD object](#crud-object)
+      - [Create a new object](#create-a-new-object)
+      - [Read object by id](#read-object-by-id)
+      - [Update object (providing full new version)](#update-object-providing-full-new-version)
+      - [Update object (providing only fields to change)](#update-object-providing-only-fields-to-change)
+      - [Delete object](#delete-object)
+        - [lastChanged](#lastchanged)
+  - [Support](#support)
+  - [License](#license)
 
 Some illustrative cases are provided in the [examples](./examples) folder.
 
@@ -67,8 +70,7 @@ const client = new fsm.CoreAPIClient({
 ```
 
 related doc's:
-- [Generating Client ID and Secret](https://docs.coresystems.net/admin/account.html#wow7)
-- [OAuth API Documentation](https://docs.coresystems.net/api/oauth.html#wow1)
+- [Generating Client ID and Secret](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/generating-client-id.html)
 
 ---
 
@@ -79,7 +81,7 @@ The CoreAPIClient will return a Promise and is asynchronous by default.
 ### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
-see [Query API Documentation](https://docs.coresystems.net/api/query-api.html)
+see [Query API Documentation](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/query-api.html)
 
 ```typescript
 
@@ -99,7 +101,7 @@ await client.query(coreSQL, ['ServiceCall']);
 ### CRUD object
 
 related doc's:
-- [Data Model Documentation](https://docs.coresystems.net/api/data-model.html)
+- [Data Model Documentation](https://help.sap.com/viewer/fsm_data_model/Cloud/en-US/data-model-overview.html)
 
 #### Create a new object
 
@@ -152,9 +154,9 @@ It's like a version-key you have to provide in order to update an object.
 
 ## Support
 
-In case you need further help, check out the [SAP Field Service Management Help Portal](https://docs.coresystems.net/) or report and incident in [SAP Support Portal](https://support.sap.com) with the component "CEC-SRV-FSM".
+In case you need further help, check out the [SAP Field Service Management Help Portal](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US/) or report and incident in [SAP Support Portal](https://support.sap.com) with the component "CEC-SRV-FSM".
 
 ## License
 
-Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE](./LICENSE) file.

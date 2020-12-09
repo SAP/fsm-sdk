@@ -55,9 +55,6 @@ export class CoreAPIClient {
     this._config = Object.assign(this._config, config);
   }
 
-  /**
-   *  https://docs.coresystems.net/api/oauth.html
-   */
   private _fetchAndSaveToken() {
     const basicAuth = Buffer.from(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
     return this._httpCRUDRequest<string>({
@@ -108,15 +105,7 @@ export class CoreAPIClient {
     return this._token
       ? Promise.resolve(this._token)
       : this._readToken()
-        .then(token => {
-
-          if (!token || !token.account) {
-            throw new Error('invalid token');
-          }
-
-          this._token = token;
-          return this._token;
-        });
+        .then(token => this.setToken(token).getToken() as OauthTokenResponse);
   };
 
   private ALL_DTO_VERSIONS: { [name: string]: number } = {
@@ -169,19 +158,13 @@ export class CoreAPIClient {
     'ProfileObject': 22,
     'ReportTemplate': 15,
     'Requirement': 8,
+    'Region': 9,
     'ReservedMaterial': 16,
     'ScreenConfiguration': 8,
     'ServiceAssignment': 25,
     'ServiceAssignmentStatus': 12,
     'ServiceAssignmentStatusDefinition': 14,
     'ServiceCall': 24,
-    'ServiceCallProblemType': 13,
-    'ServiceCallStatus': 13,
-    'ServiceCallType': 12,
-    'ServiceCallSubject': 12,
-    'ServiceCallCode': 12,
-    'ServiceCallResponsible': 12,
-    'ServiceCallOrigin': 13,
     'Shift': 8,
     'ShiftTechnician': 8,
     'Skill': 8,
@@ -291,8 +274,6 @@ export class CoreAPIClient {
 
   /**
    * Here, you can input and execute the CoreSQL query.
-   * https://docs.coresystems.net/api/query-api.html
-   * https://docs.coresystems.net/admin/query-api.html#wow3
    * @param coreSQL
    * @param resourceNames
    */
@@ -313,7 +294,6 @@ export class CoreAPIClient {
 
   /**
    * Retrieving Lists of Objects
-   * https://docs.coresystems.net/api/reference.html
    * @param resourceName resourceName
    * @param resourceId uuid
    */
@@ -329,7 +309,6 @@ export class CoreAPIClient {
 
   /**
    * Creating Objects
-   * https://docs.coresystems.net/api/reference.html
    * @param resourceName resourceName
    * @param resource should contain in the body the ENTIRE updated resource
    */
@@ -339,7 +318,6 @@ export class CoreAPIClient {
 
   /**
    * Updating Existing Objects
-   * https://docs.coresystems.net/api/reference.html
    * @param resourceName resourceName
    * @param resource should contain in the body the ENTIRE updated resource
    */
@@ -350,7 +328,6 @@ export class CoreAPIClient {
 
   /**
    * Updating Existing Objects
-   * https://docs.coresystems.net/api/reference.html
    * should contain in the body the entire updated resource
    * @param resourceName resourceName
    * @param resource should contain in the body the FIELDS THAT YOU WANT TO UPDATE
@@ -362,6 +339,16 @@ export class CoreAPIClient {
 
   public getToken(): Readonly<OauthTokenResponse> | undefined {
     return this._token;
+  }
+
+  public setToken(token: OauthTokenResponse): CoreAPIClient {
+
+    if (!token || !token.account) {
+      throw new Error('invalid token');
+    }
+
+    this._token = token;
+    return this;
   }
 
 }
