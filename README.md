@@ -1,8 +1,17 @@
-# NodeJS FSM-SDK to Interface with SAP Field Service Management APIs and Services.
+# SAP Field Service Management SDK 
+
+[![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) [![Build Status](https://travis-ci.org/coresystemsFSM/fsm-sdk.svg?branch=master)](https://travis-ci.org/coresystemsFSM/fsm-sdk) [![Coverage Status](https://coveralls.io/repos/github/coresystemsFSM/fsm-sdk/badge.svg?branch=master)](https://coveralls.io/github/coresystemsFSM/fsm-sdk?branch=master)
+
+---
+
+## NodeJS SDK to Interface with SAP Field Service Management APIs and Services.
 Find more documentation and related information at [SAP Field Service Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
 
-- [NodeJS FSM-SDK to Interface with SAP Field Service Management APIs and Services.](#nodejs-fsm-sdk-to-interface-with-sap-field-service-management-apis-and-services)
+
+- [SAP Field Service Management SDK](#sap-field-service-management-sdk)
+  - [NodeJS SDK to Interface with SAP Field Service Management APIs and Services.](#nodejs-sdk-to-interface-with-sap-field-service-management-apis-and-services)
   - [Getting started](#getting-started)
+    - [Examples](#examples)
   - [CoreAPIClient](#coreapiclient)
     - [Query for objects using CoreSQL](#query-for-objects-using-coresql)
     - [CRUD object](#crud-object)
@@ -15,14 +24,6 @@ Find more documentation and related information at [SAP Field Service Management
   - [Support](#support)
   - [License](#license)
 
-Some illustrative cases are provided in the [examples](./examples) folder.
-
----
-
-[![Build Status](https://travis-ci.org/coresystemsFSM/fsm-sdk.svg?branch=master)](https://travis-ci.org/coresystemsFSM/fsm-sdk) [![Coverage Status](https://coveralls.io/repos/github/coresystemsFSM/fsm-sdk/badge.svg?branch=master)](https://coveralls.io/github/coresystemsFSM/fsm-sdk?branch=master)
-
-
-[![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk)
 
 ## Getting started
 
@@ -71,6 +72,10 @@ const client = new fsm.CoreAPIClient({
 
 related doc's:
 - [Generating Client ID and Secret](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/generating-client-id.html)
+
+### Examples 
+Some illustrative cases are provided in the [examples](./examples) folder.
+
 
 ---
 
