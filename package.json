@@ -1,7 +1,8 @@
 {
   "name": "fsm-sdk",
   "version": "1.0.1",
-  "description": "node sdk to interface with SAP Field Service Management APIs.",
+  "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
+  "readme": "./README.md",
   "main": "release/CoreAPIClient.js",
   "types": "release/CoreAPIClient.d.ts",
   "scripts": {
@@ -53,8 +54,8 @@
     "type": "git",
     "url": "git+https://github.com/sap/fsm-sdk.git"
   },
-  "author": "Simon Gausmann / SAP SE",
-  "license": "MIT",
+  "author": "SAP SE or an SAP affiliate company - Simon Gausmann",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/sap/fsm-sdk/issues"
   },
