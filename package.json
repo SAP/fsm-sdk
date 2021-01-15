@@ -15,7 +15,7 @@
     "clean": "rm -rf release",
     "test": "nyc mocha --opts mocha.opts",
     "posttest": "(cat ./coverage/lcov.info | COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN COVERALLS_SERVICE_NAME=travis-pro ./node_modules/coveralls/bin/coveralls.js | :)",
-    "prepublish": "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm run test && npm run clean && npm run build && npm run start:examples"
+    "prepublish": "npm run test && npm run clean && npm run build && npm run start:examples"
   },
   "nyc": {
     "check-coverage": true,
