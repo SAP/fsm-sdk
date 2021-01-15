@@ -4,14 +4,17 @@ import _crypto = require('crypto');
 import fs = require('fs');
 import path = require('path');
 
-import { DTOName, DTOModels } from './model/DTOModels';
-import { ClientConfig } from './model/ClientConfig';
-import { OauthTokenResponse } from './model/OauthTokenResponse';
-import { ClientResponse } from './model/ClientResponse';
+import { DTOName, DTOModels } from './core/dto-name.model';
+import { ClientConfig } from './core/client-config.model';
+import { OauthTokenResponse } from './core/oauth-token-response.model';
+import { ClientResponse } from './core/client-response.model';
+import { ALL_DTO_VERSIONS } from './core/all-dto-versions.constant';
 
 export class CoreAPIClient {
 
+  public ALL_DTO_VERSIONS = ALL_DTO_VERSIONS;
   private _token: OauthTokenResponse | undefined;
+
   private _config: ClientConfig = {
     debug: false,
 
@@ -55,9 +58,10 @@ export class CoreAPIClient {
     this._config = Object.assign(this._config, config);
   }
 
-  private _fetchAndSaveToken() {
+  private async _fetchAndSaveToken() {
     const basicAuth = Buffer.from(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
-    return this._httpCRUDRequest<string>({
+
+    const response = await this._httpCRUDRequest<string>({
       method: 'POST',
       uri: `${this._config.oauthEndpoint}/token`,
       headers: {
@@ -77,119 +81,37 @@ export class CoreAPIClient {
           : {}
         )
       }
-    })
-      .then((response: string) => {
-        if (this._config.debug && this._config.tokenCacheFilePath) {
-          fs.writeFileSync(this._config.tokenCacheFilePath, response);
-        }
-        return JSON.parse(response);
-      });
-  };
+    });
 
-  private _readToken(): Promise<OauthTokenResponse> {
-    return new Promise<OauthTokenResponse>((resolve, fail) => {
-      if (this._config.debug && this._config.tokenCacheFilePath) {
-        return resolve(require(path.resolve(this._config.tokenCacheFilePath)))
-      }
-      fail({ code: 'MODULE_NOT_FOUND' });
-    })
-      .catch(error => {
-        if (error.code === 'MODULE_NOT_FOUND') {
-          return this._fetchAndSaveToken()
+    if (this._config.debug && this._config.tokenCacheFilePath) {
+      fs.writeFileSync(this._config.tokenCacheFilePath, response);
+    }
+
+    return JSON.parse(response);
+  }
+
+  private async _readToken(): Promise<OauthTokenResponse> {
+    try {
+      return await new Promise<OauthTokenResponse>((resolve, fail) => {
+        if (this._config.debug && this._config.tokenCacheFilePath) {
+          return resolve(require(path.resolve(this._config.tokenCacheFilePath)));
         }
-        throw error;
+        fail({ code: 'MODULE_NOT_FOUND' });
       });
-  };
+    } catch (error) {
+      if (error.code === 'MODULE_NOT_FOUND') {
+        return await this._fetchAndSaveToken();
+      }
+      throw error;
+    }
+  }
 
   private _ensureToken(): Promise<OauthTokenResponse> {
     return this._token
       ? Promise.resolve(this._token)
       : this._readToken()
         .then(token => this.setToken(token).getToken() as OauthTokenResponse);
-  };
-
-  private ALL_DTO_VERSIONS: { [name: string]: number } = {
-    'Activity': 31,
-    'ActivitySubType': 14,
-    'Approval': 13,
-    'Attachment': 16,
-    'Address': 17,
-    'BusinessPartner': 20,
-    'BusinessPartnerGroup': 14,
-    'BusinessProcessStepDefinition': 15,
-    'ChecklistInstance': 17,
-    'ChecklistInstanceElement': 13,
-    'ChecklistCategory': 10,
-    'ChecklistTemplate': 17,
-    'ChecklistTag': 8,
-    'ChecklistVariable': 8,
-    'Currency': 11,
-    'CustomRule': 8,
-    'Contact': 16,
-    'CompanyInfo': 15,
-    'CompanySettings': 11,
-    'EmployeeBranch': 9,
-    'EmployeeDepartment': 9,
-    'EmployeePosition': 9,
-    'Enumeration': 11,
-    'Equipment': 18,
-    'Expense': 15,
-    'ExpenseType': 15,
-    'FieldConfiguration': 8,
-    'Filter': 12,
-    'Function': 8,
-    'Group': 13,
-    'Icon': 8,
-    'Item': 21,
-    'ItemGroup': 10,
-    'ItemPriceListAssignment': 14,
-    'Material': 18,
-    'Mileage': 16,
-    'MileageType': 14,
-    'PaymentTerm': 14,
-    'Person': 18,
-    'PersonReservation': 15,
-    'PersonReservationType': 15,
-    'PersonWorkTimePattern': 8,
-    'Plugin': 8,
-    'Project': 10,
-    'ProjectPhase': 10,
-    'PriceList': 14,
-    'ProfileObject': 22,
-    'ReportTemplate': 15,
-    'Requirement': 8,
-    'Region': 9,
-    'ReservedMaterial': 16,
-    'ScreenConfiguration': 8,
-    'ServiceAssignment': 25,
-    'ServiceAssignmentStatus': 12,
-    'ServiceAssignmentStatusDefinition': 14,
-    'ServiceCall': 24,
-    'Shift': 8,
-    'ShiftTechnician': 8,
-    'Skill': 8,
-    'Team': 8,
-    'TeamTimeFrame': 8,
-    'Tag': 8,
-    'Tax': 9,
-    'TimeEffort': 15,
-    'TimeTask': 16,
-    'TimeSubTask': 14,
-    'Translation': 8,
-    'UdfMeta': 13,
-    'UdfMetaGroup': 10,
-    'UserSyncConfirmation': 13,
-    'Warehouse': 15,
-    'WorkTimeTask': 15,
-    'WorkTimePattern': 8,
-    'WorkTime': 15,
-    'CrowdBusinessPartner': 8,
-    'CrowdAssignment': 8,
-    'Notification': 8,
-    'CrowdExecutionRecord': 8,
-    'CrowdPerson': 8,
-    'UnifiedPerson': 8
-  };
+  }
 
   private _getVersionsParam(DTONames: DTOName[]): string {
     return DTONames
@@ -230,7 +152,6 @@ export class CoreAPIClient {
       company: this._config.authCompany ? this._config.authCompany : selectedCompany.name,
     }
   }
-
 
   private _httpCRUDRequest<T>(opt: request.Options) {
     if (this._config.debug) {
@@ -277,19 +198,19 @@ export class CoreAPIClient {
    * @param coreSQL
    * @param resourceNames
    */
-  public query<T>(coreSQL: string, resourceNames: DTOName[]): Promise<ClientResponse<T>> {
-    return this._ensureToken()
-      .then(token => this._httpCRUDRequest(
-        {
-          method: 'POST',
-          uri: `${token.cluster_url}/api/query/v1`,
-          headers: this._getRequestHeaders(token),
-          qs: {
-            ... this._getRequestAccountQueryParams(token),
-            dtos: this._getVersionsParam(resourceNames)
-          },
-          json: { query: coreSQL }
-        })) as Promise<ClientResponse<T>>;
+  public async query<T>(coreSQL: string, resourceNames: DTOName[]): Promise<ClientResponse<T>> {
+    const token = await this._ensureToken();
+    return await this._httpCRUDRequest(
+      {
+        method: 'POST',
+        uri: `${token.cluster_url}/api/query/v1`,
+        headers: this._getRequestHeaders(token),
+        qs: {
+          ...this._getRequestAccountQueryParams(token),
+          dtos: this._getVersionsParam(resourceNames)
+        },
+        json: { query: coreSQL }
+      }) as ClientResponse<T>;
   }
 
   /**
@@ -297,9 +218,9 @@ export class CoreAPIClient {
    * @param resourceName resourceName
    * @param resourceId uuid
    */
-  public getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-    return this._DataApiCRUDRequest('GET', resourceName, null, resourceId)
-      .then(response => typeof response === 'string' ? JSON.parse(response) : response); // not sending json headers
+  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
+    const response = await this._DataApiCRUDRequest('GET', resourceName, null, resourceId);
+    return typeof response === 'string' ? JSON.parse(response) : response; // not sending json headers
   }
 
   public deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {

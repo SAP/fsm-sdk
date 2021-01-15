@@ -1,7 +1,7 @@
 import assert = require('assert');
 import fs = require('fs');
-import { integrationTestConfig } from './integrationTest.config';
-import { CoreAPIClient } from '../CoreAPIClient';
+import { integrationTestConfig } from './integration-test.config';
+import { CoreAPIClient } from '../core-api.client';
 
 describe('QueryApi', () => {
 

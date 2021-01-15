@@ -1,4 +1,4 @@
-import { ClientConfig } from '../model/ClientConfig';
+import { ClientConfig } from '../core/client-config.model';
 
 require('dotenv').config()
 
