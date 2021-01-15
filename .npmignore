@@ -63,9 +63,17 @@ typings/
 # dev token
 coresystems-oauth2-token.json
 
+.travis.yml
 .editorconfig
 mocha.opts
 tsconfig.json
 
 # ts source
 src
+
+# examples 
+examples
+
+# github 
+.reuse
+.github
