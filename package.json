@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
@@ -14,8 +14,8 @@
     "build": "tsc -p . --pretty",
     "clean": "rm -rf release",
     "test": "nyc mocha --opts mocha.opts",
-    "posttest": "cat ./coverage/lcov.info | COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN COVERALLS_SERVICE_NAME=travis-pro ./node_modules/coveralls/bin/coveralls.js",
-    "beforepublish": "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm run test && npm run clean && npm run build && npm run start:examples"
+    "posttest": "(cat ./coverage/lcov.info | COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN COVERALLS_SERVICE_NAME=travis-pro ./node_modules/coveralls/bin/coveralls.js | :)",
+    "prepublish": "echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc && npm run test && npm run clean && npm run build && npm run start:examples"
   },
   "nyc": {
     "check-coverage": true,
