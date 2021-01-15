@@ -78,7 +78,7 @@ export type DTOName = 'Activity'
   | 'WorkTimePattern'
   | 'WorkTimeTask'
 
-export type DTOModels = {
+export type DTOModels = Partial<{
   id: undefined | null | string;
   lastChanged: undefined | null | number;
-} & Object;
+} & Object>;

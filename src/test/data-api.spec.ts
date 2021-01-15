@@ -16,7 +16,6 @@ describe('DataApi', () => {
 
   const THE_ID = CoreAPIClient.createUUID();
 
-
   it('should throw on unknown DTOs', done => {
     client.getById('THIS_IS_NOT_A_DTO' as any, 'SOME-ID')
       .catch(error => {

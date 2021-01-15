@@ -19,7 +19,7 @@ describe('QueryApi', () => {
 
     // ensure token is fetched
     removeTokenFile();
-    const client = new CoreAPIClient({ ...integrationTestConfig, debug: true });
+    const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
 
     it('should execute query with auth context', done => {
 
@@ -33,7 +33,10 @@ describe('QueryApi', () => {
           JOIN ServiceCall sc ON bp=sc.businessPartner
         LIMIT 3`,
         ['BusinessPartner', 'ServiceCall'])
-        .then(result => assert.deepEqual(result.data, []))
+        .then(result => {
+          assert(Array.isArray(result.data));
+          assert.strictEqual(result.data.length, 3);
+        })
         .then(_ => done())
         .catch(e => done(e));
 

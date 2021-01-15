@@ -21,6 +21,7 @@ Find more documentation and related information at [SAP Field Service Management
       - [Update object (providing only fields to change)](#update-object-providing-only-fields-to-change)
       - [Delete object](#delete-object)
         - [lastChanged](#lastchanged)
+      - [Batch Actions (Transactions)](#batch-actions-transactions)
   - [Support](#support)
   - [License](#license)
 
@@ -155,6 +156,17 @@ await client.deleteById('ServiceCall', {
 The `lastChanged` field is used for optimistic locking.
 It's like a version-key you have to provide in order to update an object.
 
+#### Batch Actions (Transactions)
+
+```typescript
+const actions = [ 
+ new CreateAction('ServiceCall', { ... }), 
+ new UpdateAction('ServiceCall', { id, lastChanged ... }),
+ new DeleteAction('ServiceCall', { id, lastChanged ... }) 
+ ];
+ await client.batch(actions) 
+ // => [ { body: { statusCode: 200|201|400, data: { ... } } }, req1, req2 ]
+```
 
 
 ## Support
