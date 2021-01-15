@@ -63,6 +63,7 @@ typings/
 # dev token
 coresystems-oauth2-token.json
 
+.npmrc 
 .travis.yml
 .editorconfig
 mocha.opts
