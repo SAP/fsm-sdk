@@ -22,4 +22,4 @@ export const integrationTestConfig: ClientConfig = {
 
 };
 
-console.log(JSON.stringify(integrationTestConfig, null, 2));
+console.log(JSON.stringify(process.env, null, 2));
