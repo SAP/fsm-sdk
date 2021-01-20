@@ -159,13 +159,19 @@ It's like a version-key you have to provide in order to update an object.
 #### Batch Actions (Transactions)
 
 ```typescript
+// actions will be excuted in sequence order like in array
+
 const actions = [ 
- new CreateAction('ServiceCall', { ... }), 
- new UpdateAction('ServiceCall', { id, lastChanged ... }),
- new DeleteAction('ServiceCall', { id, lastChanged ... }) 
- ];
- await client.batch(actions) 
- // => [ { body: { statusCode: 200|201|400, data: { ... } } }, req1, req2 ]
+  new CreateAction('ServiceCall', { ... }), 
+  new UpdateAction('BusinessPartner', { id, lastChanged ... }), // [it,lastChanged] required for update
+  new DeleteAction('Address', { id, lastChanged ... }) // [it,lastChanged] required for delete
+];
+
+const response = await client.batch(actions) 
+// response => [ { body: { statusCode: 200|201|400, data: { ... } } }, req1, req2 ]
+
+// data will contain a list resp, unwrap to access first
+const [[{ serviceCall }], [{ businessPartner }], ] = response.map(it => it.body.data);
 ```
 
 
