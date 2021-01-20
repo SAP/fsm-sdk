@@ -30,7 +30,7 @@ jobs:
         AUTH_USERNAME: ${{ secrets.AUTH_USERNAME }}
         CLIENT_IDENTIFIER: ${{ secrets.CLIENT_IDENTIFIER }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
         OAUTH_ENDPOINT: ${{ secrets.OAUTH_ENDPOINT }}
       with:
         node-version: ${{ matrix.node-version }}
