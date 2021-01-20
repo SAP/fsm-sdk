@@ -4,7 +4,7 @@ require('dotenv').config()
 
 export const integrationTestConfig: ClientConfig = {
 
-  debug: false,
+  debug: true,
 
   oauthEndpoint: process.env.OAUTH_ENDPOINT || 'https://ds.coresuite.com/api/oauth2/v1',
   tokenCacheFilePath: './coresystems-oauth2-token.json',
@@ -21,3 +21,5 @@ export const integrationTestConfig: ClientConfig = {
   authCompany: undefined // use first 
 
 };
+
+console.log(JSON.stringify(integrationTestConfig, null, 2));
