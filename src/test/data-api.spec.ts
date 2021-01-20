@@ -47,7 +47,7 @@ describe('DataApi', () => {
 
   it('GET serviceCall', done => {
 
-    client.getById('ServiceCall', THE_ID)
+    client.getById<{ id: string }>('ServiceCall', THE_ID)
       .then(response => {
         const [{ serviceCall }] = response.data;
         assert.equal(serviceCall.id, THE_ID, 'POST');
@@ -59,7 +59,7 @@ describe('DataApi', () => {
   }).timeout(5000);
 
   it('PUT serviceCall', done => {
-    client.getById('ServiceCall', THE_ID)
+    client.getById<{ id: string, subject: string }>('ServiceCall', THE_ID)
       .then(response => {
         const [{ serviceCall }] = response.data;
         return client.put('ServiceCall', { ...serviceCall, subject: 'subject-changed-with-PUT' })
@@ -75,7 +75,7 @@ describe('DataApi', () => {
 
   it('PATCH serviceCall', done => {
 
-    client.getById('ServiceCall', THE_ID)
+    client.getById<{ id: string, lastChanged: number }>('ServiceCall', THE_ID)
       .then(response => {
         const [{ serviceCall }] = response.data;
         return client.patch('ServiceCall', {
@@ -94,7 +94,7 @@ describe('DataApi', () => {
   }).timeout(5000);
 
   it('DELETE serviceCall', done => {
-    client.getById('ServiceCall', THE_ID)
+    client.getById<{ id: string, lastChanged: number }>('ServiceCall', THE_ID)
       .then(response => {
         const [{ serviceCall }] = response.data;
         return client.deleteById('ServiceCall', { id: THE_ID, lastChanged: serviceCall.lastChanged as number })
