@@ -22,7 +22,6 @@ describe('QueryApi', () => {
     const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
 
     it('should execute query with auth context', done => {
-
       client.query(
         `SELECT
           bp.id,

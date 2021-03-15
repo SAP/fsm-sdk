@@ -1,4 +1,6 @@
-import request = require('request-promise-native');
+import { URLSearchParams } from 'url';
+import fetch from 'node-fetch';
+import { RequestInit } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 
 import fs = require('fs');
@@ -62,33 +64,32 @@ export class CoreAPIClient {
 
   private async _fetchAndSaveToken() {
     const basicAuth = Buffer.from(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
-
-    const response = await this._request<string>({
+    const body = new URLSearchParams({
+      grant_type: this._config.authGrantType,
+      ...(this._config.authGrantType === 'password'
+        ? {
+          username: `${this._config.authAccountName}/${this._config.authUserName}`,
+          password: this._config.authPassword
+        }
+        : {}
+      )
+    });
+    const response = await this._request<string>(`${this._config.oauthEndpoint}/token`, {
       method: 'POST',
-      uri: `${this._config.oauthEndpoint}/token`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
         'Authorization': `Basic ${basicAuth}`,
         ...RequestOptionsFacory.getRequestXHeaders(this._config)
       },
-      form: {
-        grant_type: this._config.authGrantType,
-        ...(this._config.authGrantType === 'password'
-          ? {
-            username: `${this._config.authAccountName}/${this._config.authUserName}`,
-            password: this._config.authPassword
-          }
-          : {}
-        )
-      }
+      body: body.toString()
     });
 
     if (this._config.debug && this._config.tokenCacheFilePath) {
-      fs.writeFileSync(this._config.tokenCacheFilePath, response);
+      fs.writeFileSync(this._config.tokenCacheFilePath, JSON.stringify(response));
     }
 
-    return JSON.parse(response);
+    return typeof response === 'string' ? JSON.parse(response) : response;
   }
 
   private async _readToken(): Promise<OauthTokenResponse> {
@@ -114,16 +115,24 @@ export class CoreAPIClient {
         .then(token => this.setToken(token).getToken() as OauthTokenResponse);
   }
 
-  private _request<T>(opt: request.Options) {
+  private _request<T>(uri: string, opt: RequestInit) {
     if (this._config.debug) {
-      console.log(`[httpRequest] outgoing options[${JSON.stringify(opt, null, 2)}]`);
+      console.log(`[httpRequest] outgoing ${uri} options[${JSON.stringify(opt, null, 2)}]`);
     }
-    return request(opt)
+    return fetch(uri, opt)
+      .then(response => {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          return response.json();
+        } else {
+          return response.text();
+        }
+      })
       .then(response => {
         if (this._config.debug) {
           console.log(`[httpRequest] incoming going options[${JSON.stringify(opt, null, 2)}] response[${JSON.stringify(response, null, 2)}]`);
         }
-        return response as T;
+        return response as any as T;
       });
   }
 
@@ -135,16 +144,27 @@ export class CoreAPIClient {
     additionalQs: { [k: string]: string | number | boolean } = {}
   ) {
     const token = await this._ensureToken();
-    return await this._request({
-      method,
-      uri: RequestOptionsFacory.getDataApiUriFor(token, dtoName, dtoId),
-      headers: RequestOptionsFacory.getRequestHeaders(token, this._config),
-      qs: Object.assign({},
-        RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-        method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([dtoName]) } : undefined,
-        additionalQs),
-      json: dtoData
-    });
+    const params = new URLSearchParams(Object.assign({},
+      RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
+      method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([dtoName]) } : undefined,
+      additionalQs));
+
+    let body = undefined;
+    if (method === 'DELETE') {
+      body = ""
+    } else if (method != 'GET') {
+      body = JSON.stringify(dtoData);
+    }
+
+    return await this._request<any>(
+      `${RequestOptionsFacory.getDataApiUriFor(token, dtoName, dtoId)}?${params}`,
+      {
+        method,
+        headers: RequestOptionsFacory.getRequestHeaders(token, this._config),
+        body
+      }).then(response => {
+        return response;
+      });
   }
 
   /**
@@ -161,16 +181,18 @@ export class CoreAPIClient {
    */
   public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
     const token = await this._ensureToken();
-    return await this._request(
+    const params = new URLSearchParams({
+      ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
+      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
+    });
+    return await this._request( `${token.cluster_url}/api/query/v1?${params}`, 
       {
         method: 'POST',
-        uri: `${token.cluster_url}/api/query/v1`,
-        headers: RequestOptionsFacory.getRequestHeaders(token, this._config),
-        qs: {
-          ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-          dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
-        },
-        json: { query: coreSQL }
+        headers: Object.assign(
+          {'Content-Type': 'application/json'},
+          RequestOptionsFacory.getRequestHeaders(token, this._config)
+        ),
+        body: JSON.stringify({ query: coreSQL })
       }) as { data: T[] };
   }
 
@@ -236,21 +258,21 @@ export class CoreAPIClient {
    */
   public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
     const token = await this._ensureToken();
-    const requestBody = new BatchRequest(token, this._config, actions).toString();
+    const body = new BatchRequest(token, this._config, actions).toString();
 
-    const responseBody = await this._request<string>({
+    const params = new URLSearchParams(Object.assign({
+      clientIdentifier: this._config.clientIdentifier,
+      dtos: RequestOptionsFacory.getDTOVersionsString(actions.map(it => it.dtoName)),
+      ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
+    }));
+
+    const responseBody = await this._request<string>(`${token.cluster_url}/api/data/batch/v1?${params}`, {
       method: 'POST',
-      uri: `${token.cluster_url}/api/data/batch/v1`,
       headers: {
         'content-type': 'multipart/mixed;boundary="======boundary======"',
         ...RequestOptionsFacory.getRequestHeaders(token, this._config),
       },
-      qs: Object.assign({
-        clientIdentifier: this._config.clientIdentifier,
-        dtos: RequestOptionsFacory.getDTOVersionsString(actions.map(it => it.dtoName)),
-        ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-      }),
-      body: requestBody
+      body
     });
 
     return new BatchResponse<T>(responseBody).toJson();
