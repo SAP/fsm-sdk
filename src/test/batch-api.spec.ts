@@ -8,7 +8,7 @@ describe('BatchApi', () => {
   let client: CoreAPIClient
 
   beforeEach(() => {
-    client = new CoreAPIClient({ ...integrationTestConfig, debug: true });
+    client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
   });
 
   function prepareFixture() {
