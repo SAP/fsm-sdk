@@ -132,7 +132,7 @@ export class CoreAPIClient {
         if (this._config.debug) {
           console.log(`[httpRequest] incoming going options[${JSON.stringify(opt, null, 2)}] response[${JSON.stringify(response, null, 2)}]`);
         }
-        return response as any as T;
+        return response as T;
       });
   }
 
