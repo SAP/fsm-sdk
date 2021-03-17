@@ -13,8 +13,10 @@ const client = new fsm.CoreAPIClient({
   // put your auth config here
   authAccountName: process.env.AUTH_ACCOUNTNAME,
   authUserName: process.env.AUTH_USERNAME,
-  authPassword: process.env.AUTH_PASSWORD
+  authPassword: process.env.AUTH_PASSWORD,
 
+  authGrantType: process.env.AUTH_GRANT_TYPE,
+  oauthEndpoint: process.env.OAUTH_ENDPOINT
 });
 
 (async () => {
