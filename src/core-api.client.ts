@@ -121,7 +121,7 @@ export class CoreAPIClient {
     }
     return fetch(uri, opt)
       .then(response => {
-        const contentType = response.headers.get("content-type");
+        const contentType = response.headers.get('content-type');
         if (contentType && contentType.indexOf("application/json") !== -1) {
           return response.json();
         } else {
