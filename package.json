@@ -61,13 +61,13 @@
   },
   "homepage": "https://github.com/sap/fsm-sdk#readme",
   "dependencies": {
-    "@types/node-fetch": "^2.5.8",
     "node-fetch": "^2.6.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.9.3",
+    "@types/node-fetch": "^2.5.8",
     "@types/uuid": "^8.3.0",
     "coveralls": "^3.1.0",
     "dotenv": "^8.2.0",
