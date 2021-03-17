@@ -87,7 +87,7 @@ The CoreAPIClient will return a Promise and is asynchronous by default.
 ### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
-see [Query API Documentation](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/query-api.html)
+see [Query API Documentation](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
 
 ```typescript
 

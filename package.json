@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
@@ -61,20 +61,18 @@
   },
   "homepage": "https://github.com/sap/fsm-sdk#readme",
   "dependencies": {
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.5",
-    "uuid": "^3.3.2"
+    "node-fetch": "^2.6.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.9.3",
-    "@types/request": "^2.47.1",
-    "@types/request-promise-native": "^1.0.15",
-    "@types/uuid": "^3.4.4",
-    "coveralls": "^3.0.2",
-    "dotenv": "^6.0.0",
+    "@types/node-fetch": "^2.5.8",
+    "@types/uuid": "^8.3.0",
+    "coveralls": "^3.1.0",
+    "dotenv": "^8.2.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.0.1",
+    "nyc": "^15.1.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.1"
   }
