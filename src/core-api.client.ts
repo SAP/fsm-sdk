@@ -149,14 +149,12 @@ export class CoreAPIClient {
       method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([dtoName]) } : undefined,
       additionalQs));
 
-    return await this._request<any>(
+    return await this._request<T>(
       `${RequestOptionsFacory.getDataApiUriFor(token, dtoName, dtoId)}?${params}`,
       {
         method,
         headers: RequestOptionsFacory.getRequestHeaders(token, this._config),
         body: method != 'GET' ? JSON.stringify(dtoData) : undefined
-      }).then(response => {
-        return response;
       });
   }
 
