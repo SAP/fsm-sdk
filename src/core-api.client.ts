@@ -296,7 +296,6 @@ export class CoreAPIClient {
   public setToken(token: OauthTokenResponse): CoreAPIClient {
 
     if (!token || !token.account) {
-      console.log(token)
       throw new Error('invalid token');
     }
 
