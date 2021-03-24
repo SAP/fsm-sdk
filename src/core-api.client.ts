@@ -14,6 +14,7 @@ import { BatchAction } from './core/batch-action.model';
 import { RequestOptionsFacory } from './core/request-options.facory';
 import { BatchRequest } from './core/batch-request.model';
 import { BatchResponse, BatchResponseJson } from './core/batch-response';
+import { ErrorResponse } from './core/error-response.model';
 
 export class CoreAPIClient {
 
@@ -115,22 +116,32 @@ export class CoreAPIClient {
         .then(token => this.setToken(token).getToken() as OauthTokenResponse);
   }
 
-  private _request<T>(uri: string, opt: RequestInit) {
+  private _request<T>(uri: string, options: RequestInit) {
     if (this._config.debug) {
-      console.log(`[httpRequest] outgoing ${uri} options[${JSON.stringify(opt, null, 2)}]`);
+      console.log(`[httpRequest] outgoing ${uri} options[${JSON.stringify(options, null, 2)}]`);
     }
-    return fetch(uri, opt)
-      .then(response => {
+    return fetch(uri, options)
+      .then(async (response) => {
+
         const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          return response.json();
-        } else {
-          return response.text();
+        const isJson = contentType && contentType.includes('application/json');
+        const content: any = await (isJson ? response.json() : response.text())
+
+        if (!response.ok && [304, 302].indexOf(response.status) === -1) {
+          throw <ErrorResponse<any>>{
+            statusCode: response.status,
+            message: response.statusText,
+            error: content,
+            response: response,
+            options: options
+          };
         }
+
+        return content;
       })
       .then(response => {
         if (this._config.debug) {
-          console.log(`[httpRequest] incoming going options[${JSON.stringify(opt, null, 2)}] response[${JSON.stringify(response, null, 2)}]`);
+          console.log(`[httpRequest] incoming going options[${JSON.stringify(options, null, 2)}] response[${JSON.stringify(response, null, 2)}]`);
         }
         return response as T;
       });
@@ -144,10 +155,11 @@ export class CoreAPIClient {
     additionalQs: { [k: string]: string | number | boolean } = {}
   ) {
     const token = await this._ensureToken();
+
     const params = new URLSearchParams(Object.assign({},
       RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
       method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([dtoName]) } : undefined,
-      additionalQs));
+      additionalQs) as { [key: string]: string });
 
     return await this._request<T>(
       `${RequestOptionsFacory.getDataApiUriFor(token, dtoName, dtoId)}?${params}`,
@@ -176,11 +188,11 @@ export class CoreAPIClient {
       ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
       dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
     });
-    return await this._request( `${token.cluster_url}/api/query/v1?${params}`, 
+    return await this._request(`${token.cluster_url}/api/query/v1?${params}`,
       {
         method: 'POST',
         headers: Object.assign(
-          {'Content-Type': 'application/json'},
+          { 'Content-Type': 'application/json' },
           RequestOptionsFacory.getRequestHeaders(token, this._config)
         ),
         body: JSON.stringify({ query: coreSQL })
@@ -284,6 +296,7 @@ export class CoreAPIClient {
   public setToken(token: OauthTokenResponse): CoreAPIClient {
 
     if (!token || !token.account) {
+      console.log(token)
       throw new Error('invalid token');
     }
 

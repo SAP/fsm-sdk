@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
@@ -20,10 +20,10 @@
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "statements": 44,
-    "branches": 49,
-    "functions": 38,
-    "lines": 43,
+    "statements": 90,
+    "branches": 75,
+    "functions": 90,
+    "lines": 90,
     "extension": [
       ".ts",
       ".tsx"
