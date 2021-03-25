@@ -1,6 +1,6 @@
 # SAP Field Service Management SDK 
 
-[![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) ![integration test](https://github.com/SAP/fsm-sdk/workflows/integration%20test/badge.svg) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/GauSim/ef8d97285399b9ccfd8acf9e0796cd16/raw/fsm-sdk-badge.json) [![Coverage Status](https://coveralls.io/repos/github/coresystemsFSM/fsm-sdk/badge.svg?branch=master)](https://coveralls.io/github/coresystemsFSM/fsm-sdk?branch=master)
+[![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) ![integration test](https://github.com/SAP/fsm-sdk/workflows/integration%20test/badge.svg) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/GauSim/ef8d97285399b9ccfd8acf9e0796cd16/raw/fsm-sdk-badge.json) 
 
 ---
 
