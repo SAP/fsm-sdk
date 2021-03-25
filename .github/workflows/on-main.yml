@@ -1,4 +1,14 @@
-name: CI
+name: on-main 
+
+env:
+  AUTH_ACCOUNTNAME: ${{ secrets.AUTH_ACCOUNTNAME }}
+  AUTH_GRANT_TYPE: ${{ secrets.AUTH_GRANT_TYPE }}
+  AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
+  AUTH_USERNAME: ${{ secrets.AUTH_USERNAME }}
+  CLIENT_IDENTIFIER: ${{ secrets.CLIENT_IDENTIFIER }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+  CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
+  OAUTH_ENDPOINT: ${{ secrets.OAUTH_ENDPOINT }}
 
 on:
   push:
@@ -10,14 +20,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Get the Numbers
+        run: echo "VALUE=99" >> $GITHUB_ENV
       - name: Create Badge
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: ef8d97285399b9ccfd8acf9e0796cd16
           filename: fsm-sdk-badge.json
-          label: Hello
-          message: World
-          color: orange
+          label: coverage
+          message: "${{ env.VALUE }} %"
+          color: green
 
 
