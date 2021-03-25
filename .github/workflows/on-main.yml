@@ -31,7 +31,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm i
       - run: npm test
-      - run: VALUE=$(node -e "console.log(require(\"./coverage/coverage-summary.json\").total.statements.covered)") && echo "COVERED=$VALUE"
+      - run: COVERED=$(node -e "console.log(require(\"./coverage/coverage-summary.json\").total.statements.covered)") && echo "COVERED=$COVERED" >> $GITHUB_ENV
       - name: Create Badge
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
