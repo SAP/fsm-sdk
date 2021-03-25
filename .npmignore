@@ -75,6 +75,9 @@ src
 # examples 
 examples
 
+# tools 
+tools
+
 # github 
 .reuse
 .github

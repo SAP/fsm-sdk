@@ -13,9 +13,28 @@
     "prebuild": "npm run clean",
     "build": "tsc -p . --pretty",
     "clean": "rm -rf release",
-    "test": "nyc mocha --opts mocha.opts",
-    "prepublish": "npm run test && npm run clean && npm run build && npm run start:examples"
+    "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
+    "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples"
   },
+  "keywords": [
+    "SAP Field Service Management SDK",
+    "SAP FSM",
+    "sdk",
+    "nodejs",
+    "lambda",
+    "integration",
+    "customisation",
+    "query-api",
+    "data-api",
+    "batch-api"
+  ],
+  "contributors": [
+    {
+      "name": "Simon Gausmann",
+      "email": "s.gausmann@sap.com",
+      "url": "https://github.com/gausim"
+    }
+  ],
   "nyc": {
     "check-coverage": true,
     "per-file": false,
