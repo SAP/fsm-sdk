@@ -31,7 +31,7 @@ describe('Auth', () => {
           assert.strictEqual(errorResp.error.error_description, 'Client authentication failed');
           return done();
         });
-    });
+    }).timeout(5000);
   });
 
 

@@ -40,7 +40,8 @@ describe('QueryApi', () => {
         .then(_ => done())
         .catch(e => done(e));
 
-    });
+    }).timeout(5000);
+
   });
 
 

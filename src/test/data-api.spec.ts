@@ -24,7 +24,7 @@ describe('DataApi', () => {
       })
       .then(_ => done())
       .catch(error => done(error));
-  });
+  }).timeout(5000);
 
   it('POST serviceCall', done => {
 
