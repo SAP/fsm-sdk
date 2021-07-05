@@ -186,7 +186,7 @@ export class CoreAPIClient {
     const token = await this._ensureToken();
     const params = new URLSearchParams({
       ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames || <Array<DTOName>>[... new Set(coreSQL.match(/(?<=from\s*|join\s*)(\w+)/gi))])
+      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames || [... new Set(coreSQL.match(/(?<=from\s*|join\s*)(\w+)/gi))] as DTOName[])
     });
     return await this._request(`${token.cluster_url}/api/query/v1?${params}`,
       {
