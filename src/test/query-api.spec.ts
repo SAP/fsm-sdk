@@ -42,6 +42,25 @@ describe('QueryApi', () => {
 
     }).timeout(5000);
 
+    it('should execute query without DTOs', done => {
+
+      client.query(
+        `SELECT
+          bp.id,
+          bp.name,
+          sc.id
+        FROM
+          BusinessPartner bp
+          JOIN ServiceCall sc ON bp=sc.businessPartner
+        LIMIT 3`)
+        .then(result => {
+          assert(Array.isArray(result.data));
+          assert.strictEqual(result.data.length, 3);
+        })
+        .then(_ => done())
+        .catch(e => done(e));
+
+    }).timeout(5000);
   });
 
 

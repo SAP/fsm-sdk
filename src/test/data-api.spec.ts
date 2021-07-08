@@ -100,7 +100,7 @@ describe('DataApi', () => {
         return client.deleteById('ServiceCall', { id: THE_ID, lastChanged: serviceCall.lastChanged as number })
       })
       .then(_ => client.getById('ServiceCall', THE_ID))
-      .then(response => assert.equal(response.data.length, 0))
+      .then(response => assert.strictEqual(response.data.length, 0))
       .then(_ => done())
       .catch(e => done(e));
   }).timeout(5000);

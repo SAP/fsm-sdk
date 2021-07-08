@@ -32,6 +32,20 @@ describe('Auth', () => {
           return done();
         });
     }).timeout(5000);
+    
+    removeTokenFile();    
+
+    it('should forward error for password', done => {
+      const client = new CoreAPIClient({ ...integrationTestConfig, debug: false, authGrantType: 'password', authUserName: 'i/n/v/a/l/i/d', authPassword: '******' });
+      client.query(`does not matter`, ['ServiceCall'])
+        .catch((errorResp: ErrorResponse<{ error: string, error_description: string, disassociated: string }>) => {
+          assert.strictEqual(errorResp.statusCode, 400);
+          assert.strictEqual(errorResp.error.error, 'invalid_grant');
+          assert.strictEqual(errorResp.error.error_description, 'Bad credentials');
+          assert.strictEqual(errorResp.error.disassociated, 'true');          
+          return done();
+        });
+    }).timeout(5000);
   });
 
 
