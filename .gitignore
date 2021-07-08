@@ -68,3 +68,4 @@ release
 
 # More
 .DS_Store
+.vscode/

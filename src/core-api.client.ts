@@ -1,4 +1,3 @@
-import { URLSearchParams } from 'url';
 import fetch from 'node-fetch';
 import { RequestInit } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
@@ -65,16 +64,13 @@ export class CoreAPIClient {
 
   private async _fetchAndSaveToken() {
     const basicAuth = Buffer.from(`${this._config.clientIdentifier}:${this._config.clientSecret}`).toString('base64');
-    const body = new URLSearchParams({
-      grant_type: this._config.authGrantType,
-      ...(this._config.authGrantType === 'password'
+    const body = new URLSearchParams(Object.assign(
+      { grant_type: this._config.authGrantType },
+        this._config.authGrantType === 'password' 
         ? {
           username: `${this._config.authAccountName}/${this._config.authUserName}`,
           password: this._config.authPassword
-        }
-        : {}
-      )
-    });
+        } : {} ) as { [key: string]: string });
     const response = await this._request<string>(`${this._config.oauthEndpoint}/token`, {
       method: 'POST',
       headers: {
@@ -182,12 +178,12 @@ export class CoreAPIClient {
    * @param coreSQL
    * @param dtoNames
    */
-  public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
+  public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames?: DTOName[]): Promise<{ data: T[] }> {
     const token = await this._ensureToken();
-    const params = new URLSearchParams({
+    const params = new URLSearchParams(Object.assign({ 
       ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
-    });
+      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames || [... new Set(coreSQL.match(/(?<=from\s*|join\s*)(\w+)/gi))] as DTOName[]),
+    }) as { [key: string]: string });
     return await this._request(`${token.cluster_url}/api/query/v1?${params}`,
       {
         method: 'POST',
@@ -267,7 +263,7 @@ export class CoreAPIClient {
       clientIdentifier: this._config.clientIdentifier,
       dtos: RequestOptionsFacory.getDTOVersionsString(actions.map(it => it.dtoName)),
       ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-    }));
+    }) as { [key: string]: string });
 
     const responseBody = await this._request<string>(`${token.cluster_url}/api/data/batch/v1?${params}`, {
       method: 'POST',
