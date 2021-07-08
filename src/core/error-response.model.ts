@@ -1,4 +1,3 @@
-import { RequestInit, Response } from 'node-fetch';
 
 export type ErrorResponse<T> = {
   statusCode: number,

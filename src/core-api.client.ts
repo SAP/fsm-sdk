@@ -1,5 +1,4 @@
-import fetch from 'node-fetch';
-import { RequestInit } from 'node-fetch';
+import fetch from 'isomorphic-fetch';
 import { v4 as uuid } from 'uuid';
 
 import fs = require('fs');
