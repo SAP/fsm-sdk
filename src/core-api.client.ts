@@ -177,11 +177,11 @@ export class CoreAPIClient {
    * @param coreSQL
    * @param dtoNames
    */
-  public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames?: DTOName[]): Promise<{ data: T[] }> {
+   public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
     const token = await this._ensureToken();
     const params = new URLSearchParams(Object.assign({ 
       ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
-      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames || [... new Set(coreSQL.match(/(?<=from\s*|join\s*)(\w+)/gi))] as DTOName[]),
+      dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
     }) as { [key: string]: string });
     return await this._request(`${token.cluster_url}/api/query/v1?${params}`,
       {
