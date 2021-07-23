@@ -177,7 +177,7 @@ export class CoreAPIClient {
    * @param coreSQL
    * @param dtoNames
    */
-   public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
+  public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
     const token = await this._ensureToken();
     const params = new URLSearchParams(Object.assign({ 
       ...RequestOptionsFacory._getRequestAccountQueryParams(token, this._config),
