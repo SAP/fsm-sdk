@@ -20,7 +20,7 @@ describe('DataApi', () => {
     client.getById('THIS_IS_NOT_A_DTO' as any, 'SOME-ID')
       .catch(error => {
         assert(error instanceof Error)
-        assert.deepEqual((error as Error).message, 'no DTO version found for THIS_IS_NOT_A_DTO')
+        assert.deepStrictEqual((error as Error).message, 'no DTO version found for THIS_IS_NOT_A_DTO')
       })
       .then(_ => done())
       .catch(error => done(error));
@@ -37,7 +37,7 @@ describe('DataApi', () => {
     client.post('ServiceCall', serviceCall)
       .then(response => {
         const [{ serviceCall }] = response.data;
-        assert.equal(serviceCall.id, THE_ID, 'POST');
+        assert.strictEqual(serviceCall.id, THE_ID, 'POST');
         return serviceCall;
       })
       .then(_ => done())
@@ -50,7 +50,7 @@ describe('DataApi', () => {
     client.getById<{ id: string }>('ServiceCall', THE_ID)
       .then(response => {
         const [{ serviceCall }] = response.data;
-        assert.equal(serviceCall.id, THE_ID, 'POST');
+        assert.strictEqual(serviceCall.id, THE_ID, 'POST');
         return serviceCall;
       })
       .then(_ => done())
@@ -66,7 +66,7 @@ describe('DataApi', () => {
       })
       .then(response => {
         const [{ serviceCall }] = response.data;
-        assert.equal(serviceCall.subject, 'subject-changed-with-PUT', 'PUT');
+        assert.strictEqual(serviceCall.subject, 'subject-changed-with-PUT', 'PUT');
         return serviceCall;
       })
       .then(_ => done())
@@ -86,7 +86,7 @@ describe('DataApi', () => {
       })
       .then(response => {
         const [{ serviceCall }] = response.data;
-        assert.equal(serviceCall.subject, 'subject-changed-with-PATCH', 'PATCH');
+        assert.strictEqual(serviceCall.subject, 'subject-changed-with-PATCH', 'PATCH');
         return serviceCall;
       })
       .then(_ => done())
@@ -100,7 +100,7 @@ describe('DataApi', () => {
         return client.deleteById('ServiceCall', { id: THE_ID, lastChanged: serviceCall.lastChanged as number })
       })
       .then(_ => client.getById('ServiceCall', THE_ID))
-      .then(response => assert.equal(response.data.length, 0))
+      .then(response => assert.strictEqual(response.data.length, 0))
       .then(_ => done())
       .catch(e => done(e));
   }).timeout(5000);

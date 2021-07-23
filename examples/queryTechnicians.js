@@ -4,12 +4,14 @@
  */
 
 const fsm = require('../release');
+const packageJson = require('../package.json');
+
 const client = new fsm.CoreAPIClient({
 
   // put your client config here
   clientIdentifier: process.env.CLIENT_IDENTIFIER,
   clientSecret: process.env.CLIENT_SECRET,
-  clientVersion: process.env.CLIENT_VERSION,
+  clientVersion: packageJson.version,
 
   // put your auth config here
   authAccountName: process.env.AUTH_ACCOUNTNAME,
