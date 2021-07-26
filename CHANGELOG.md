@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.5] 2021-07-23
 ### Added
+- Adding support for using client in browser (isomorphic), migrate from `node-fetch` to `isomorphic-fetch`
 - Adding `user_id` to `OauthTokenResponse`
 - Adding compatibility tests
 ### Updated 

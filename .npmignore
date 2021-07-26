@@ -70,7 +70,7 @@ mocha.opts
 tsconfig.json
 tsconfig.umd.json
 rollup.config.js
-development-vars.env
+development.md
 
 # ts source
 src
