@@ -19,6 +19,9 @@
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
     "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples"
   },
+  "engines": {
+    "node": ">=12"
+  },
   "keywords": [
     "SAP Field Service Management SDK",
     "SAP FSM",

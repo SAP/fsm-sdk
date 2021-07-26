@@ -2,6 +2,8 @@
 
 [![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) ![integration test](https://github.com/SAP/fsm-sdk/workflows/integration%20test/badge.svg) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/GauSim/ef8d97285399b9ccfd8acf9e0796cd16/raw/fsm-sdk-badge.json) 
 
+> The latest versions of fsm-sdk require Node.js v12 or newer. (Versions of fsm-sdk below v2 still work with previous Node.js versions, but are unsupported.)
+
 ---
 
 ## NodeJS SDK to Interface with SAP Field Service Management APIs and Services.
