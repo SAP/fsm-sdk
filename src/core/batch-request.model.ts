@@ -1,9 +1,7 @@
-import * as qs from 'querystring';
 import { BatchAction } from './batch-action.model';
 import { ClientConfig } from './client-config.model';
 import { OauthTokenResponse } from './oauth-token-response.model';
 import { RequestOptionsFacory } from './request-options.facory';
-
 
 export class BatchRequest {
 
@@ -25,11 +23,10 @@ export class BatchRequest {
         ' ',
         RequestOptionsFacory.getDataApiUriFor(this._token, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
         '?',
-        qs.stringify({
+        RequestOptionsFacory.stringify({
           clientIdentifier: this._config.clientIdentifier,
-          
-       
-          ...RequestOptionsFacory._getRequestAccountQueryParams(this._token, this._config),
+
+          ...RequestOptionsFacory.getRequestAccountQueryParams(this._token, this._config),
 
           ...(action.method !== 'DELETE' && { dtos: RequestOptionsFacory.getDTOVersionsString([action.dtoName]) }),
           ...(action.force && action.method !== 'DELETE' && { forceUpdate: 'true' }),

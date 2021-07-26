@@ -1,6 +1,6 @@
 
-const fsm = require('../release');
-const packageJson = require('../package.json');
+const fsm = require('../../release');
+const packageJson = require('../../package.json');
 
 const client = new fsm.CoreAPIClient({
 

@@ -1,6 +1,6 @@
 
-const fsm = require('../release');
-const packageJson = require('../package.json');
+const fsm = require('../../release');
+const packageJson = require('../../package.json');
 
 const client = new fsm.CoreAPIClient({
 
@@ -26,23 +26,10 @@ const client = new fsm.CoreAPIClient({
   SELECT
     it
   FROM
-    ServiceCall it
+    Equipment it
   `;
 
-  const result1 = await client.query(coreSQL1, ['ServiceCall']);
+  const result1 = await client.query(coreSQL1, ['Equipment']);
   console.log(JSON.stringify(result1, null, 2)); // => { "data": [ { "it": { ... } } ... ] ...
-
-  const coreSQL2 = `
-  SELECT
-    serviceCall.id,
-    serviceCall.subject
-  FROM
-    ServiceCall serviceCall
-  WHERE
-    serviceCall.id = '36A5626F65A54FE7911F536C501D151A'
-  `;
-
-  const result2 = await client.query(coreSQL2, ['ServiceCall']);
-  console.log(JSON.stringify(result2, null, 2)); // => { "data": [ { "serviceCall": { "id": "36A5626F65A54FE7911F536C501D151A" ... } } ... ] ...
 
 })();
