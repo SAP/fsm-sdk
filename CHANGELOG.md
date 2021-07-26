@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] 2021-07-26
 ### Changed
-- **breaking** Dropping support for node version 10
+- **BREAKING** Dropping support for Node.js < v12, sdk now requires Node.js v12 or newer 
 ### Added
 - Adding support for using client in browser (isomorphic), migrate from `node-fetch` to `isomorphic-fetch`
 - Adding `user_id` to `OauthTokenResponse`
