@@ -12,6 +12,7 @@ env:
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
   CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
   OAUTH_ENDPOINT: ${{ secrets.OAUTH_ENDPOINT }}
+  NPM_TOKEN: 'N/A'
 
 on:
   push:
