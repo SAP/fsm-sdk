@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.5] 2021-07-23
+## [2.0.0] 2021-07-26
+### Changed
+- **breaking** Dropping support for node version 10
 ### Added
 - Adding support for using client in browser (isomorphic), migrate from `node-fetch` to `isomorphic-fetch`
 - Adding `user_id` to `OauthTokenResponse`
