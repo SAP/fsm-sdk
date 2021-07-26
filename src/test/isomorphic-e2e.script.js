@@ -1,5 +1,3 @@
-const client = new fsm.CoreAPIClient(config);
-
 function log(name, data) {
     console.log('running: ', name, data);
     const pre = document.querySelectorAll('#output')[0];
@@ -62,7 +60,7 @@ const prepareFixture = () => ({
     "originName": null
 });
 
-async function queryAPI() {
+async function queryAPI(client) {
     const list = await client.query(
         `SELECT 
         bp.id, sc.id
@@ -75,7 +73,7 @@ async function queryAPI() {
     return list.length === 3;
 }
 
-async function dataAPI() {
+async function dataAPI(client) {
 
     const THE_ID = fsm.CoreAPIClient.createUUID();
 
@@ -114,7 +112,7 @@ async function dataAPI() {
         && r4.serviceCall.subject === 'subject-changed-with-PATCH'
 }
 
-async function batchAPI() {
+async function batchAPI(client) {
     const id1 = fsm.CoreAPIClient.createUUID()
     const id2 = fsm.CoreAPIClient.createUUID()
 
@@ -148,14 +146,17 @@ async function batchAPI() {
         && responses[1].body.data[0].serviceCall.id === id2
 }
 
-Promise.all([
-    queryAPI(),
-    dataAPI(),
-    batchAPI()
-]).then(allResults => {
+async function runTests(config) {
+    const client = new fsm.CoreAPIClient(config);
+
+    const allResults = await Promise.all([
+        queryAPI(client),
+        dataAPI(client),
+        batchAPI(client)
+    ])
 
     if (allResults.some(r => r !== true)) {
-        throw new Error('failed');
+        throw new Error('on or more tests failed');
     }
-
-})
+    return true;
+}

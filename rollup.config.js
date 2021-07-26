@@ -6,7 +6,7 @@ export default {
     input: 'src/index.ts',
     output: [
         {
-            file: 'release/client.umd.js',
+            file: 'release/umd/fsm-sdk.bundle.js',
             format: 'umd',
             name: 'fsm',
             sourcemap: true

@@ -13,9 +13,9 @@
     "build": "npm run build:node && npm run build:browser",
     "prebuild:node": "npm run clean",
     "build:node": "tsc -p . --pretty",
-    "prebuild:browser": "node ./tools/write-config.js",
     "build:browser": "rollup -c",
     "clean": "rm -rf release",
+    "pretest": "npm run build:browser",
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
     "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples"
   },
@@ -95,6 +95,7 @@
     "dotenv": "^8.2.0",
     "mocha": "^5.2.0",
     "nyc": "^15.1.0",
+    "puppeteer": "^10.1.0",
     "rollup": "^2.53.3",
     "rollup-plugin-filesize": "^9.1.1",
     "rollup-plugin-typescript2": "^0.30.0",
