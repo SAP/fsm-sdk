@@ -9,24 +9,21 @@
 <body>
 
     <pre id="output"></pre>
+    <script src="https://unpkg.com/fsm-sdk/release/umd/fsm-sdk.bundle"></script>
     <script>
-        const fsm = require('../../release');
-        const packageJson = require('../../package.json');
 
         const client = new fsm.CoreAPIClient({
 
             // put your client config here
-            clientIdentifier: process.env.CLIENT_IDENTIFIER,
-            clientSecret: process.env.CLIENT_SECRET,
-            clientVersion: packageJson.version,
+            clientIdentifier: '<your-clientIdentifier>',
+            clientSecret: '<your-clientSecret>',
+            clientVersion: '<your-clientVersion>',
 
             // put your auth config here
-            authAccountName: process.env.AUTH_ACCOUNTNAME,
-            authUserName: process.env.AUTH_USERNAME,
-            authPassword: process.env.AUTH_PASSWORD,
+            authAccountName: '<your-authAccountName>',
+            authUserName: '<your-authUserName>',
+            authPassword: '<your-authPassword>'
 
-            authGrantType: process.env.AUTH_GRANT_TYPE,
-            oauthEndpoint: process.env.OAUTH_ENDPOINT
         });
 
         (async () => {
@@ -45,13 +42,18 @@
                 unifiedPerson.plannableResource = true
             `;
 
-            const result = await client.query(coreSQL, ['UnifiedPerson']);
+            document.querySelectorAll('#output')[0].innerHTML += ['Running:', coreSQL].join('\n') + '\n';
 
-            console.log(`Total ${result.data.length} technicians found`);
+            try {
 
-            result.data.forEach(el => {
-                console.log(el);
-            });
+                const result = await client.query(coreSQL, ['UnifiedPerson']);
+                document.querySelectorAll('#output')[0].innerHTML += 'DATA:\n' + JSON.stringify(result, null, 2);
+
+            } catch (e) {
+
+                document.querySelectorAll('#output')[0].innerHTML += 'ERROR:\n' + JSON.stringify(e.error, null, 2);
+
+            }
 
         })();
 
