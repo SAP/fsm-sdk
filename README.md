@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) ![integration test](https://github.com/SAP/fsm-sdk/workflows/integration%20test/badge.svg) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/GauSim/ef8d97285399b9ccfd8acf9e0796cd16/raw/fsm-sdk-badge.json) 
 
-> The latest versions of fsm-sdk require Node.js v12 or newer. (Versions of fsm-sdk below v2 still work with previous Node.js versions, but are unsupported.)
+> The latest versions >2.x of fsm-sdk require Node.js v12 or newer. (Versions of fsm-sdk below 2.x still work with previous Node.js versions, but are unsupported.)
 
 ---
 
@@ -35,7 +35,7 @@ install from NPM
 npm i fsm-sdk --save
 ```
 
-using the sdk with credentials:
+using the sdk in NodeJS with credentials:
 ```typescript
 const fsm = require('fsm-sdk');
 
@@ -73,6 +73,15 @@ const client = new fsm.CoreAPIClient({
 });
 ```
 
+for in browser usage using the umd bundle via unpkg for example:
+```html
+  <script src="https://unpkg.com/fsm-sdk/release/umd/fsm-sdk.bundle"></script>
+  <script>
+        const client = new fsm.CoreAPIClient({ ... });
+        // ...
+  </script>
+```
+
 related doc's:
 - [Generating Client ID and Secret](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/generating-client-id.html)
 
@@ -84,7 +93,7 @@ Some illustrative cases are provided in the [examples](./examples) folder.
 
 ## CoreAPIClient
 
-The CoreAPIClient will return a Promise and is asynchronous by default.
+The CoreAPIClient API actions will return a Promise and is asynchronous by default.
 
 ### Query for objects using CoreSQL
 
