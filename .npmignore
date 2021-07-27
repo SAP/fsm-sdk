@@ -68,6 +68,9 @@ coresystems-oauth2-token.json
 .editorconfig
 mocha.opts
 tsconfig.json
+tsconfig.umd.json
+rollup.config.js
+development.md
 
 # ts source
 src

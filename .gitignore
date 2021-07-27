@@ -50,6 +50,7 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+package
 
 # Yarn Integrity file
 .yarn-integrity
@@ -65,6 +66,9 @@ coresystems-oauth2-token.json
 
 # Compiled src
 release
+
+# Compiled examples
+./examples/html/*.js
 
 # More
 .DS_Store

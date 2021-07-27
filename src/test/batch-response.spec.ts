@@ -1,5 +1,5 @@
 import assert = require('assert');
-import { BatchResponse } from './batch-response';
+import { BatchResponse } from '../core/batch-response';
 
 describe('BatchResponse', () => {
 
@@ -18,7 +18,7 @@ Location: https://et.dev.coresuite.com/api/data/v4/Activity/DDEFFC52A88A4B888887
 
     const result = new BatchResponse(batchApiResponse).toJson();
 
-    assert.deepEqual(result, [
+    assert.deepStrictEqual(result, [
       {
         'body': {
           'data': [

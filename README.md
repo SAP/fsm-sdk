@@ -2,14 +2,16 @@
 
 [![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) ![integration test](https://github.com/SAP/fsm-sdk/workflows/integration%20test/badge.svg) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/GauSim/ef8d97285399b9ccfd8acf9e0796cd16/raw/fsm-sdk-badge.json) 
 
+> The latest versions of fsm-sdk require Node.js v12 or newer. (Versions of fsm-sdk below v2 still work with previous Node.js versions, but are unsupported.)
+
 ---
 
-## NodeJS SDK to Interface with SAP Field Service Management APIs and Services.
+## JavaScript SDK to Interface with SAP Field Service Management APIs and Services.
 Find more documentation and related information at [SAP Field Service Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
 
 
 - [SAP Field Service Management SDK](#sap-field-service-management-sdk)
-  - [NodeJS SDK to Interface with SAP Field Service Management APIs and Services.](#nodejs-sdk-to-interface-with-sap-field-service-management-apis-and-services)
+  - [JavaScript SDK to Interface with SAP Field Service Management APIs and Services.](#javascript-sdk-to-interface-with-sap-field-service-management-apis-and-services)
   - [Getting started](#getting-started)
     - [Examples](#examples)
   - [CoreAPIClient](#coreapiclient)
@@ -60,9 +62,9 @@ const client = new fsm.CoreAPIClient({
   authCompany: '<your-authCompany>',
 
   // [optional] provide verbose logs
-  debug: true,
+  debug: false,
 
-  // [optional] enable using custom oauthEndpoints
+  // [optional] enable using custom oauth endpoints
   oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
 
   // [optional] client will cache token (helpful for writing integration tests)

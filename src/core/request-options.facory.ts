@@ -1,10 +1,18 @@
-import _crypto = require('crypto');
+import { v4 as uuid } from 'uuid';
 import { ALL_DTO_VERSIONS } from './all-dto-versions.constant';
 import { ClientConfig } from './client-config.model';
 import { DTOName } from './dto-name.model';
 import { OauthTokenResponse } from './oauth-token-response.model';
 
 export class RequestOptionsFacory {
+
+  public static getUUID(): string {
+    return uuid().replace(/\-/g, '');
+  }
+
+  public static stringify(o: { [key: string]: any }): string {
+    return Object.keys(o).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(o[key])}`).join('&');
+  }
 
   public static getDataApiUriFor(token: OauthTokenResponse, dtoName: DTOName, dtoId: string | null = null) {
     return `${token.cluster_url}/api/data/v4/${dtoName}${(dtoId ? `/${dtoId}` : '')}`
@@ -30,7 +38,7 @@ export class RequestOptionsFacory {
   }
 
   public static getRequestXHeaders(config: ClientConfig) {
-    const requestId = _crypto.randomBytes(16).toString('hex');
+    const requestId = uuid().replace(/\-/g, '');
     return {
       'X-Client-Id': config.clientIdentifier,
       'X-Client-Version': config.clientVersion,
@@ -47,7 +55,7 @@ export class RequestOptionsFacory {
     }
   }
 
-  public static _getRequestAccountQueryParams(token: OauthTokenResponse, config: ClientConfig) {
+  public static getRequestAccountQueryParams(token: OauthTokenResponse, config: ClientConfig) {
     if (!token.companies || !token.companies.length) {
       throw new Error('no compnay found on given account');
     }

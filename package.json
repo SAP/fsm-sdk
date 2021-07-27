@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "1.2.4",
+  "version": "2.0.0",
   "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
@@ -9,12 +9,18 @@
     "prestart": "npm run build",
     "start": "node release/index.js",
     "prestart:examples": "npm run build",
-    "start:examples": "node -r dotenv/config examples/index.js",
-    "prebuild": "npm run clean",
-    "build": "tsc -p . --pretty",
+    "start:examples": "node -r dotenv/config examples/node/index.js",
+    "build": "npm run build:node && npm run build:browser",
+    "prebuild:node": "npm run clean",
+    "build:node": "tsc -p . --pretty",
+    "build:browser": "rollup -c",
     "clean": "rm -rf release",
+    "pretest": "npm run build:browser",
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
     "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples"
+  },
+  "engines": {
+    "node": ">=12"
   },
   "keywords": [
     "SAP Field Service Management SDK",
@@ -38,10 +44,10 @@
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "statements": 90,
+    "statements": 89,
     "branches": 70,
-    "functions": 90,
-    "lines": 90,
+    "functions": 89,
+    "lines": 89,
     "extension": [
       ".ts",
       ".tsx"
@@ -79,18 +85,22 @@
   },
   "homepage": "https://github.com/sap/fsm-sdk#readme",
   "dependencies": {
-    "node-fetch": "^2.6.1",
+    "isomorphic-fetch": "^3.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.2",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.9.3",
-    "@types/node-fetch": "^2.5.8",
     "@types/uuid": "^8.3.0",
     "coveralls": "^3.1.0",
     "dotenv": "^8.2.0",
     "mocha": "^5.2.0",
     "nyc": "^15.1.0",
+    "puppeteer": "^10.1.0",
+    "rollup": "^2.53.3",
+    "rollup-plugin-filesize": "^9.1.1",
+    "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.1"
   }

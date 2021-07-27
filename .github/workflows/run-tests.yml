@@ -12,6 +12,7 @@ env:
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
   CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
   OAUTH_ENDPOINT: ${{ secrets.OAUTH_ENDPOINT }}
+  NPM_TOKEN: 'N/A'
 
 on:
   push:
@@ -26,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:

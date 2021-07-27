@@ -7,6 +7,7 @@ export type OauthTokenResponse = {
   account: string;
   account_id: number;
   user: string;
+  user_id: number;
   user_email: string;
   companies: {
     strictEncryptionPolicy: boolean;
