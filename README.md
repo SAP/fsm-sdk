@@ -6,12 +6,12 @@
 
 ---
 
-## NodeJS SDK to Interface with SAP Field Service Management APIs and Services.
+## JavaScript SDK to Interface with SAP Field Service Management APIs and Services.
 Find more documentation and related information at [SAP Field Service Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
 
 
 - [SAP Field Service Management SDK](#sap-field-service-management-sdk)
-  - [NodeJS SDK to Interface with SAP Field Service Management APIs and Services.](#nodejs-sdk-to-interface-with-sap-field-service-management-apis-and-services)
+  - [JavaScript SDK to Interface with SAP Field Service Management APIs and Services.](#javascript-sdk-to-interface-with-sap-field-service-management-apis-and-services)
   - [Getting started](#getting-started)
     - [Examples](#examples)
   - [CoreAPIClient](#coreapiclient)
@@ -62,9 +62,9 @@ const client = new fsm.CoreAPIClient({
   authCompany: '<your-authCompany>',
 
   // [optional] provide verbose logs
-  debug: true,
+  debug: false,
 
-  // [optional] enable using custom oauthEndpoints
+  // [optional] enable using custom oauth endpoints
   oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
 
   // [optional] client will cache token (helpful for writing integration tests)
