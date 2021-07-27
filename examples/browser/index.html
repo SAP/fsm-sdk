@@ -9,11 +9,6 @@
 <body>
 
     <pre id="output"></pre>
-
-    <!--
-        <script src="https://unpkg.com/fsm-sdk"></script>     
-    -->
-
     <script>
         const fsm = require('../../release');
         const packageJson = require('../../package.json');
@@ -55,7 +50,7 @@
             console.log(`Total ${result.data.length} technicians found`);
 
             result.data.forEach(el => {
-                console.log(`username: ${el.unifiedPerson.userName}\tname: ${el.unifiedPerson.firstName} ${el.unifiedPerson.lastName}\tid: ${el.unifiedPerson.id}\texternal: ${el.unifiedPerson.externalResource}\ttitle: ${el.unifiedPerson.jobTitle}`);
+                console.log(el);
             });
 
         })();
