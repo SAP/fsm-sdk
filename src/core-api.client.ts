@@ -12,6 +12,7 @@ import { ErrorResponse, HttpRequestOptions, HttpResponse } from './core/error-re
 export class CoreAPIClient {
 
   private _token: OauthTokenResponse | undefined;
+  private _tokenExpiration: Date | undefined;
 
   private _config: ClientConfig = {
     debug: false,
@@ -110,7 +111,7 @@ export class CoreAPIClient {
   }
 
   private _ensureToken(): Promise<OauthTokenResponse> {
-    return this._token
+    return this._token && this._tokenExpiration && (new Date() < this._tokenExpiration)
       ? Promise.resolve(this._token)
       : this._readToken()
         .then(token => this.setToken(token).getToken() as OauthTokenResponse);
@@ -315,6 +316,8 @@ export class CoreAPIClient {
     }
 
     this._token = token;
+    this._tokenExpiration = new Date(new Date().getTime() + token.expires_in * 1000);
+
     return this;
   }
 
