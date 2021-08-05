@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] 2021-08-05
+### Added
+- Addding token expiration and refresh as proposed by Tobias Wymer ( [@tswymer](https://github.com/tswymer) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/11) ]
+### Changed 
+- Internal refactoring facade public client API
+### Updated 
+- Updating down stream npm packages - High vulnerability [ [ref](https://npmjs.com/advisories/1770) ]
+
 ## [2.0.0] 2021-07-26
 ### Changed
 - **BREAKING** Dropping support for Node.js < v12, sdk now requires Node.js v12 or newer 
