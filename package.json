@@ -45,7 +45,7 @@
     "check-coverage": true,
     "per-file": false,
     "statements": 90,
-    "branches": 80,
+    "branches": 79,
     "functions": 90,
     "lines": 90,
     "extension": [
