@@ -56,7 +56,7 @@ export class CoreAPIClient {
   constructor(config: ClientConfig) {
     const _config = Object.assign(this._config_default, config);
     const _http = new HttpService(_config);
-    const _auth = new AuthService(_http, _config);
+    const _auth = new AuthService(_http);
     this._client = new ClientService(_config, _http, _auth);
   }
 

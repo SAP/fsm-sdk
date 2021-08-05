@@ -7,65 +7,69 @@ import { RequestOptionsFacory } from './request-options.facory';
 export class AuthService {
     private _token: OauthTokenResponse | undefined;
 
-    constructor(private _http: Readonly<HttpService>, private _config: Readonly<ClientConfig>) { }
+    constructor(private _http: Readonly<HttpService>) { }
 
-    private async _fetchAndSaveToken() {
+    private async _fetchAndSaveToken(config: Readonly<ClientConfig>) {
         const body = new URLSearchParams({
-            grant_type: this._config.authGrantType,
-            ...(this._config.authGrantType === 'password'
+            grant_type: config.authGrantType,
+            ...(config.authGrantType === 'password'
                 ? {
-                    username: `${this._config.authAccountName}/${this._config.authUserName}`,
-                    password: this._config.authPassword
+                    username: `${config.authAccountName}/${config.authUserName}`,
+                    password: config.authPassword
                 }
                 : {}
             )
         });
 
-        const response = await this._http.request<string>(`${this._config.oauthEndpoint}/token`, {
+        const response = await this._http.request<string>(`${config.oauthEndpoint}/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json',
-                'Authorization': `Basic ${toBase64(`${this._config.clientIdentifier}:${this._config.clientSecret}`)}`,
-                ...RequestOptionsFacory.getRequestXHeaders(this._config)
+                'Authorization': `Basic ${toBase64(`${config.clientIdentifier}:${config.clientSecret}`)}`,
+                ...RequestOptionsFacory.getRequestXHeaders(config)
             },
             body: body.toString()
         });
 
-        if (this._config.debug && this._config.tokenCacheFilePath) {
+        if (config.debug && config.tokenCacheFilePath) {
             try {
                 const fs = require('fs'); // inline import for isomorphic
-                fs.writeFileSync(this._config.tokenCacheFilePath, JSON.stringify(response));
+                fs.writeFileSync(config.tokenCacheFilePath, JSON.stringify(response));
             } catch (error) {
-                console.error(`ERROR: could not create ${this._config.tokenCacheFilePath}`, error);
+                console.error(`ERROR: could not create ${config.tokenCacheFilePath}`, error);
             }
         }
 
         return typeof response === 'string' ? JSON.parse(response) : response;
     }
 
-    private async _readToken(): Promise<OauthTokenResponse> {
+    private async _readToken(config: Readonly<ClientConfig>): Promise<OauthTokenResponse> {
         try {
             return await new Promise<OauthTokenResponse>((resolve, fail) => {
-                if (this._config.debug && this._config.tokenCacheFilePath) {
+                if (config.debug && config.tokenCacheFilePath) {
                     const path = require('path');
-                    return resolve(require(path.resolve(this._config.tokenCacheFilePath)));
+                    return resolve(require(path.resolve(config.tokenCacheFilePath)));
                 }
                 fail({ code: 'MODULE_NOT_FOUND' });
             });
         } catch (error) {
             if (error.code === 'MODULE_NOT_FOUND') {
-                return await this._fetchAndSaveToken();
+                return await this._fetchAndSaveToken(config);
             }
             throw error;
         }
     }
 
-    public ensureToken(): Promise<OauthTokenResponse> {
-        return this._token
+    public async ensureToken(config: Readonly<ClientConfig>): Promise<OauthTokenResponse> {
+
+        const tokenPromise = this._token
             ? Promise.resolve(this._token)
-            : this._readToken()
+            : this._readToken(config)
                 .then(token => this.setToken(token).getToken() as OauthTokenResponse);
+
+
+        return tokenPromise;
     }
 
     public getToken(): Readonly<OauthTokenResponse> | undefined {

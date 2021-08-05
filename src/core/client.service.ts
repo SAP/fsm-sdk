@@ -25,7 +25,7 @@ export class ClientService {
         dtoId: string | null = null,
         additionalQs: { [k: string]: string | number | boolean } = {}
     ) {
-        const token = await this._auth.ensureToken();
+        const token = await this._auth.ensureToken(this._config);
 
         const params = new URLSearchParams(Object.assign({},
             RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
@@ -42,7 +42,7 @@ export class ClientService {
     }
 
     public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
-        const token = await this._auth.ensureToken();
+        const token = await this._auth.ensureToken(this._config);
         const params = new URLSearchParams({
             ...RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
             dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
@@ -83,7 +83,7 @@ export class ClientService {
     }
 
     public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
-        const token = await this._auth.ensureToken();
+        const token = await this._auth.ensureToken(this._config);
         const body = new BatchRequest(token, this._config, actions).toString();
 
         const params = new URLSearchParams(Object.assign({
