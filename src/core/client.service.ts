@@ -7,7 +7,7 @@ import { ClientResponse } from './client-response.model';
 import { DTOModels, DTOName } from './dto-name.model';
 import { HttpService } from './http-service';
 import { OauthTokenResponse } from './oauth-token-response.model';
-import { AuthService } from './oauth-token.service';
+import { AuthService } from './auth.service';
 import { RequestOptionsFacory } from './request-options.facory';
 
 export class ClientService {

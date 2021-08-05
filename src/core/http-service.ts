@@ -4,12 +4,17 @@ import { fetch } from '../polyfills';
 
 export class HttpService {
 
-    constructor(private _config: Readonly<ClientConfig>) { }
+    constructor(
+        private _config: Readonly<ClientConfig>,
+        private _logger: { log: Function } = console
+    ) { }
 
     public request<T>(uri: string, options: HttpRequestOptions): Promise<T | string | null> {
+
         if (this._config.debug) {
-            console.log(`[httpRequest] outgoing ${uri} options[${JSON.stringify(options, null, 2)}]`);
+            this._logger.log(`[httpRequest] outgoing ${uri} options[${JSON.stringify(options, null, 2)}]`);
         }
+
         return fetch(uri, options)
             .then(async (response: HttpResponse) => {
 
@@ -34,7 +39,7 @@ export class HttpService {
                 }
 
                 if (this._config.debug) {
-                    console.log(`[httpRequest] incoming going options[${JSON.stringify(options, null, 2)}] response[${JSON.stringify(content, null, 2)}]`);
+                    this._logger.log(`[httpRequest] incoming going options[${JSON.stringify(options, null, 2)}] response[${JSON.stringify(content, null, 2)}]`);
                 }
 
                 return content as T;

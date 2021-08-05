@@ -6,10 +6,14 @@ import { RequestOptionsFacory } from './request-options.facory';
 
 export class AuthService {
     private _token: OauthTokenResponse | undefined;
+    private _tokenExpiration: Date | undefined;
 
-    constructor(private _http: Readonly<HttpService>) { }
+    constructor(
+        private _http: Readonly<HttpService>,
+        private _logger: { error: Function } = console
+    ) { }
 
-    private async _fetchAndSaveToken(config: Readonly<ClientConfig>) {
+    private async _fetchAndSaveToken(config: Readonly<ClientConfig>): Promise<OauthTokenResponse> {
         const body = new URLSearchParams({
             grant_type: config.authGrantType,
             ...(config.authGrantType === 'password'
@@ -37,11 +41,13 @@ export class AuthService {
                 const fs = require('fs'); // inline import for isomorphic
                 fs.writeFileSync(config.tokenCacheFilePath, JSON.stringify(response));
             } catch (error) {
-                console.error(`ERROR: could not create ${config.tokenCacheFilePath}`, error);
+                this._logger.error(`ERROR: could not create ${config.tokenCacheFilePath}`, error);
             }
         }
 
-        return typeof response === 'string' ? JSON.parse(response) : response;
+        const token: OauthTokenResponse = typeof response === 'string' ? JSON.parse(response) : response;
+
+        return token;
     }
 
     private async _readToken(config: Readonly<ClientConfig>): Promise<OauthTokenResponse> {
@@ -49,7 +55,8 @@ export class AuthService {
             return await new Promise<OauthTokenResponse>((resolve, fail) => {
                 if (config.debug && config.tokenCacheFilePath) {
                     const path = require('path');
-                    return resolve(require(path.resolve(config.tokenCacheFilePath)));
+                    const token = require(path.resolve(config.tokenCacheFilePath));
+                    return resolve(token);
                 }
                 fail({ code: 'MODULE_NOT_FOUND' });
             });
@@ -62,14 +69,10 @@ export class AuthService {
     }
 
     public async ensureToken(config: Readonly<ClientConfig>): Promise<OauthTokenResponse> {
-
-        const tokenPromise = this._token
+        return this._token && this._tokenExpiration && (new Date() < this._tokenExpiration)
             ? Promise.resolve(this._token)
             : this._readToken(config)
                 .then(token => this.setToken(token).getToken() as OauthTokenResponse);
-
-
-        return tokenPromise;
     }
 
     public getToken(): Readonly<OauthTokenResponse> | undefined {
@@ -83,6 +86,8 @@ export class AuthService {
         }
 
         this._token = token;
+        this._tokenExpiration = new Date(new Date().getTime() + token.expires_in * 1000);
+
         return this;
     }
 

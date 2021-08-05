@@ -44,10 +44,10 @@
   "nyc": {
     "check-coverage": true,
     "per-file": false,
-    "statements": 89,
-    "branches": 70,
-    "functions": 89,
-    "lines": 89,
+    "statements": 90,
+    "branches": 80,
+    "functions": 90,
+    "lines": 90,
     "extension": [
       ".ts",
       ".tsx"

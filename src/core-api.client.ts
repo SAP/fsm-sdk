@@ -6,7 +6,7 @@ import { BatchAction } from './core/batch-action.model';
 import { RequestOptionsFacory } from './core/request-options.facory';
 import { BatchResponseJson } from './core/batch-response';
 
-import { AuthService } from './core/oauth-token.service';
+import { AuthService } from './core/auth.service';
 import { HttpService } from './core/http-service';
 import { ClientService } from './core/client.service';
 
