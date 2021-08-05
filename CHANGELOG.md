@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.1] 2021-08-05
 ### Added
-- Addding token expiration and refresh as proposed by Tobias Wymer ( [@tswymer](https://github.com/tswymer) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/11) ]
+- Adding token expiration and refresh as proposed by Tobias Wymer ( [@tswymer](https://github.com/tswymer) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/11) ]
 ### Changed 
 - Internal refactoring facade public client API
 ### Updated 
