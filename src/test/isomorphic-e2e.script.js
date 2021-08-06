@@ -156,7 +156,7 @@ async function runTests(config) {
     ])
 
     if (allResults.some(r => r !== true)) {
-        throw new Error('on or more tests failed');
+        throw new Error('one or more tests failed');
     }
     return true;
 }

@@ -3,6 +3,9 @@ import fs = require('fs');
 import { integrationTestConfig } from './integration-test.config';
 import { CoreAPIClient } from '../core-api.client';
 import { ErrorResponse } from '../core/error-response.model';
+import { OauthTokenResponse } from '../core/oauth-token-response.model';
+import { HttpService } from '../core/http-service';
+import { AuthService } from '../core/auth.service';
 
 describe('Auth', () => {
 
@@ -15,6 +18,91 @@ describe('Auth', () => {
       fs.unlinkSync(integrationTestConfig.tokenCacheFilePath);
     } catch (error) { }
   }
+
+  describe('AuthService', () => {
+
+    const tokenMock: OauthTokenResponse = {
+
+      expires_in: 9999999,
+
+      access_token: '<token>',
+      token_type: 'bearer',
+      scope: '<scope>',
+      account: '<account>',
+      account_id: -1,
+      tenant_id: null,
+      user: '<user>',
+      user_email: '<user_email>',
+      user_id: -1,
+      companies: [
+        {
+          permissionGroupId: -1,
+          strictEncryptionPolicy: false,
+          name: '<name>',
+          description: '<description>',
+          personId: '<personId>',
+          id: -1
+        }
+      ],
+      authorities: [
+        'USER'
+      ],
+      cluster_url: '<cluster_url>'
+    };
+
+    describe('ensureToken', () => {
+
+      it('should fetch token if not present', done => {
+
+        removeTokenFile();
+
+        const auth = new AuthService({ request: () => Promise.resolve(tokenMock) } as any as HttpService);
+
+        auth.ensureToken(integrationTestConfig)
+          .then(token => assert.deepStrictEqual(token, tokenMock))
+          .then(() => done())
+          .catch(e => done(e));
+
+      });
+
+      it('should refresh token if expired', done => {
+
+        removeTokenFile();
+
+        const httpStub = { request: () => Promise.resolve(JSON.stringify(tokenMock)) } as any as HttpService;
+        const loggerStub = { error: () => { } }
+        const auth = new AuthService(httpStub, loggerStub);
+
+        const invalidToken = { ...tokenMock, expires_in: 0 };
+        auth.setToken(invalidToken);
+
+        auth.ensureToken({ ...integrationTestConfig, debug: true, authGrantType: 'client_credentials', tokenCacheFilePath: 'i/n/v/a/l/i/d' })
+          .then(token => assert.deepStrictEqual(token, tokenMock))
+          .then(() => done())
+          .catch(e => done(e));
+
+      });
+
+      it('should NOT refresh token if still valid', done => {
+
+        removeTokenFile();
+
+        const httpStub = { request: () => Promise.resolve(JSON.stringify(tokenMock)) } as any as HttpService;
+        const auth = new AuthService(httpStub);
+
+        const validToken = { ...tokenMock, expires_in: 8888888 };
+        auth.setToken(validToken);
+
+        auth.ensureToken({ ...integrationTestConfig, debug: false, authGrantType: 'client_credentials' })
+          .then(token => assert.deepStrictEqual(token, validToken))
+          .then(() => done())
+          .catch(e => done(e))
+
+      });
+
+    });
+
+  });
 
   describe('auth errors', () => {
 

@@ -6,15 +6,18 @@ export type OauthTokenResponse = {
   scope: string;
   account: string;
   account_id: number;
+  tenant_id?: null | number;
   user: string;
   user_id: number;
   user_email: string;
   companies: {
-    strictEncryptionPolicy: boolean;
+    id: number;
     name: string;
     description: string;
-    id: number;
+    strictEncryptionPolicy: boolean;
+    personId?: string;
+    permissionGroupId?: number;
   }[];
-  authorities: string[];
+  authorities: string[]; // USER
   cluster_url: string;
 }
