@@ -9,6 +9,7 @@ import { HttpService } from './http-service';
 import { OauthTokenResponse } from './oauth-token-response.model';
 import { AuthService } from './auth.service';
 import { RequestOptionsFacory } from './request-options.facory';
+import { QueryParams } from './client-request.model';
 
 export class ClientService {
 
@@ -23,7 +24,7 @@ export class ClientService {
         dtoName: DTOName,
         dtoData: T | null | any,
         dtoId: string | null = null,
-        additionalQs: { [k: string]: string | number | boolean } = {}
+        additionalQs: QueryParams = {}
     ) {
         const token = await this._auth.ensureToken(this._config);
 
@@ -58,28 +59,28 @@ export class ClientService {
             }) as { data: T[] };
     }
 
-    public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-        const response = await this._requestDataApi('GET', resourceName, null, resourceId);
+    public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
+        const response = await this._requestDataApi('GET', resourceName, null, resourceId, additionalQs);
         return typeof response === 'string' ? JSON.parse(response) : response; // not sending json headers
     }
 
-    public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {
+    public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }, additionalQs?: QueryParams): Promise<undefined> {
         const { id, lastChanged } = resource;
-        return this._requestDataApi('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
+        return this._requestDataApi('DELETE', resourceName, null, id, { lastChanged, ...additionalQs }) as any as Promise<undefined>;
     }
 
-    public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-        return this._requestDataApi('POST', resourceName, resource) as Promise<ClientResponse<T>>;
+    public async post<T extends DTOModels>(resourceName: DTOName, resource: T, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
+        return this._requestDataApi('POST', resourceName, resource, null, additionalQs) as Promise<ClientResponse<T>>;
     }
 
-    public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
+    public async put<T extends DTOModels>(resourceName: DTOName, resource: T, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
         const { id } = resource;
-        return this._requestDataApi('PUT', resourceName, resource, id) as Promise<ClientResponse<T>>;
+        return this._requestDataApi('PUT', resourceName, resource, id, additionalQs) as Promise<ClientResponse<T>>;
     }
 
-    public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
+    public async patch<T extends DTOModels>(resourceName: DTOName, resource: T, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
         const { id } = resource;
-        return this._requestDataApi('PATCH', resourceName, resource, id) as Promise<ClientResponse<T>>;
+        return this._requestDataApi('PATCH', resourceName, resource, id, additionalQs) as Promise<ClientResponse<T>>;
     }
 
     public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {

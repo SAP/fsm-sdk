@@ -5,6 +5,7 @@ import { ClientResponse } from './core/client-response.model';
 import { BatchAction } from './core/batch-action.model';
 import { RequestOptionsFacory } from './core/request-options.facory';
 import { BatchResponseJson } from './core/batch-response';
+import { QueryParams } from './core/client-request.model';
 
 import { AuthService } from './core/auth.service';
 import { HttpService } from './core/http-service';
@@ -83,34 +84,37 @@ export class CoreAPIClient {
    * Retrieving Lists of Objects
    * @param resourceName DTOName 
    * @param resourceId uuid as string
+   * @param additionalQs Additional query parameters to add to the request
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-    return this._client.getById<T>(resourceName, resourceId);
+  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
+    return this._client.getById<T>(resourceName, resourceId, additionalQs);
   }
 
-  public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {
-    return this._client.deleteById<T>(resourceName, resource);
+  public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }, additionalQs?: QueryParams): Promise<undefined> {
+    return this._client.deleteById<T>(resourceName, resource, additionalQs);
   }
 
   /**
    * Creating Objects
    * @param resourceName DTOName
    * @param resource should contain in the body the ENTIRE updated resource
+   * @param additionalQs Additional query parameters to add to the request
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.post<T>(resourceName, resource);
+  public async post<T extends DTOModels>(resourceName: DTOName, resource: T, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
+    return this._client.post<T>(resourceName, resource, additionalQs);
   }
 
   /**
    * Updating Existing Objects
    * @param resourceName resourceName
    * @param resource should contain in the body the ENTIRE updated resource
+   * @param additionalQs Additional query parameters to add to the request
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.put<T>(resourceName, resource);
+  public async put<T extends DTOModels>(resourceName: DTOName, resource: T, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
+    return this._client.put<T>(resourceName, resource, additionalQs);
   }
 
   /**
@@ -118,10 +122,11 @@ export class CoreAPIClient {
    * should contain in the body the entire updated resource
    * @param resourceName resourceName
    * @param resource should contain in the body the [FIELDS THAT YOU WANT TO UPDATE]
+   * @param additionalQs Additional query parameters to add to the request
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patch<T>(resourceName, resource);
+  public async patch<T extends DTOModels>(resourceName: DTOName, resource: T, additionalQs?: QueryParams): Promise<ClientResponse<T>> {
+    return this._client.patch<T>(resourceName, resource, additionalQs);
   }
 
 
