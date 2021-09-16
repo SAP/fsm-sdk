@@ -97,7 +97,7 @@
     "dotenv": "^10.0.0",
     "mocha": "^5.2.0",
     "nyc": "^15.1.0",
-    "puppeteer": "^10.1.0",
+    "puppeteer": "^10.2.0",
     "rollup": "^2.53.3",
     "rollup-plugin-filesize": "^9.1.1",
     "rollup-plugin-typescript2": "^0.30.0",
