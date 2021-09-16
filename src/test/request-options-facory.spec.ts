@@ -30,6 +30,10 @@ describe('RequestOptionsFacory', () => {
             assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/externalId/1-external-id`);
         });
 
+        it('should prefer id', () => {
+            const result = RequestOptionsFacory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', '1-uid', '1-external-id');
+            assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/1-uid`);
+        });
     });
 
 });

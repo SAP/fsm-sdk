@@ -81,4 +81,5 @@ export type DTOName = 'Activity'
 export type DTOModels = Partial<{
   id: undefined | null | string;
   lastChanged: undefined | null | number;
+  externalId: undefined | null | string;
 } & Object>;

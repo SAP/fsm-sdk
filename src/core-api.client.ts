@@ -71,6 +71,9 @@ export class CoreAPIClient {
 
   /**
    * Here, you can input and execute the CoreSQL query.
+   * 
+   * related docs:  https://help.sap.com/viewer/fsm_query_api/Cloud/en-US/query-api-intro.html
+   * 
    * @param coreSQL valid CoreSQL
    * @param dtoNames DTOName[]
    * @returns Promise<{ data: DTO[] }>
@@ -80,7 +83,10 @@ export class CoreAPIClient {
   }
 
   /**
-   * Retrieving Lists of Objects
+   * Retrieving Lists of Objects by Id
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName DTOName 
    * @param resourceId uuid as string
    * @returns Promise<ClientResponse<DTO>>
@@ -90,28 +96,42 @@ export class CoreAPIClient {
   }
 
   /**
-   * Retrieving Lists of Objects
+   * Retrieving Lists of Objects by ExternalId
+   * 
+   * Note: [useExternalIds=true] option will be used
+   * referenced resources will not be a uid-string or null but of object or null
+   * containing id and externalId if present
+   * ```typescript
+   *  [referenced-resource] : { id: string, externalId? : string } | null
+   * ```
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName DTOName 
    * @param externalId externalId as string
    * @returns Promise<ClientResponse<DTO>>
    */
   public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<ClientResponse<T>> {
-    return this._client.getResource<T>(resourceName, { externalId });
+    return this._client.getResource<T>(resourceName, { externalId }, { useExternalIds: true });
   }
 
   /**
    * Deletes Existing Object by Id
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName DTOName
    * @param resource { id: string, lastChanged: number }
    * @returns 
    */
   public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { id, lastChanged } = resource;
-    return this._client.deleteResource<T>(resourceName, { resourceId: id }, lastChanged); // { externalId }
+    return this._client.deleteResource<T>(resourceName, { resourceId: id }, lastChanged);
   }
 
   /**
    * Deletes Existing Object by ExternalId
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName DTOName
    * @param resource { id: string, lastChanged: number }
    * @returns 
@@ -122,7 +142,10 @@ export class CoreAPIClient {
   }
 
   /**
-   * Creating Objects
+   * Creating Objects by Id
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName DTOName
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
@@ -132,7 +155,30 @@ export class CoreAPIClient {
   }
 
   /**
+   * Creating Objects by ExternalId
+   * 
+   * Note: [useExternalIds=true] option will be used
+   * referenced resources will not be a uid-string or null but of object or null
+   * containing id and externalId if present
+   * ```typescript
+   *  [referenced-resource] : { id: string, externalId? : string } | null
+   * ```
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
+   * @param resourceName DTOName
+   * @param resource should contain in the body the ENTIRE updated resource
+   * @returns Promise<ClientResponse<DTO>>
+   */
+  public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
+    return this._client.postResource<T>(resourceName, resource, { useExternalIds: true });
+  }
+  
+  /**
    * Updating Existing Objects by Id
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName resourceName
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
@@ -143,17 +189,30 @@ export class CoreAPIClient {
 
   /**
    * Updating Existing Objects by ExternalId
+   * 
+   * Note: [useExternalIds=true] option will be used
+   * referenced resources will not be a uid-string or null but of object or null
+   * containing id and externalId if present
+   * ```typescript
+   *  [referenced-resource] : { id: string, externalId? : string } | null
+   * ```
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName resourceName
-   * @param resource should contain in the body the ENTIRE updated resource
+   * @param resource should contain in the resource the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
   public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource);
+    return this._client.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
   }
 
   /**
    * Updating Existing Objects by Id
-   * should contain in the body the entire updated resource
+   * should contain [id] in the body the entire updated resource
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName resourceName
    * @param resource should contain in the body the [id] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
@@ -164,18 +223,29 @@ export class CoreAPIClient {
 
   /**
    * Updating Existing Objects by ExternalId
-   * should contain in the body the entire updated resource
+   * should contain [ExternalId] in the resource the entire updated resource
+   * 
+   * Note: [useExternalIds=true] option will be used
+   * referenced resources will not be a uid-string or null but of object or null
+   * containing id and externalId if present
+   * ```typescript
+   *  [referenced-resource] : { id: string, externalId? : string } | null
+   * ```
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * 
    * @param resourceName resourceName
-   * @param resource should contain in the body the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
+   * @param resource should contain in the resource the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
    */
   public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patchResource<T>(resourceName, { externalId: resource.externalId }, resource);
+    return this._client.patchResource<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
   }
 
   /**
    * Batch request with transational support
    * requests will be executed in oder of the actions array.
+   * 
    * Example:
    * ```typescript
    *  const actions = [ 
@@ -185,6 +255,9 @@ export class CoreAPIClient {
    *  ];
    *  await client.batch(actions)
    * ```
+   * 
+   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US/batch-api-intro.html
+   * 
    * @param actions BatchAction | CreateAction | UpdateAction | DeleteAction
    * @returns Promise<BatchResponseJson<T>[]>
    */

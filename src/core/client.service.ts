@@ -65,8 +65,8 @@ export class ClientService {
             }) as { data: T[] };
     }
 
-    public async getResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId): Promise<ClientResponse<T>> {
-        const response = await this._requestDataApi('GET', resourceName, null, id);
+    public async getResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        const response = await this._requestDataApi('GET', resourceName, null, id, queryParams);
         return typeof response === 'string' ? JSON.parse(response) : response;
     }
 
@@ -74,16 +74,16 @@ export class ClientService {
         return this._requestDataApi('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
     }
 
-    public async postResource<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-        return this._requestDataApi('POST', resourceName, resource) as Promise<ClientResponse<T>>;
+    public async postResource<T extends DTOModels>(resourceName: DTOName, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        return this._requestDataApi('POST', resourceName, resource, undefined, queryParams) as Promise<ClientResponse<T>>;
     }
 
-    public async putResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T): Promise<ClientResponse<T>> {
-        return this._requestDataApi('PUT', resourceName, resource, id) as Promise<ClientResponse<T>>;
+    public async putResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        return this._requestDataApi('PUT', resourceName, resource, id, queryParams) as Promise<ClientResponse<T>>;
     }
 
-    public async patchResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T): Promise<ClientResponse<T>> {
-        return this._requestDataApi('PATCH', resourceName, resource, id) as Promise<ClientResponse<T>>;
+    public async patchResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        return this._requestDataApi('PATCH', resourceName, resource, id, queryParams) as Promise<ClientResponse<T>>;
     }
 
     public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {

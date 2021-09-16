@@ -18,7 +18,7 @@ export class RequestOptionsFacory {
 
     const identifier = [
       (resourceId ? `/${resourceId}` : '').trim(),
-      (externalId ? `/externalId/${externalId}` : '').trim()
+      (externalId && !resourceId ? `/externalId/${externalId}` : '').trim()
     ].join('').trim();
 
     return `${token.cluster_url}/api/data/v4/${resourceName}${identifier}`;

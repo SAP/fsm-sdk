@@ -83,6 +83,8 @@ for in browser usage using the umd bundle via unpkg for example:
 ```
 
 related doc's:
+- [Field Service Management - Integration Guidelines](https://help.sap.com/viewer/fsm_integration_guidelines/Cloud/en-US/integration-guidelines-intro.html)
+- [Access API (OAuth 2.0)](https://help.sap.com/viewer/fsm_access_api/Cloud/en-US)
 - [Generating Client ID and Secret](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/generating-client-id.html)
 
 ### Examples 
@@ -98,7 +100,7 @@ The CoreAPIClient API actions will return a Promise and is asynchronous by defau
 ### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
-see [Query API Documentation](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
+see [Field Service Management - Query API](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
 
 ```typescript
 
@@ -118,6 +120,7 @@ await client.query(coreSQL, ['ServiceCall']);
 ### CRUD object
 
 related doc's:
+- [Field Service Management - Data API v4](DATA API Docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US)
 - [Data Model Documentation](https://help.sap.com/viewer/fsm_data_model/Cloud/en-US/data-model-overview.html)
 
 #### Create a new object
@@ -172,7 +175,7 @@ await client.deleteById('ServiceCall', {
   });
 // or
 await client.deleteByExternalId('ServiceCall', {
-    externalId: '36A5626F65A54FE7911F536C501D151A',
+    externalId: 'my-external-id-1',
     lastChanged: 1535712340
   });
 ```
