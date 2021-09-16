@@ -86,11 +86,39 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-    return this._client.getById<T>(resourceName, resourceId);
+    return this._client.getResource<T>(resourceName, { resourceId });
   }
 
-  public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {
-    return this._client.deleteById<T>(resourceName, resource);
+  /**
+   * Retrieving Lists of Objects
+   * @param resourceName DTOName 
+   * @param externalId externalId as string
+   * @returns Promise<ClientResponse<DTO>>
+   */
+  public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<ClientResponse<T>> {
+    return this._client.getResource<T>(resourceName, { externalId });
+  }
+
+  /**
+   * Deletes Existing Object by Id
+   * @param resourceName DTOName
+   * @param resource { id: string, lastChanged: number }
+   * @returns 
+   */
+  public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
+    const { id, lastChanged } = resource;
+    return this._client.deleteResource<T>(resourceName, { resourceId: id }, lastChanged); // { externalId }
+  }
+
+  /**
+   * Deletes Existing Object by ExternalId
+   * @param resourceName DTOName
+   * @param resource { id: string, lastChanged: number }
+   * @returns 
+   */
+  public async deleteByExternalId<T extends Partial<DTOModels> & { externalId: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
+    const { externalId, lastChanged } = resource;
+    return this._client.deleteResource<T>(resourceName, { externalId }, lastChanged);
   }
 
   /**
@@ -100,30 +128,50 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.post<T>(resourceName, resource);
+    return this._client.postResource<T>(resourceName, resource);
   }
 
   /**
-   * Updating Existing Objects
+   * Updating Existing Objects by Id
    * @param resourceName resourceName
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
   public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.put<T>(resourceName, resource);
+    return this._client.putResource<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
-   * Updating Existing Objects
+   * Updating Existing Objects by ExternalId
+   * @param resourceName resourceName
+   * @param resource should contain in the body the ENTIRE updated resource
+   * @returns Promise<ClientResponse<DTO>>
+   */
+  public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
+    return this._client.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource);
+  }
+
+  /**
+   * Updating Existing Objects by Id
    * should contain in the body the entire updated resource
    * @param resourceName resourceName
-   * @param resource should contain in the body the [FIELDS THAT YOU WANT TO UPDATE]
+   * @param resource should contain in the body the [id] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
    */
   public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patch<T>(resourceName, resource);
+    return this._client.patchResource<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
+  /**
+   * Updating Existing Objects by ExternalId
+   * should contain in the body the entire updated resource
+   * @param resourceName resourceName
+   * @param resource should contain in the body the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
+   * @returns Promise<ClientResponse<DTO>>
+   */
+  public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
+    return this._client.patchResource<T>(resourceName, { externalId: resource.externalId }, resource);
+  }
 
   /**
    * Batch request with transational support

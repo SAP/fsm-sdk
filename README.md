@@ -131,16 +131,20 @@ const serviceCall = {
 await client.post('ServiceCall', serviceCall);
 ```
 
-#### Read object by id
+#### Read object by id or externalId
 
 ```typescript
 await client.getById('ServiceCall', '36A5626F65A54FE7911F536C501D151A');
+// or
+await client.getByExternalId('ServiceCall', 'my-external-id-1');
 ```
 
 #### Update object (providing full new version)
 
 ```typescript
 await client.put('ServiceCall', { ... });
+// or
+await client.putByExternalId('ServiceCall', { ... });
 ```
 
 #### Update object (providing only fields to change)
@@ -151,13 +155,24 @@ await client.patch('ServiceCall', {
     subject: 'update-only-subject',
     lastChanged: 1535712340
   });
+// or
+await client.patchByExternalId('ServiceCall', {
+    externalId: 'my-external-id-1',
+    subject: 'update-only-subject',
+    lastChanged: 1535712340
+  });
 ```
 
-#### Delete object
+#### Delete object by id or externalId
 
 ```typescript
 await client.deleteById('ServiceCall', {
     id: '36A5626F65A54FE7911F536C501D151A',
+    lastChanged: 1535712340
+  });
+// or
+await client.deleteByExternalId('ServiceCall', {
+    externalId: '36A5626F65A54FE7911F536C501D151A',
     lastChanged: 1535712340
   });
 ```

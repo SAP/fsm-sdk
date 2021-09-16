@@ -14,8 +14,14 @@ export class RequestOptionsFacory {
     return Object.keys(o).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(o[key])}`).join('&');
   }
 
-  public static getDataApiUriFor(token: OauthTokenResponse, dtoName: DTOName, dtoId: string | null = null) {
-    return `${token.cluster_url}/api/data/v4/${dtoName}${(dtoId ? `/${dtoId}` : '')}`
+  public static getDataApiUriFor(token: OauthTokenResponse, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
+
+    const identifier = [
+      (resourceId ? `/${resourceId}` : '').trim(),
+      (externalId ? `/externalId/${externalId}` : '').trim()
+    ].join('').trim();
+
+    return `${token.cluster_url}/api/data/v4/${resourceName}${identifier}`;
   }
 
   /**
