@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] 2021-09-16
+### Added
+- Support `getByExternalId`, `postByExternalId`, `patchByExternalId`, `putByExternalId`, `deleteByExternalId`  for working with external ids
+- `login()` to used oauth api stand alone
+- More links to docs 
+- Adding missing DTOs
+
+### Updated 
+- DTO versions updates
+- Updating down stream npm packages - High vulnerability [ [ref](https://npmjs.com/advisories/1781 ]
+
 ## [2.0.1] 2021-08-05
 ### Added
 - Adding token expiration and refresh as proposed by Tobias Wymer ( [@tswymer](https://github.com/tswymer) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/11) ]

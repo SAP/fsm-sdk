@@ -139,7 +139,7 @@ await client.post('ServiceCall', serviceCall);
 ```typescript
 await client.getById('ServiceCall', '36A5626F65A54FE7911F536C501D151A');
 // or
-await client.getByExternalId('ServiceCall', 'my-external-id-1');
+await client.getByExternalId('ServiceCall', 'my-1');
 ```
 
 #### Update object (providing full new version)
@@ -159,11 +159,7 @@ await client.patch('ServiceCall', {
     lastChanged: 1535712340
   });
 // or
-await client.patchByExternalId('ServiceCall', {
-    externalId: 'my-external-id-1',
-    subject: 'update-only-subject',
-    lastChanged: 1535712340
-  });
+await client.patchByExternalId('ServiceCall', { externalId: 'my-1', ... });
 ```
 
 #### Delete object by id or externalId
@@ -174,26 +170,23 @@ await client.deleteById('ServiceCall', {
     lastChanged: 1535712340
   });
 // or
-await client.deleteByExternalId('ServiceCall', {
-    externalId: 'my-external-id-1',
-    lastChanged: 1535712340
-  });
+await client.deleteByExternalId('ServiceCall', { externalId: 'my-1', ... });
 ```
 
 ##### lastChanged
 
 The `lastChanged` field is used for optimistic locking.
-It's like a version-key you have to provide in order to update an object.
+It's like a version-key you must provide in order to update an object.
 
 #### Batch Actions (Transactions)
 
 ```typescript
-// actions will be excuted in sequence order like in array
+// actions will be executed in sequence order like in array
 
 const actions = [ 
   new CreateAction('ServiceCall', { ... }), 
-  new UpdateAction('BusinessPartner', { id, lastChanged ... }), // [it,lastChanged] required for update
-  new DeleteAction('Address', { id, lastChanged ... }) // [it,lastChanged] required for delete
+  new UpdateAction('BusinessPartner', { id, lastChanged ... }), // required for update
+  new DeleteAction('Address', { id, lastChanged ... }) // required for delete
 ];
 
 const response = await client.batch(actions) 
