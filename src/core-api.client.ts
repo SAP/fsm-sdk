@@ -32,25 +32,42 @@ export class CoreAPIClient {
   }
 
   /**
-   *
-   * @param _config ClientConfig {
-   *   debug: boolean | undefined;
-   *   tokenCacheFilePath: string | undefined;
-   *
-   *   oauthEndpoint: string;
-   *
-   *   clientIdentifier: string;
-   *   clientSecret: string;
-   *   clientVersion: string;
-   *
-   *   authGrantType: 'password' | 'client_credentials' | undefined
+   * The CoreAPIClient
    * 
-   *   authAccountName: string | undefined;
-   *   authUserName: string | undefined;
-   *   authPassword: string | undefined;
-   *   authCompany: string | undefined;
-   * 
-   *  }
+   * ```typescript
+   *{
+   *	// [mandatory] your client configuration
+   *	clientIdentifier: '<your-clientIdentifier>',
+   *	clientSecret: '<your-clientSecret>',
+   *	clientVersion: '<your-clientVersion>',
+   *	
+   *	// [optional] oauth grant type, default=password
+   *	authGrantType: 'password' | 'client_credentials' | undefined
+   *	
+   *	// [optional] | [mandatory] if oauth grant type password
+   *	authAccountName: '<your-authAccountName>',
+   *	
+   *	// [optional] | [mandatory] if oauth grant type password
+   *	authUserName: '<your-authUserName>',
+   *	
+   *	// [optional] | [mandatory] if oauth grant type password
+   *	authPassword: '<your-authPassword>',
+   *	
+   *	// [optional] or default=FIRST
+   *	authCompany: '<your-authCompany>',
+   *	
+   *	// [optional] provide verbose logs
+   *	debug: false,
+   *	
+   *	// [optional] enable using custom oauth endpoints
+   *	oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
+   *	
+   *	// [optional] client will cache token (helpful for writing integration tests)
+   *	tokenCacheFilePath: './.myToken.json'
+   *	
+   *}
+   * ```
+   * @param _config ClientConfig
    * @returns CoreAPIClient
    */
   constructor(config: ClientConfig) {
@@ -72,7 +89,8 @@ export class CoreAPIClient {
   /**
    * Here, you can input and execute the CoreSQL query.
    * 
-   * related docs:  https://help.sap.com/viewer/fsm_query_api/Cloud/en-US/query-api-intro.html
+   * related api docs:  
+   * https://help.sap.com/viewer/fsm_query_api/Cloud/en-US/query-api-intro.html
    * 
    * @param coreSQL valid CoreSQL
    * @param dtoNames DTOName[]
@@ -85,7 +103,8 @@ export class CoreAPIClient {
   /**
    * Retrieving Lists of Objects by Id
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName DTOName 
    * @param resourceId uuid as string
@@ -105,7 +124,8 @@ export class CoreAPIClient {
    *  [referenced-resource] : { id: string, externalId? : string } | null
    * ```
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName DTOName 
    * @param externalId externalId as string
@@ -117,7 +137,8 @@ export class CoreAPIClient {
 
   /**
    * Deletes Existing Object by Id
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName DTOName
    * @param resource { id: string, lastChanged: number }
@@ -130,7 +151,8 @@ export class CoreAPIClient {
 
   /**
    * Deletes Existing Object by ExternalId
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName DTOName
    * @param resource { id: string, lastChanged: number }
@@ -144,7 +166,8 @@ export class CoreAPIClient {
   /**
    * Creating Objects by Id
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName DTOName
    * @param resource should contain in the body the ENTIRE updated resource
@@ -164,7 +187,8 @@ export class CoreAPIClient {
    *  [referenced-resource] : { id: string, externalId? : string } | null
    * ```
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName DTOName
    * @param resource should contain in the body the ENTIRE updated resource
@@ -177,7 +201,8 @@ export class CoreAPIClient {
   /**
    * Updating Existing Objects by Id
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName resourceName
    * @param resource should contain in the body the ENTIRE updated resource
@@ -197,7 +222,8 @@ export class CoreAPIClient {
    *  [referenced-resource] : { id: string, externalId? : string } | null
    * ```
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName resourceName
    * @param resource should contain in the resource the ENTIRE updated resource
@@ -211,7 +237,8 @@ export class CoreAPIClient {
    * Updating Existing Objects by Id
    * should contain [id] in the body the entire updated resource
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName resourceName
    * @param resource should contain in the body the [id] & [FIELDS THAT YOU WANT TO UPDATE]
@@ -232,7 +259,8 @@ export class CoreAPIClient {
    *  [referenced-resource] : { id: string, externalId? : string } | null
    * ```
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
    * 
    * @param resourceName resourceName
    * @param resource should contain in the resource the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
@@ -256,13 +284,31 @@ export class CoreAPIClient {
    *  await client.batch(actions)
    * ```
    * 
-   * related docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US/batch-api-intro.html
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US/batch-api-intro.html
    * 
    * @param actions BatchAction | CreateAction | UpdateAction | DeleteAction
    * @returns Promise<BatchResponseJson<T>[]>
    */
   public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
     return this._client.batch<T>(actions);
+  }
+
+  /**
+   * Will use provided ClientConfig and perform a Login.
+   * 
+   * Note: that it is **not required** to explicitly call client.login()
+   * before each client action. The CoreAPIClient will login and  **keep a internally token copy**
+   * and will use this **up to its expiration** and **will auto refresh** when needed.
+   * Calling client.login() will NOT result in mutiple http calls to the oauth api.
+   * 
+   * related api docs: 
+   * https://help.sap.com/viewer/fsm_access_api/Cloud/en-US/oauth-intro.html
+   * 
+   * @returns Promise<OauthTokenResponse>
+   */
+  public async login(): Promise<OauthTokenResponse> {
+    return this._client.login();
   }
 
 

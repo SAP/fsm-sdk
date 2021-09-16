@@ -27,7 +27,7 @@ export class ClientService {
         { resourceId, externalId }: IdOrExternalId = { resourceId: null, externalId: null },
         additionalQs: { [k: string]: string | number | boolean } = {}
     ) {
-        const token = await this._auth.ensureToken(this._config);
+        const token = await this.login();
 
         const queryParams = new URLSearchParams(Object.assign(
             {},
@@ -48,8 +48,12 @@ export class ClientService {
         );
     }
 
+    public async login(): Promise<OauthTokenResponse> {
+        return await this._auth.ensureToken(this._config);
+    }
+
     public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
-        const token = await this._auth.ensureToken(this._config);
+        const token = await this.login();
         const queryParams = new URLSearchParams({
             ...RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
             dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
@@ -87,7 +91,7 @@ export class ClientService {
     }
 
     public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
-        const token = await this._auth.ensureToken(this._config);
+        const token = await this.login();
         const body = new BatchRequest(token, this._config, actions).toString();
 
         const queryParams = new URLSearchParams(Object.assign({

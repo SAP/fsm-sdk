@@ -104,6 +104,22 @@ describe('Auth', () => {
 
   });
 
+  describe('login', () => {
+
+    it('should do login', done => {
+      // ensure token is fetched
+      removeTokenFile();
+
+      const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
+      client.login()
+        .then(token => assert.ok(token.expires_in))
+        .then(() => done())
+        .catch(e => done(e))
+
+    }).timeout(5000);
+
+  });
+  
   describe('auth errors', () => {
 
     it('should forward error', done => {

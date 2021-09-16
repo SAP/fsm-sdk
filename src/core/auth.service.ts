@@ -61,7 +61,7 @@ export class AuthService {
                 fail({ code: 'MODULE_NOT_FOUND' });
             });
         } catch (error) {
-            if (error.code === 'MODULE_NOT_FOUND') {
+            if ((error as any).code === 'MODULE_NOT_FOUND') {
                 return await this._fetchAndSaveToken(config);
             }
             throw error;
