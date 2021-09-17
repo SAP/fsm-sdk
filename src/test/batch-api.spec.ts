@@ -12,7 +12,7 @@ describe('BatchApi', () => {
   });
 
   function prepareFixture() {
-    return require('./serviceCall.fixture.json');
+    return require('./fixture/serviceCall.fixture.json');
   }
 
   it('batch create', done => {

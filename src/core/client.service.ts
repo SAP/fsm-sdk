@@ -10,6 +10,8 @@ import { OauthTokenResponse } from './oauth-token-response.model';
 import { AuthService } from './auth.service';
 import { RequestOptionsFacory } from './request-options.facory';
 
+type IdOrExternalId = Partial<{ resourceId: string | null | undefined, externalId: string | null | undefined }>;
+
 export class ClientService {
 
     constructor(
@@ -20,34 +22,43 @@ export class ClientService {
 
     private async _requestDataApi<T extends DTOModels>(
         method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
-        dtoName: DTOName,
-        dtoData: T | null | any,
-        dtoId: string | null = null,
+        resourceName: DTOName,
+        resourceData: T | null | any,
+        { resourceId, externalId }: IdOrExternalId = { resourceId: null, externalId: null },
         additionalQs: { [k: string]: string | number | boolean } = {}
     ) {
-        const token = await this._auth.ensureToken(this._config);
+        const token = await this.login();
 
-        const params = new URLSearchParams(Object.assign({},
+        const queryParams = new URLSearchParams(Object.assign(
+            {},
             RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
-            method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([dtoName]) } : undefined,
-            additionalQs) as { [key: string]: string });
+            method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([resourceName]) } : undefined,
+            additionalQs
+        ) as { [key: string]: string });
+
+        const uri = `${RequestOptionsFacory.getDataApiUriFor(token, resourceName, resourceId, externalId)}?${queryParams}`;
 
         return await this._http.request<T>(
-            `${RequestOptionsFacory.getDataApiUriFor(token, dtoName, dtoId)}?${params}`,
+            uri,
             {
                 method,
                 headers: RequestOptionsFacory.getRequestHeaders(token, this._config),
-                body: method != 'GET' ? JSON.stringify(dtoData) : undefined
-            });
+                body: method != 'GET' ? JSON.stringify(resourceData) : undefined
+            }
+        );
+    }
+
+    public async login(): Promise<OauthTokenResponse> {
+        return await this._auth.ensureToken(this._config);
     }
 
     public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
-        const token = await this._auth.ensureToken(this._config);
-        const params = new URLSearchParams({
+        const token = await this.login();
+        const queryParams = new URLSearchParams({
             ...RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
             dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
         });
-        return await this._http.request(`${token.cluster_url}/api/query/v1?${params}`,
+        return await this._http.request(`${token.cluster_url}/api/query/v1?${queryParams}`,
             {
                 method: 'POST',
                 headers: Object.assign(
@@ -58,41 +69,38 @@ export class ClientService {
             }) as { data: T[] };
     }
 
-    public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-        const response = await this._requestDataApi('GET', resourceName, null, resourceId);
-        return typeof response === 'string' ? JSON.parse(response) : response; // not sending json headers
+    public async getResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        const response = await this._requestDataApi('GET', resourceName, null, id, queryParams);
+        return typeof response === 'string' ? JSON.parse(response) : response;
     }
 
-    public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, resource: { id: string, lastChanged: number }): Promise<undefined> {
-        const { id, lastChanged } = resource;
+    public async deleteResource<T extends Partial<DTOModels>>(resourceName: DTOName, id: IdOrExternalId, lastChanged: number): Promise<undefined> {
         return this._requestDataApi('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
     }
 
-    public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-        return this._requestDataApi('POST', resourceName, resource) as Promise<ClientResponse<T>>;
+    public async postResource<T extends DTOModels>(resourceName: DTOName, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        return this._requestDataApi('POST', resourceName, resource, undefined, queryParams) as Promise<ClientResponse<T>>;
     }
 
-    public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-        const { id } = resource;
-        return this._requestDataApi('PUT', resourceName, resource, id) as Promise<ClientResponse<T>>;
+    public async putResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        return this._requestDataApi('PUT', resourceName, resource, id, queryParams) as Promise<ClientResponse<T>>;
     }
 
-    public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-        const { id } = resource;
-        return this._requestDataApi('PATCH', resourceName, resource, id) as Promise<ClientResponse<T>>;
+    public async patchResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<ClientResponse<T>> {
+        return this._requestDataApi('PATCH', resourceName, resource, id, queryParams) as Promise<ClientResponse<T>>;
     }
 
     public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
-        const token = await this._auth.ensureToken(this._config);
+        const token = await this.login();
         const body = new BatchRequest(token, this._config, actions).toString();
 
-        const params = new URLSearchParams(Object.assign({
+        const queryParams = new URLSearchParams(Object.assign({
             clientIdentifier: this._config.clientIdentifier,
             dtos: RequestOptionsFacory.getDTOVersionsString(actions.map(it => it.dtoName)),
             ...RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
         }));
 
-        const responseBody = await this._http.request<string>(`${token.cluster_url}/api/data/batch/v1?${params}`, {
+        const responseBody = await this._http.request<string>(`${token.cluster_url}/api/data/batch/v1?${queryParams}`, {
             method: 'POST',
             headers: {
                 'content-type': 'multipart/mixed;boundary="======boundary======"',

@@ -40,11 +40,16 @@ describe('compatibility', () => {
             [
                 'batch',
                 'deleteById',
+                'deleteByExternalId',
                 'getById',
+                'getByExternalId',
                 'getToken',
                 'patch',
+                'patchByExternalId',
                 'post',
+                'postByExternalId',
                 'put',
+                'putByExternalId',
                 'query',
                 'setToken',
             ].forEach(fn => assert((client as any)[fn], `${fn} to be defined`));
@@ -78,7 +83,7 @@ describe('compatibility', () => {
 
     describe('ALL_DTO_VERSIONS', () => {
         it('should have DTOs', () => {
-            assert.strictEqual(Object.keys(fsm.ALL_DTO_VERSIONS).length, 78);
+            assert.strictEqual(Object.keys(fsm.ALL_DTO_VERSIONS).length, 104);
         });
 
     });

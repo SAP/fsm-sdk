@@ -44,7 +44,7 @@ export class BatchResponse<T> {
 
       return JSON.parse(result) as { data: [] };
     } catch (ex) {
-      throw new Error(`Error (${ex.message ? ex.message : ex}) parsing body of ${response}`);
+      throw new Error(`Error (${ex instanceof Error && ex.message ? ex.message : ex}) parsing body of ${response}`);
     }
   }
 

@@ -83,6 +83,8 @@ for in browser usage using the umd bundle via unpkg for example:
 ```
 
 related doc's:
+- [Field Service Management - Integration Guidelines](https://help.sap.com/viewer/fsm_integration_guidelines/Cloud/en-US/integration-guidelines-intro.html)
+- [Access API (OAuth 2.0)](https://help.sap.com/viewer/fsm_access_api/Cloud/en-US)
 - [Generating Client ID and Secret](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/generating-client-id.html)
 
 ### Examples 
@@ -98,7 +100,7 @@ The CoreAPIClient API actions will return a Promise and is asynchronous by defau
 ### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
-see [Query API Documentation](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
+see [Field Service Management - Query API](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
 
 ```typescript
 
@@ -118,6 +120,7 @@ await client.query(coreSQL, ['ServiceCall']);
 ### CRUD object
 
 related doc's:
+- [Field Service Management - Data API v4](DATA API Docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US)
 - [Data Model Documentation](https://help.sap.com/viewer/fsm_data_model/Cloud/en-US/data-model-overview.html)
 
 #### Create a new object
@@ -131,16 +134,20 @@ const serviceCall = {
 await client.post('ServiceCall', serviceCall);
 ```
 
-#### Read object by id
+#### Read object by id or externalId
 
 ```typescript
 await client.getById('ServiceCall', '36A5626F65A54FE7911F536C501D151A');
+// or
+await client.getByExternalId('ServiceCall', 'my-1');
 ```
 
 #### Update object (providing full new version)
 
 ```typescript
 await client.put('ServiceCall', { ... });
+// or
+await client.putByExternalId('ServiceCall', { ... });
 ```
 
 #### Update object (providing only fields to change)
@@ -151,31 +158,35 @@ await client.patch('ServiceCall', {
     subject: 'update-only-subject',
     lastChanged: 1535712340
   });
+// or
+await client.patchByExternalId('ServiceCall', { externalId: 'my-1', ... });
 ```
 
-#### Delete object
+#### Delete object by id or externalId
 
 ```typescript
 await client.deleteById('ServiceCall', {
     id: '36A5626F65A54FE7911F536C501D151A',
     lastChanged: 1535712340
   });
+// or
+await client.deleteByExternalId('ServiceCall', { externalId: 'my-1', ... });
 ```
 
 ##### lastChanged
 
 The `lastChanged` field is used for optimistic locking.
-It's like a version-key you have to provide in order to update an object.
+It's like a version-key you must provide in order to update an object.
 
 #### Batch Actions (Transactions)
 
 ```typescript
-// actions will be excuted in sequence order like in array
+// actions will be executed in sequence order like in array
 
 const actions = [ 
   new CreateAction('ServiceCall', { ... }), 
-  new UpdateAction('BusinessPartner', { id, lastChanged ... }), // [it,lastChanged] required for update
-  new DeleteAction('Address', { id, lastChanged ... }) // [it,lastChanged] required for delete
+  new UpdateAction('BusinessPartner', { id, lastChanged ... }), // required for update
+  new DeleteAction('Address', { id, lastChanged ... }) // required for delete
 ];
 
 const response = await client.batch(actions) 

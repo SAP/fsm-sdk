@@ -13,9 +13,27 @@ describe('RequestOptionsFacory', () => {
         assert.deepStrictEqual(result, `a_number=1&a_boolean=true&a_string=str%22ing`);
     });
 
-    it('getDataApiUriFor', () => {
-        const result = RequestOptionsFacory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', '1');
-        assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/1`);
+    describe('getDataApiUriFor', () => {
+
+        it('with no id', () => {
+            const result = RequestOptionsFacory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity');
+            assert.deepStrictEqual(result, `test.com/api/data/v4/Activity`);
+        });
+
+        it('by dto id', () => {
+            const result = RequestOptionsFacory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', '1-uid');
+            assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/1-uid`);
+        });
+
+        it('by external id', () => {
+            const result = RequestOptionsFacory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', null, '1-external-id');
+            assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/externalId/1-external-id`);
+        });
+
+        it('should prefer id', () => {
+            const result = RequestOptionsFacory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', '1-uid', '1-external-id');
+            assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/1-uid`);
+        });
     });
 
 });
