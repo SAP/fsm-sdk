@@ -120,7 +120,7 @@ await client.query(coreSQL, ['ServiceCall']);
 ### CRUD object
 
 related doc's:
-- [Field Service Management - Data API v4](DATA API Docs: https://help.sap.com/viewer/fsm_data_api/Cloud/en-US)
+- [Data API v4 Docs](https://help.sap.com/viewer/fsm_data_api/Cloud/en-US)
 - [Data Model Documentation](https://help.sap.com/viewer/fsm_data_model/Cloud/en-US/data-model-overview.html)
 
 #### Create a new object

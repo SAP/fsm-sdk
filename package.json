@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
@@ -17,7 +17,8 @@
     "clean": "rm -rf release",
     "pretest": "npm run build:browser",
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
-    "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples"
+    "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples",
+    "tools:update-dto-versions": "./node_modules/.bin/ts-node ./src/test/update-dto-versions.ts"
   },
   "engines": {
     "node": ">=12"
