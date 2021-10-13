@@ -17,7 +17,8 @@
     "clean": "rm -rf release",
     "pretest": "npm run build:browser",
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
-    "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples"
+    "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples",
+    "tools:update-dto-versions": "./node_modules/.bin/ts-node ./src/test/update-dto-versions.ts"
   },
   "engines": {
     "node": ">=12"
