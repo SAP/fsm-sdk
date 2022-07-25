@@ -1,11 +1,12 @@
 import assert = require('assert');
 import fs = require('fs');
+
 import { integrationTestConfig } from './integration-test.config';
 import { CoreAPIClient } from '../core-api.client';
 import { ErrorResponse } from '../core/http/error-response.model';
 import { HttpService } from '../core/http/http-service';
-import { AuthService } from '../core/oauth/oauth.service';
-import { OAuthResponse } from '../core/oauth/oauth-response.model';
+import { OAuthApiClient } from '../core/api-clients/oauth-api/oauth-api.client';
+import { oAuthResponseMock } from './fixture/oAuthResponse.mock';
 
 describe('Auth', () => {
 
@@ -19,36 +20,7 @@ describe('Auth', () => {
     } catch (error) { }
   }
 
-  describe('AuthService', () => {
-
-    const tokenMock: OAuthResponse = {
-
-      expires_in: 9999999,
-
-      access_token: '<token>',
-      token_type: 'bearer',
-      scope: '<scope>',
-      account: '<account>',
-      account_id: -1,
-      tenant_id: null,
-      user: '<user>',
-      user_email: '<user_email>',
-      user_id: -1,
-      companies: [
-        {
-          permissionGroupId: -1,
-          strictEncryptionPolicy: false,
-          name: '<name>',
-          description: '<description>',
-          personId: '<personId>',
-          id: -1
-        }
-      ],
-      authorities: [
-        'USER'
-      ],
-      cluster_url: '<cluster_url>'
-    };
+  describe('OAuthApiClient', () => {
 
     describe('ensureToken', () => {
 
@@ -56,10 +28,10 @@ describe('Auth', () => {
 
         removeTokenFile();
 
-        const auth = new AuthService({ request: () => Promise.resolve(tokenMock) } as any as HttpService);
+        const auth = new OAuthApiClient({ request: () => Promise.resolve(oAuthResponseMock) } as any as HttpService);
 
         auth.ensureToken(integrationTestConfig)
-          .then(token => assert.deepStrictEqual(token, tokenMock))
+          .then(token => assert.deepStrictEqual(token, oAuthResponseMock))
           .then(() => done())
           .catch(e => done(e));
 
@@ -69,15 +41,15 @@ describe('Auth', () => {
 
         removeTokenFile();
 
-        const httpStub = { request: () => Promise.resolve(JSON.stringify(tokenMock)) } as any as HttpService;
+        const httpStub = { request: () => Promise.resolve(JSON.stringify(oAuthResponseMock)) } as any as HttpService;
         const loggerStub = { error: () => { } }
-        const auth = new AuthService(httpStub, loggerStub);
+        const auth = new OAuthApiClient(httpStub, loggerStub);
 
-        const invalidToken = { ...tokenMock, expires_in: 0 };
+        const invalidToken = { ...oAuthResponseMock, expires_in: 0 };
         auth.setToken(invalidToken);
 
         auth.ensureToken({ ...integrationTestConfig, debug: true, authGrantType: 'client_credentials', tokenCacheFilePath: 'i/n/v/a/l/i/d' })
-          .then(token => assert.deepStrictEqual(token, tokenMock))
+          .then(token => assert.deepStrictEqual(token, oAuthResponseMock))
           .then(() => done())
           .catch(e => done(e));
 
@@ -87,10 +59,10 @@ describe('Auth', () => {
 
         removeTokenFile();
 
-        const httpStub = { request: () => Promise.resolve(JSON.stringify(tokenMock)) } as any as HttpService;
-        const auth = new AuthService(httpStub);
+        const httpStub = { request: () => Promise.resolve(JSON.stringify(oAuthResponseMock)) } as any as HttpService;
+        const auth = new OAuthApiClient(httpStub);
 
-        const validToken = { ...tokenMock, expires_in: 8888888 };
+        const validToken = { ...oAuthResponseMock, expires_in: 8888888 };
         auth.setToken(validToken);
 
         auth.ensureToken({ ...integrationTestConfig, debug: false, authGrantType: 'client_credentials' })

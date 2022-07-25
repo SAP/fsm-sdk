@@ -1,7 +1,8 @@
 import { BatchAction } from './batch-action.model';
-import { ClientConfig } from '../../../client-config.model';
-import { OAuthResponse } from '../../../oauth/oauth-response.model';
+import { ClientConfig } from '../../../config/client-config.model';
+import { OAuthResponse } from '../../oauth-api/oauth-response.model';
 import { RequestOptionsFactory } from '../../../request-options.factory';
+import { DataApiClient } from '../data-api.client';
 
 export class BatchRequest {
 
@@ -9,6 +10,10 @@ export class BatchRequest {
     private _token: OAuthResponse,
     private _config: ClientConfig,
     private _actions: BatchAction[]) {
+  }
+
+  public static stringify(o: { [key: string]: any }): string {
+    return Object.keys(o).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(o[key])}`).join('&');
   }
 
   public toString() {
@@ -21,9 +26,9 @@ export class BatchRequest {
       bodyPart += [
         action.method.toUpperCase(),
         ' ',
-        RequestOptionsFactory.getDataApiUriFor(this._token, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
+        DataApiClient.getDataApiUriFor(this._token, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
         '?',
-        RequestOptionsFactory.stringify({
+        BatchRequest.stringify({
           clientIdentifier: this._config.clientIdentifier,
 
           ...RequestOptionsFactory.getRequestAccountQueryParams(this._token, this._config),

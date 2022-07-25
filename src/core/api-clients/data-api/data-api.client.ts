@@ -1,15 +1,12 @@
 import { URLSearchParams } from '../../../polyfills';
 
 import { HttpService } from '../../http/http-service';
-import { AuthService } from '../../oauth/oauth.service';
-import { OAuthResponse } from '../../oauth/oauth-response.model';
-
+import { OAuthApiClient } from '../oauth-api/oauth-api.client';
+import { OAuthResponse } from '../oauth-api/oauth-response.model';
 
 import { RequestOptionsFactory } from '../../request-options.factory';
-
-import { ClientConfig } from '../../client-config.model';
+import { ClientConfig } from '../../config/client-config.model';
 import { ClientResponse } from '../../client-response.model';
-
 import { DTOModels, DTOName } from './model/dto-name.model';
 
 
@@ -20,23 +17,27 @@ export class DataApiClient {
     constructor(
         private _config: Readonly<ClientConfig>,
         private _http: Readonly<HttpService>,
-        private _auth: Readonly<AuthService>
+        private _oauth: Readonly<OAuthApiClient>
     ) { }
-
-    //@todo make this private
-    public async login(): Promise<OAuthResponse> {
-        return await this._auth.ensureToken(this._config);
-    }
 
     //@todo todo move this
     public getToken(): Readonly<OAuthResponse> | undefined {
-        return this._auth.getToken();
+        return this._oauth.getToken();
     }
 
     //@todo todo move this
     public setToken(token: OAuthResponse): DataApiClient {
-        this._auth.setToken(token);
+        this._oauth.setToken(token);
         return this;
+    }
+
+    public static getDataApiUriFor(token: OAuthResponse, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
+        const identifier = [
+            (resourceId ? `/${resourceId}` : '').trim(),
+            (externalId && !resourceId ? `/externalId/${externalId}` : '').trim()
+        ].join('').trim();
+
+        return `${token.cluster_url}/api/data/v4/${resourceName}${identifier}`;
     }
 
     private async _requestDataApi<T extends DTOModels>(
@@ -46,7 +47,7 @@ export class DataApiClient {
         { resourceId, externalId }: IdOrExternalId = { resourceId: null, externalId: null },
         additionalQs: { [k: string]: string | number | boolean } = {}
     ) {
-        const token = await this.login();
+        const token = await this._oauth.ensureToken(this._config);
 
         const queryParams = new URLSearchParams(Object.assign(
             {},
@@ -55,7 +56,7 @@ export class DataApiClient {
             additionalQs
         ) as { [key: string]: string });
 
-        const uri = `${RequestOptionsFactory.getDataApiUriFor(token, resourceName, resourceId, externalId)}?${queryParams}`;
+        const uri = `${DataApiClient.getDataApiUriFor(token, resourceName, resourceId, externalId)}?${queryParams}`;
 
         return await this._http.request<T>(
             uri,

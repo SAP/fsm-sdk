@@ -1,40 +1,25 @@
 import { DTOName, DTOModels } from './core/api-clients/data-api/model/dto-name.model';
-import { ClientConfig } from './core/client-config.model';
-import { OAuthResponse } from './core/oauth/oauth-response.model';
+import { ClientConfig } from './core/config/client-config.model';
+import { OAuthResponse } from './core/api-clients/oauth-api/oauth-response.model';
 import { ClientResponse } from './core/client-response.model';
 import { BatchAction } from './core/api-clients/data-api/model/batch-action.model';
 import { RequestOptionsFactory } from './core/request-options.factory';
-import { BatchResponseJson } from './core/api-clients/data-api/model/batch-response';
+import { BatchResponseJson } from './core/api-clients/data-api/model/batch-response.model';
 
-import { AuthService } from './core/oauth/oauth.service';
+import { OAuthApiClient } from './core/api-clients/oauth-api/oauth-api.client';
 import { HttpService } from './core/http/http-service';
 import { DataApiClient } from './core/api-clients/data-api/data-api.client';
 import { QueryApiClient } from './core/api-clients/query-api/query-api.client';
 import { BatchApiClient } from './core/api-clients/data-api/batch-api.client';
+import { ClientConfigService } from './core/config/client-config.service';
 
 export class CoreAPIClient {
 
   private _dataApi: DataApiClient;
   private _queryApi: QueryApiClient;
   private _batchApi: BatchApiClient;
-
-  private _config_default: ClientConfig = {
-    debug: false,
-
-    oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
-    tokenCacheFilePath: undefined,
-
-    clientIdentifier: '<your-clientIdentifier>',
-    clientSecret: '<your-clientSecret>',
-    clientVersion: '<your-clientVersion>',
-
-    authGrantType: 'password',
-
-    authAccountName: undefined,
-    authUserName: undefined,
-    authPassword: undefined,
-    authCompany: undefined
-  }
+  private _oauthApi: OAuthApiClient;
+  private _config: Readonly<ClientConfig>;
 
   /**
    * The CoreAPIClient
@@ -76,12 +61,16 @@ export class CoreAPIClient {
    * @returns CoreAPIClient
    */
   constructor(config: ClientConfig) {
-    const _config = Object.assign(this._config_default, config);
-    const _http = new HttpService(_config);
-    const _auth = new AuthService(_http);
-    this._dataApi = new DataApiClient(_config, _http, _auth);
-    this._queryApi = new QueryApiClient(_config, _http, _auth);
-    this._batchApi = new BatchApiClient(_config, _http, _auth);
+    const defaultConfig: ClientConfig = ClientConfigService.getDefault();
+    this._config = Object.assign(defaultConfig, config);
+
+    const _http = new HttpService(this._config);
+
+    this._oauthApi = new OAuthApiClient(_http);
+
+    this._dataApi = new DataApiClient(this._config, _http, this._oauthApi);
+    this._queryApi = new QueryApiClient(this._config, _http, this._oauthApi);
+    this._batchApi = new BatchApiClient(this._config, _http, this._oauthApi);
   }
 
 
@@ -315,7 +304,7 @@ export class CoreAPIClient {
    * @returns Promise<OauthTokenResponse>
    */
   public async login(): Promise<OAuthResponse> {
-    return this._dataApi.login();
+    return await this._oauthApi.ensureToken(this._config);
   }
 
 

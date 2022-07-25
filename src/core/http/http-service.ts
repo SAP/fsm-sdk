@@ -1,4 +1,4 @@
-import { ClientConfig } from '../client-config.model';
+import { ClientConfig } from '../config/client-config.model';
 import { ErrorResponse, HttpRequestOptions, HttpResponse } from './error-response.model';
 import { fetch } from '../../polyfills';
 

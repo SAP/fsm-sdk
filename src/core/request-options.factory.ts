@@ -1,29 +1,15 @@
 import { v4 as uuid } from 'uuid';
 import { ALL_DTO_VERSIONS } from './all-dto-versions.constant';
-import { ClientConfig } from './client-config.model';
+import { ClientConfig } from './config/client-config.model';
 import { DTOName } from './api-clients/data-api/model/dto-name.model';
-import { OAuthResponse } from './oauth/oauth-response.model';
+import { OAuthResponse } from './api-clients/oauth-api/oauth-response.model';
 
 export class RequestOptionsFactory {
 
   public static getUUID(): string {
     return uuid().replace(/\-/g, '');
   }
-
-  public static stringify(o: { [key: string]: any }): string {
-    return Object.keys(o).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(o[key])}`).join('&');
-  }
-
-  public static getDataApiUriFor(token: OAuthResponse, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
-
-    const identifier = [
-      (resourceId ? `/${resourceId}` : '').trim(),
-      (externalId && !resourceId ? `/externalId/${externalId}` : '').trim()
-    ].join('').trim();
-
-    return `${token.cluster_url}/api/data/v4/${resourceName}${identifier}`;
-  }
-
+  
   public static getDTOVersionsString(DTONames: DTOName[]): string {
     return DTONames
       .map(name => {
@@ -52,19 +38,20 @@ export class RequestOptionsFactory {
     }
   }
 
-  public static getRequestAccountQueryParams(token: OAuthResponse, config: ClientConfig) {
+  public static getRequestAccountQueryParams(token: { companies: { name: string }[] }, config: ClientConfig) {
     if (!token.companies || !token.companies.length) {
       throw new Error('no company found on given account');
     }
 
-    const [selectedCompany] = token.companies;
+    const [firstCompany] = token.companies;
 
     return {
       account: config.authAccountName,
       user: config.authUserName,
+
       company: config.authCompany
         ? config.authCompany
-        : selectedCompany.name,
+        : firstCompany.name,
     }
   }
 }

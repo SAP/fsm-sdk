@@ -1,10 +1,11 @@
-import { toBase64, URLSearchParams } from '../../polyfills';
-import { ClientConfig } from '../client-config.model';
-import { HttpService } from '../http/http-service';
+import { toBase64, URLSearchParams } from '../../../polyfills';
+import { ClientConfig } from '../../config/client-config.model';
+import { HttpService } from '../../http/http-service';
 import { OAuthResponse } from './oauth-response.model';
-import { RequestOptionsFactory } from '../request-options.factory';
+import { RequestOptionsFactory } from '../../request-options.factory';
 
-export class AuthService {
+export class OAuthApiClient {
+
     private _token: OAuthResponse | undefined;
     private _tokenExpiration: Date | undefined;
 
@@ -79,7 +80,7 @@ export class AuthService {
         return this._token;
     }
 
-    public setToken(token: OAuthResponse): AuthService {
+    public setToken(token: OAuthResponse): OAuthApiClient {
 
         if (!token || !token.account) {
             throw new Error('invalid token');
