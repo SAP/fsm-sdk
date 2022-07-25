@@ -22,14 +22,19 @@ const client = new fsm.CoreAPIClient({
 
 (async () => {
 
-  const coreSQL1 = `
+  try {
+    const coreSQL1 = `
   SELECT
     it
   FROM
     Equipment it
   `;
 
-  const result1 = await client.query(coreSQL1, ['Equipment']);
-  console.log(JSON.stringify(result1, null, 2)); // => { "data": [ { "it": { ... } } ... ] ...
+    const result1 = await client.query(coreSQL1, ['Equipment']);
+    console.log(JSON.stringify(result1, null, 2)); // => { "data": [ { "it": { ... } } ... ] ...
+  } catch (error) {
+    console.log('ERROR');
+    console.error(error);
+  }
 
 })();
