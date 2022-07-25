@@ -1,5 +1,5 @@
 import assert = require('assert');
-import { BatchResponse } from '../core/batch-response';
+import { BatchResponse } from '../core/api-clients/data-api/model/batch-response';
 
 describe('BatchResponse', () => {
 

@@ -2,10 +2,10 @@ import assert = require('assert');
 import fs = require('fs');
 import { integrationTestConfig } from './integration-test.config';
 import { CoreAPIClient } from '../core-api.client';
-import { ErrorResponse } from '../core/error-response.model';
-import { OauthTokenResponse } from '../core/oauth-token-response.model';
-import { HttpService } from '../core/http-service';
-import { AuthService } from '../core/auth.service';
+import { ErrorResponse } from '../core/http/error-response.model';
+import { HttpService } from '../core/http/http-service';
+import { AuthService } from '../core/oauth/oauth.service';
+import { OAuthResponse } from '../core/oauth/oauth-response.model';
 
 describe('Auth', () => {
 
@@ -21,7 +21,7 @@ describe('Auth', () => {
 
   describe('AuthService', () => {
 
-    const tokenMock: OauthTokenResponse = {
+    const tokenMock: OAuthResponse = {
 
       expires_in: 9999999,
 
@@ -119,7 +119,7 @@ describe('Auth', () => {
     }).timeout(5000);
 
   });
-  
+
   describe('auth errors', () => {
 
     it('should forward error', done => {

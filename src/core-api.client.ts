@@ -1,18 +1,23 @@
-import { DTOName, DTOModels } from './core/dto-name.model';
+import { DTOName, DTOModels } from './core/api-clients/data-api/model/dto-name.model';
 import { ClientConfig } from './core/client-config.model';
-import { OauthTokenResponse } from './core/oauth-token-response.model';
+import { OAuthResponse } from './core/oauth/oauth-response.model';
 import { ClientResponse } from './core/client-response.model';
-import { BatchAction } from './core/batch-action.model';
+import { BatchAction } from './core/api-clients/data-api/model/batch-action.model';
 import { RequestOptionsFactory } from './core/request-options.factory';
-import { BatchResponseJson } from './core/batch-response';
+import { BatchResponseJson } from './core/api-clients/data-api/model/batch-response';
 
-import { AuthService } from './core/auth.service';
-import { HttpService } from './core/http-service';
-import { ClientService } from './core/client.service';
+import { AuthService } from './core/oauth/oauth.service';
+import { HttpService } from './core/http/http-service';
+import { DataApiClient } from './core/api-clients/data-api/data-api.client';
+import { QueryApiClient } from './core/api-clients/query-api/query-api.client';
+import { BatchApiClient } from './core/api-clients/data-api/batch-api.client';
 
 export class CoreAPIClient {
 
-  private _client: ClientService;
+  private _dataApi: DataApiClient;
+  private _queryApi: QueryApiClient;
+  private _batchApi: BatchApiClient;
+
   private _config_default: ClientConfig = {
     debug: false,
 
@@ -74,7 +79,9 @@ export class CoreAPIClient {
     const _config = Object.assign(this._config_default, config);
     const _http = new HttpService(_config);
     const _auth = new AuthService(_http);
-    this._client = new ClientService(_config, _http, _auth);
+    this._dataApi = new DataApiClient(_config, _http, _auth);
+    this._queryApi = new QueryApiClient(_config, _http, _auth);
+    this._batchApi = new BatchApiClient(_config, _http, _auth);
   }
 
 
@@ -97,7 +104,7 @@ export class CoreAPIClient {
    * @returns Promise<{ data: DTO[] }>
    */
   public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
-    return this._client.query<T>(coreSQL, dtoNames);
+    return this._queryApi.query<T>(coreSQL, dtoNames);
   }
 
   /**
@@ -111,7 +118,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-    return this._client.getResource<T>(resourceName, { resourceId });
+    return this._dataApi.getResource<T>(resourceName, { resourceId });
   }
 
   /**
@@ -132,7 +139,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<ClientResponse<T>> {
-    return this._client.getResource<T>(resourceName, { externalId }, { useExternalIds: true });
+    return this._dataApi.getResource<T>(resourceName, { externalId }, { useExternalIds: true });
   }
 
   /**
@@ -146,7 +153,7 @@ export class CoreAPIClient {
    */
   public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { id, lastChanged } = resource;
-    return this._client.deleteResource<T>(resourceName, { resourceId: id }, lastChanged);
+    return this._dataApi.deleteResource<T>(resourceName, { resourceId: id }, lastChanged);
   }
 
   /**
@@ -160,7 +167,7 @@ export class CoreAPIClient {
    */
   public async deleteByExternalId<T extends Partial<DTOModels> & { externalId: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { externalId, lastChanged } = resource;
-    return this._client.deleteResource<T>(resourceName, { externalId }, lastChanged);
+    return this._dataApi.deleteResource<T>(resourceName, { externalId }, lastChanged);
   }
 
   /**
@@ -174,7 +181,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.postResource<T>(resourceName, resource);
+    return this._dataApi.postResource<T>(resourceName, resource);
   }
 
   /**
@@ -195,9 +202,9 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.postResource<T>(resourceName, resource, { useExternalIds: true });
+    return this._dataApi.postResource<T>(resourceName, resource, { useExternalIds: true });
   }
-  
+
   /**
    * Updating Existing Objects by Id
    * 
@@ -209,7 +216,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.putResource<T>(resourceName, { resourceId: resource.id as string }, resource);
+    return this._dataApi.putResource<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
@@ -230,7 +237,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
+    return this._dataApi.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
   }
 
   /**
@@ -245,7 +252,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patchResource<T>(resourceName, { resourceId: resource.id as string }, resource);
+    return this._dataApi.patchResource<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
@@ -267,11 +274,11 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patchResource<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
+    return this._dataApi.patchResource<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
   }
 
   /**
-   * Batch request with transational support
+   * Batch request with transnational support
    * requests will be executed in oder of the actions array.
    * 
    * Example:
@@ -291,7 +298,7 @@ export class CoreAPIClient {
    * @returns Promise<BatchResponseJson<T>[]>
    */
   public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
-    return this._client.batch<T>(actions);
+    return this._batchApi.batch<T>(actions);
   }
 
   /**
@@ -300,15 +307,15 @@ export class CoreAPIClient {
    * Note: that it is **not required** to explicitly call client.login()
    * before each client action. The CoreAPIClient will login and  **keep a internally token copy**
    * and will use this **up to its expiration** and **will auto refresh** when needed.
-   * Calling client.login() will NOT result in mutiple http calls to the oauth api.
+   * Calling client.login() will NOT result in multiple http calls to the oauth api.
    * 
    * related api docs: 
    * https://help.sap.com/viewer/fsm_access_api/Cloud/en-US/oauth-intro.html
    * 
    * @returns Promise<OauthTokenResponse>
    */
-  public async login(): Promise<OauthTokenResponse> {
-    return this._client.login();
+  public async login(): Promise<OAuthResponse> {
+    return this._dataApi.login();
   }
 
 
@@ -316,8 +323,8 @@ export class CoreAPIClient {
    * get OauthTokenResponse
    * @returns Readonly<OauthTokenResponse> | undefined
    */
-  public getToken(): Readonly<OauthTokenResponse> | undefined {
-    return this._client.getToken();
+  public getToken(): Readonly<OAuthResponse> | undefined {
+    return this._dataApi.getToken();
   }
 
   /**
@@ -325,8 +332,8 @@ export class CoreAPIClient {
    * @param token OauthTokenResponse
    * @returns CoreAPIClient
    */
-  public setToken(token: OauthTokenResponse): CoreAPIClient {
-    this._client.setToken(token);
+  public setToken(token: OAuthResponse): CoreAPIClient {
+    this._dataApi.setToken(token);
     return this;
   }
 

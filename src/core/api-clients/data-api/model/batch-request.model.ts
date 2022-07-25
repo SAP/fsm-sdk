@@ -1,12 +1,12 @@
 import { BatchAction } from './batch-action.model';
-import { ClientConfig } from './client-config.model';
-import { OauthTokenResponse } from './oauth-token-response.model';
-import { RequestOptionsFactory } from './request-options.factory';
+import { ClientConfig } from '../../../client-config.model';
+import { OAuthResponse } from '../../../oauth/oauth-response.model';
+import { RequestOptionsFactory } from '../../../request-options.factory';
 
 export class BatchRequest {
 
   constructor(
-    private _token: OauthTokenResponse,
+    private _token: OAuthResponse,
     private _config: ClientConfig,
     private _actions: BatchAction[]) {
   }
