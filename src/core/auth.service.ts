@@ -2,7 +2,7 @@ import { toBase64, URLSearchParams } from '../polyfills';
 import { ClientConfig } from './client-config.model';
 import { HttpService } from './http-service';
 import { OauthTokenResponse } from './oauth-token-response.model';
-import { RequestOptionsFacory } from './request-options.facory';
+import { RequestOptionsFactory } from './request-options.factory';
 
 export class AuthService {
     private _token: OauthTokenResponse | undefined;
@@ -31,7 +31,7 @@ export class AuthService {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json',
                 'Authorization': `Basic ${toBase64(`${config.clientIdentifier}:${config.clientSecret}`)}`,
-                ...RequestOptionsFacory.getRequestXHeaders(config)
+                ...RequestOptionsFactory.getRequestXHeaders(config)
             },
             body: body.toString()
         });

@@ -3,7 +3,7 @@ import { ClientConfig } from './core/client-config.model';
 import { OauthTokenResponse } from './core/oauth-token-response.model';
 import { ClientResponse } from './core/client-response.model';
 import { BatchAction } from './core/batch-action.model';
-import { RequestOptionsFacory } from './core/request-options.facory';
+import { RequestOptionsFactory } from './core/request-options.factory';
 import { BatchResponseJson } from './core/batch-response';
 
 import { AuthService } from './core/auth.service';
@@ -83,7 +83,7 @@ export class CoreAPIClient {
    * @returns a uuid that can be used as an FSM object id
    */
   public static createUUID(): string {
-    return RequestOptionsFacory.getUUID().toUpperCase();
+    return RequestOptionsFactory.getUUID().toUpperCase();
   }
 
   /**
