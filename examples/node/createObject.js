@@ -79,8 +79,13 @@ const serviceCall = {
 };
 
 (async () => {
+  try {
+    const result = await client.post('ServiceCall', serviceCall);
+    console.log(JSON.stringify(result, null, 2));  // => { data: [ { serviceCall: [Object] } ] }
 
-  const result = await client.post('ServiceCall', serviceCall);
-  console.log(JSON.stringify(result, null, 2));  // => { data: [ { serviceCall: [Object] } ] }
+  } catch (error) {
+    console.log('ERROR');
+    console.error(error);
+  }
 
 })();

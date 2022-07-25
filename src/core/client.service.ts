@@ -8,7 +8,7 @@ import { DTOModels, DTOName } from './dto-name.model';
 import { HttpService } from './http-service';
 import { OauthTokenResponse } from './oauth-token-response.model';
 import { AuthService } from './auth.service';
-import { RequestOptionsFacory } from './request-options.facory';
+import { RequestOptionsFactory } from './request-options.factory';
 
 type IdOrExternalId = Partial<{ resourceId: string | null | undefined, externalId: string | null | undefined }>;
 
@@ -31,18 +31,18 @@ export class ClientService {
 
         const queryParams = new URLSearchParams(Object.assign(
             {},
-            RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
-            method !== 'DELETE' ? { dtos: RequestOptionsFacory.getDTOVersionsString([resourceName]) } : undefined,
+            RequestOptionsFactory.getRequestAccountQueryParams(token, this._config),
+            method !== 'DELETE' ? { dtos: RequestOptionsFactory.getDTOVersionsString([resourceName]) } : undefined,
             additionalQs
         ) as { [key: string]: string });
 
-        const uri = `${RequestOptionsFacory.getDataApiUriFor(token, resourceName, resourceId, externalId)}?${queryParams}`;
+        const uri = `${RequestOptionsFactory.getDataApiUriFor(token, resourceName, resourceId, externalId)}?${queryParams}`;
 
         return await this._http.request<T>(
             uri,
             {
                 method,
-                headers: RequestOptionsFacory.getRequestHeaders(token, this._config),
+                headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
                 body: method != 'GET' ? JSON.stringify(resourceData) : undefined
             }
         );
@@ -55,15 +55,15 @@ export class ClientService {
     public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
         const token = await this.login();
         const queryParams = new URLSearchParams({
-            ...RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
-            dtos: RequestOptionsFacory.getDTOVersionsString(dtoNames)
+            ...RequestOptionsFactory.getRequestAccountQueryParams(token, this._config),
+            dtos: RequestOptionsFactory.getDTOVersionsString(dtoNames)
         });
         return await this._http.request(`${token.cluster_url}/api/query/v1?${queryParams}`,
             {
                 method: 'POST',
                 headers: Object.assign(
                     { 'Content-Type': 'application/json' },
-                    RequestOptionsFacory.getRequestHeaders(token, this._config)
+                    RequestOptionsFactory.getRequestHeaders(token, this._config)
                 ),
                 body: JSON.stringify({ query: coreSQL })
             }) as { data: T[] };
@@ -96,15 +96,15 @@ export class ClientService {
 
         const queryParams = new URLSearchParams(Object.assign({
             clientIdentifier: this._config.clientIdentifier,
-            dtos: RequestOptionsFacory.getDTOVersionsString(actions.map(it => it.dtoName)),
-            ...RequestOptionsFacory.getRequestAccountQueryParams(token, this._config),
+            dtos: RequestOptionsFactory.getDTOVersionsString(actions.map(it => it.dtoName)),
+            ...RequestOptionsFactory.getRequestAccountQueryParams(token, this._config),
         }));
 
         const responseBody = await this._http.request<string>(`${token.cluster_url}/api/data/batch/v1?${queryParams}`, {
             method: 'POST',
             headers: {
                 'content-type': 'multipart/mixed;boundary="======boundary======"',
-                ...RequestOptionsFacory.getRequestHeaders(token, this._config),
+                ...RequestOptionsFactory.getRequestHeaders(token, this._config),
             },
             body
         });

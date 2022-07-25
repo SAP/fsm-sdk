@@ -23,27 +23,32 @@ const client = new fsm.CoreAPIClient({
 });
 
 (async () => {
-  // select the data we need regarding technicians. It can be filtered by job title and external resource flag
-  const coreSQL = `
-    SELECT
-      unifiedPerson.id,
-      unifiedPerson.userName,
-      unifiedPerson.firstName,
-      unifiedPerson.lastName,
-      unifiedPerson.externalResource,
-      unifiedPerson.jobTitle
-    FROM
-      UnifiedPerson unifiedPerson
-    WHERE
-      unifiedPerson.plannableResource = true
-    `;
+  try {
+    // select the data we need regarding technicians. It can be filtered by job title and external resource flag
+    const coreSQL = `
+  SELECT
+    unifiedPerson.id,
+    unifiedPerson.userName,
+    unifiedPerson.firstName,
+    unifiedPerson.lastName,
+    unifiedPerson.externalResource,
+    unifiedPerson.jobTitle
+  FROM
+    UnifiedPerson unifiedPerson
+  WHERE
+    unifiedPerson.plannableResource = true
+  `;
 
-  const result = await client.query(coreSQL, ['UnifiedPerson']);
+    const result = await client.query(coreSQL, ['UnifiedPerson']);
 
-  console.log(`Total ${result.data.length} technicians found`);
+    console.log(`Total ${result.data.length} technicians found`);
 
-  result.data.forEach(el => {
-    console.log(`username: ${el.unifiedPerson.userName}\tname: ${el.unifiedPerson.firstName} ${el.unifiedPerson.lastName}\tid: ${el.unifiedPerson.id}\texternal: ${el.unifiedPerson.externalResource}\ttitle: ${el.unifiedPerson.jobTitle}`);
-  });
+    result.data.forEach(el => {
+      console.log(`username: ${el.unifiedPerson.userName}\tname: ${el.unifiedPerson.firstName} ${el.unifiedPerson.lastName}\tid: ${el.unifiedPerson.id}\texternal: ${el.unifiedPerson.externalResource}\ttitle: ${el.unifiedPerson.jobTitle}`);
+    });
+  } catch (error) {
+    console.log('ERROR');
+    console.error(error);
+  }
 
 })();

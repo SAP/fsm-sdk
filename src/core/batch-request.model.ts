@@ -1,7 +1,7 @@
 import { BatchAction } from './batch-action.model';
 import { ClientConfig } from './client-config.model';
 import { OauthTokenResponse } from './oauth-token-response.model';
-import { RequestOptionsFacory } from './request-options.facory';
+import { RequestOptionsFactory } from './request-options.factory';
 
 export class BatchRequest {
 
@@ -21,14 +21,14 @@ export class BatchRequest {
       bodyPart += [
         action.method.toUpperCase(),
         ' ',
-        RequestOptionsFacory.getDataApiUriFor(this._token, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
+        RequestOptionsFactory.getDataApiUriFor(this._token, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
         '?',
-        RequestOptionsFacory.stringify({
+        RequestOptionsFactory.stringify({
           clientIdentifier: this._config.clientIdentifier,
 
-          ...RequestOptionsFacory.getRequestAccountQueryParams(this._token, this._config),
+          ...RequestOptionsFactory.getRequestAccountQueryParams(this._token, this._config),
 
-          ...(action.method !== 'DELETE' && { dtos: RequestOptionsFacory.getDTOVersionsString([action.dtoName]) }),
+          ...(action.method !== 'DELETE' && { dtos: RequestOptionsFactory.getDTOVersionsString([action.dtoName]) }),
           ...(action.force && action.method !== 'DELETE' && { forceUpdate: 'true' }),
           ...(action.force && action.method === 'DELETE' && { forceDelete: 'true' }),
           ...(action.method === 'DELETE' && !!action.dtoData && !!action.dtoData.lastChanged && { lastChanged: action.dtoData.lastChanged }),

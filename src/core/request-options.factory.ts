@@ -4,7 +4,7 @@ import { ClientConfig } from './client-config.model';
 import { DTOName } from './dto-name.model';
 import { OauthTokenResponse } from './oauth-token-response.model';
 
-export class RequestOptionsFacory {
+export class RequestOptionsFactory {
 
   public static getUUID(): string {
     return uuid().replace(/\-/g, '');
@@ -27,7 +27,7 @@ export class RequestOptionsFacory {
   /**
    * map of DTO objects and versions 
    * { ['<DTOName>']: number }
-   * Note: DTOName is case sensitiv
+   * Note: DTOName is case sensitive
    */
   public static getAllDTOVersions() {
     return ALL_DTO_VERSIONS;
@@ -57,7 +57,7 @@ export class RequestOptionsFacory {
     return {
       'Authorization': `${token.token_type} ${token.access_token}`,
       'Accept': 'application/json',
-      ...RequestOptionsFacory.getRequestXHeaders(config)
+      ...RequestOptionsFactory.getRequestXHeaders(config)
     }
   }
 
