@@ -3,7 +3,7 @@ import fs = require('fs');
 import { integrationTestConfig } from './integration-test.config';
 import { CoreAPIClient } from '../core-api.client';
 import { ALL_DTO_VERSIONS } from '../core/all-dto-versions.constant';
-import { DTOName } from '../core/dto-name.model';
+import { DTOName } from '../core/api-clients/data-api/model/dto-name.model';
 
 describe('QueryApi', () => {
 

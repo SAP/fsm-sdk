@@ -4,7 +4,7 @@ import puppeteer = require('puppeteer');
 import fs = require('fs');
 import path = require('path');
 import { integrationTestConfig } from './integration-test.config';
-import { ClientConfig } from '../core/client-config.model';
+import { ClientConfig } from '../core/config/client-config.model';
 
 declare var runTests: (c: ClientConfig) => Promise<Boolean>
 
