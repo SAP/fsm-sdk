@@ -30,16 +30,17 @@ const current: { [key: string]: string } = Object.keys(ALL_DTO_VERSIONS)
     await page.evaluate((data) => {
         eval(`
         const listElements = jQuery('.head.expanded ul li').get();
-        
+
         const allDTOTitles = listElements.filter(x => jQuery(x).text().includes(' DTO ')).map(x => jQuery(x).text().trim())
-        
+
         const dtos = allDTOTitles.reduce((it, value) => {
             if (!value.includes(' DTO ')) { return it; }
             const [name, versionS] = value.split(' DTO ').map(x => x.trim());
             if (!name || [
-                // deprecated but still in doc's 
+                // deprecated but still in doc's
                 'GeocodingExecutionLog',
-                'ServiceSuiteConfig'
+                'ServiceSuiteConfig',
+                'CrowdExecutionRecord'
             ].includes(name) || !versionS || versionS.length !== 3 || versionS[0] !== 'v') { return it; }
             const version = parseInt(versionS.replace('v', ''), 10);
             if (!version) { return it; }
