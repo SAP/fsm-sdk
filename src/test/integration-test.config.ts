@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { ClientConfig } from '../core/client-config.model';
+import { ClientConfig } from '../core/config/client-config.model';
 const packageJson = JSON.parse(readFileSync('./package.json').toString()) as { version: string };
 require('dotenv').config()
 
