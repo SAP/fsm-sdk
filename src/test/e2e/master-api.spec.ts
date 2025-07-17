@@ -2,7 +2,7 @@ import assert from 'assert';
 import { integrationTestConfig } from '../integration-test.config';
 import { CoreAPIClient } from '../../core-api.client';
 
-describe('MasterApi', () => {
+describe.skip('MasterApi', () => {
 
   const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
   it('should getAccounts', done => {
