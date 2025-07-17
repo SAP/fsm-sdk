@@ -3,7 +3,7 @@ import { ClientConfig } from "../client-config.model";
 import { HttpService } from "../http/http-service";
 import { RequestOptionsFactory } from "../request-options.factory";
 
-export type CompanyResponse = {
+export type Company = {
     id: number;
     name: string;
     accountId: number;
@@ -14,6 +14,11 @@ export type CompanyResponse = {
     strictEncryptionPolicy: boolean;
 }
 
+export type Account = {
+    id: number;
+    name: string;
+};
+
 export class MasterAPIService {
     private http: HttpService;
 
@@ -21,19 +26,18 @@ export class MasterAPIService {
         this.http = new HttpService(_config)
     }
 
-    async getCompanies(accountId: number): Promise<CompanyResponse[]> {
+    async getCompaniesByAccount(accountId: number): Promise<Company[]> {
         const token = await this._auth.ensureToken(this._config);
-        return await this.http.request<CompanyResponse[]>(`${this._config.baseUrl}/api/master/v1/accounts/${accountId}/companies`, {
+        return await this.http.request<Company[]>(`${this._config.baseUrl}/api/master/v1/accounts/${accountId}/companies`, {
             method: 'GET',
             headers: {
                 'content-type': 'application/json',
                 ...RequestOptionsFactory.getRequestHeaders(token, this._config)
             },
-        }) as CompanyResponse[]
+        }) as Company[]
     }
 
-
-    async getAccounts(): Promise<{ id: number, name: string }[]> {
+    async getAccounts(): Promise<Account[]> {
         const token = await this._auth.ensureToken(this._config);
         return await this.http.request(`${this._config.baseUrl}/api/master/v1/accounts`, {
             method: 'GET',
@@ -41,7 +45,7 @@ export class MasterAPIService {
                 'content-type': 'application/json',
                 ...RequestOptionsFactory.getRequestHeaders(token, this._config)
             },
-        }) as { id: number, name: string }[]
+        }) as Account[]
     }
 
 }

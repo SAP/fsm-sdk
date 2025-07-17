@@ -125,7 +125,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<DataApiResponse<T>> {
-    return this._dataApi.getResource<T>(resourceName, { resourceId });
+    return this._dataApi.getById<T>(resourceName, { resourceId });
   }
 
   /**
@@ -146,7 +146,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<DataApiResponse<T>> {
-    return this._dataApi.getResource<T>(resourceName, { externalId }, { useExternalIds: true });
+    return this._dataApi.getById<T>(resourceName, { externalId }, { useExternalIds: true });
   }
 
   /**
@@ -160,7 +160,7 @@ export class CoreAPIClient {
    */
   public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { id, lastChanged } = resource;
-    return this._dataApi.deleteResource<T>(resourceName, { resourceId: id }, lastChanged);
+    return this._dataApi.deleteById<T>(resourceName, { resourceId: id }, lastChanged);
   }
 
   /**
@@ -174,7 +174,7 @@ export class CoreAPIClient {
    */
   public async deleteByExternalId<T extends Partial<DTOModels> & { externalId: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { externalId, lastChanged } = resource;
-    return this._dataApi.deleteResource<T>(resourceName, { externalId }, lastChanged);
+    return this._dataApi.deleteById<T>(resourceName, { externalId }, lastChanged);
   }
 
   /**
@@ -188,7 +188,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.postResource<T>(resourceName, resource);
+    return this._dataApi.post<T>(resourceName, resource);
   }
 
   /**
@@ -209,7 +209,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.postResource<T>(resourceName, resource, { useExternalIds: true });
+    return this._dataApi.post<T>(resourceName, resource, { useExternalIds: true });
   }
 
   /**
@@ -223,7 +223,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.putResource<T>(resourceName, { resourceId: resource.id as string }, resource);
+    return this._dataApi.put<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
@@ -244,7 +244,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
+    return this._dataApi.put<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
   }
 
   /**
@@ -259,7 +259,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.patchResource<T>(resourceName, { resourceId: resource.id as string }, resource);
+    return this._dataApi.patch<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
@@ -281,7 +281,7 @@ export class CoreAPIClient {
    * @returns Promise<ClientResponse<DTO>>
    */
   public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.patchResource<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
+    return this._dataApi.patch<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
   }
 
   /**

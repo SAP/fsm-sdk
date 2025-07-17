@@ -44,24 +44,24 @@ export class DataApiService {
         );
     }
 
-    public async getResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async getById<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         const response = await this._requestDataApi('GET', resourceName, null, id, queryParams);
         return typeof response === 'string' ? JSON.parse(response) : response;
     }
 
-    public async deleteResource<T extends Partial<DTOModels>>(resourceName: DTOName, id: IdOrExternalId, lastChanged: number): Promise<undefined> {
+    public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, id: IdOrExternalId, lastChanged: number): Promise<undefined> {
         return this._requestDataApi('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
     }
 
-    public async postResource<T extends DTOModels>(resourceName: DTOName, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async post<T extends DTOModels>(resourceName: DTOName, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         return this._requestDataApi('POST', resourceName, resource, undefined, queryParams) as Promise<DataApiResponse<T>>;
     }
 
-    public async putResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async put<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         return this._requestDataApi('PUT', resourceName, resource, id, queryParams) as Promise<DataApiResponse<T>>;
     }
 
-    public async patchResource<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async patch<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         return this._requestDataApi('PATCH', resourceName, resource, id, queryParams) as Promise<DataApiResponse<T>>;
     }
 }

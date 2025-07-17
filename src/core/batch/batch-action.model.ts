@@ -1,4 +1,4 @@
-import { DTOModels, DTOName } from './dto-name.model';
+import { DTOModels, DTOName } from '../dto-name.model';
 
 type Method = 'PATCH' | 'POST' | 'DELETE'
 

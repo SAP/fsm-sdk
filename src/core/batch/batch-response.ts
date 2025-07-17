@@ -1,4 +1,4 @@
-import { DTOModels } from './dto-name.model';
+import { DTOModels } from '../dto-name.model';
 
 type Maybe<T> = T | undefined;
 
