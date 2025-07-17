@@ -1,7 +1,7 @@
 name: on-main 
 
 env:
-  AUTH_ACCOUNTNAME: ${{ secrets.AUTH_ACCOUNTNAME }}
+  AUTH_ACCOUNT_NAME: ${{ secrets.AUTH_ACCOUNT_NAME }}
   AUTH_GRANT_TYPE: ${{ secrets.AUTH_GRANT_TYPE }}
   AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
   AUTH_USERNAME: ${{ secrets.AUTH_USERNAME }}

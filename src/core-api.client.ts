@@ -309,17 +309,11 @@ export class CoreAPIClient {
   }
 
   /**
-   * Will use provided ClientConfig and perform a Login.
+   * Executes a login using the current client configuration and retrieves an OAuth token.
    * 
-   * Note: that it is **not required** to explicitly call client.login()
-   * before each client action. The CoreAPIClient will login and  **keep a internally token copy**
-   * and will use this **up to its expiration** and **will auto refresh** when needed.
-   * Calling client.login() will NOT result in mutiple http calls to the oauth api.
+   * Note: Explicit login is not required before other actions; the client will auto-login and refresh tokens as needed.
    * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_access_api/Cloud/en-US/oauth-intro.html
-   * 
-   * @returns Promise<OauthTokenResponse>
+   * @returns {Promise<OauthTokenResponse>} Resolves with the OAuth token response.
    */
   public async login(): Promise<OauthTokenResponse> {
     return this._auth.ensureToken(this._config);
@@ -327,23 +321,32 @@ export class CoreAPIClient {
 
 
   /**
-   * get OauthTokenResponse
-   * @returns Readonly<OauthTokenResponse> | undefined
+   * Retrieves the current OAuth token, if available.
+   * 
+   * @returns {Readonly<OauthTokenResponse> | undefined} The current OAuth token or undefined if not logged in.
    */
   public getToken(): Readonly<OauthTokenResponse> | undefined {
     return this._auth.getToken();
   }
 
   /**
-   * set OauthTokenResponse
-   * @param token OauthTokenResponse
-   * @returns CoreAPIClient
+   * Sets the OAuth token to be used by the client.
+   * 
+   * @param {OauthTokenResponse} token - The OAuth token to set.
+   * @returns {CoreAPIClient} The current client instance for chaining.
    */
   public setToken(token: OauthTokenResponse): CoreAPIClient {
     this._auth.setToken(token);
     return this;
   }
 
+  /**
+   * Sets the company to use for authentication, if the token contains multiple companies.
+   * 
+   * @param {string} companyName - The name of the company to set for authentication.
+   * @throws {Error} If no token is found, or if the company is not available in the token.
+   * @returns {CoreAPIClient} The current client instance for chaining.
+   */
   public setAuthCompany(companyName: string): CoreAPIClient {
     const token = this._auth.getToken();
     if (!token) {
@@ -361,6 +364,11 @@ export class CoreAPIClient {
 
   }
 
+  /**
+   * Provides access to the MasterAPIService for master data operations.
+   * 
+   * @returns {MasterAPIService} The master API service instance.
+   */
   public get masterApi(): MasterAPIService {
     return this._masterApi;
   }
