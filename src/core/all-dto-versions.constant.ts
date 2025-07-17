@@ -38,7 +38,6 @@ export const ALL_DTO_VERSIONS: Readonly<{ [name: string]: number }> = {
   'Country': 12,
   'County': 10,
   'CreditNote': 13,
-  'CrowdExecutionRecord': 8,
   'Currency': 12,
   'CustomRule': 8,
   'Defect': 11,

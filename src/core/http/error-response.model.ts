@@ -19,7 +19,7 @@ export type HttpResponse = {
 }
 
 export type HttpRequestOptions = {
-  body: ArrayBuffer
+  body?: ArrayBuffer
   | ArrayBufferView
   | NodeJS.ReadableStream
   | string

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es6",
+    "target": "es2017",
+    "module": "ESNext",
     "lib": [
       "es2015",
       "es2015.promise",
@@ -21,13 +21,14 @@
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
     "node_modules",
+    "release",
     "**/*.spec.ts",
     "**/test/*.*"
   ]

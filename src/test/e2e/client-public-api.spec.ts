@@ -1,7 +1,7 @@
-import assert = require('assert');
-import fs = require('fs');
-import { integrationTestConfig } from './integration-test.config';
-import * as fsm from '..';
+import assert from 'assert';
+import fs from 'fs';
+import { integrationTestConfig } from '../integration-test.config';
+import * as fsm from '../..';
 
 
 describe('compatibility', () => {
@@ -63,8 +63,9 @@ describe('compatibility', () => {
 
         describe('setToken', () => {
             it('should set token', async () => {
-                assert(!!client.setToken({ account: -1 } as any));
-                assert.deepStrictEqual(client.getToken(), { account: -1 });
+                const t = { access_token: '', expires_in: 999999, token_type: 'some', account: -1 } as any
+                assert(!!client.setToken(t));
+                assert.deepStrictEqual(client.getToken(), t);
             });
 
             it('should throw on invalid tokens', async () => {
@@ -83,7 +84,7 @@ describe('compatibility', () => {
 
     describe('ALL_DTO_VERSIONS', () => {
         it('should have DTOs', () => {
-            assert.strictEqual(Object.keys(fsm.ALL_DTO_VERSIONS).length, 166);
+            assert.strictEqual(Object.keys(fsm.ALL_DTO_VERSIONS).length, 165);
         });
 
     });

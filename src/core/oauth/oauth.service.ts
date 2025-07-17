@@ -1,10 +1,10 @@
-import { toBase64, URLSearchParams } from '../polyfills';
-import { ClientConfig } from './client-config.model';
-import { HttpService } from './http-service';
-import { OauthTokenResponse } from './oauth-token-response.model';
-import { RequestOptionsFactory } from './request-options.factory';
+import { toBase64, URLSearchParams } from '../../polyfills';
+import { ClientConfig } from '../client-config.model';
+import { HttpService } from '../http/http-service';
+import { OauthTokenBase, OauthTokenResponse } from './oauth-token-response.model';
+import { RequestOptionsFactory } from '../request-options.factory';
 
-export class AuthService {
+export class OAuthService {
     private _token: OauthTokenResponse | undefined;
     private _tokenExpiration: Date | undefined;
 
@@ -25,7 +25,12 @@ export class AuthService {
             )
         });
 
-        const response = await this._http.request<string>(`${config.oauthEndpoint}/token`, {
+        const tokenEndpoint = config.oauthEndpoint
+            ? `${config.oauthEndpoint}/token`
+            : `https://${config.baseUrl}/api/oauth2/v2/token`;
+
+
+        const response = await this._http.request<string>(tokenEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -79,10 +84,13 @@ export class AuthService {
         return this._token;
     }
 
-    public setToken(token: OauthTokenResponse): AuthService {
+    public setToken(token: OauthTokenResponse): OAuthService {
 
-        if (!token || !token.account) {
-            throw new Error('invalid token');
+        const missing = (['access_token', 'expires_in', 'token_type'] as Array<keyof OauthTokenBase>)
+            .filter(key => token[key] === undefined || token[key] === null);
+
+        if (missing.length) {
+            throw new Error(`Invalid token missing required properties [${missing.join(', ')}]`);
         }
 
         this._token = token;

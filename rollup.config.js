@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2'
+import typescript from '@rollup/plugin-typescript';
 import filesize from 'rollup-plugin-filesize'
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
@@ -13,13 +13,7 @@ export default {
         }
     ],
     plugins: [
-        typescript({
-            typescript: require('typescript'),
-            tsconfig: 'tsconfig.umd.json',
-            tsconfigDefaults: {
-                sourceMap: true
-            }
-        }),
+        typescript({ tsconfig: './tsconfig.umd.json' }),
         filesize(),
         nodeResolve(),
     ],

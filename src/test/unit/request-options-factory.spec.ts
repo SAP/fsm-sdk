@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { RequestOptionsFactory } from '../core/request-options.factory';
+import { RequestOptionsFactory } from '../../core/request-options.factory';
 
 describe('RequestOptionsFactory', () => {
 
@@ -16,22 +16,22 @@ describe('RequestOptionsFactory', () => {
     describe('getDataApiUriFor', () => {
 
         it('with no id', () => {
-            const result = RequestOptionsFactory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity');
+            const result = RequestOptionsFactory.getDataApiUriFor('test.com', 'Activity');
             assert.deepStrictEqual(result, `test.com/api/data/v4/Activity`);
         });
 
         it('by dto id', () => {
-            const result = RequestOptionsFactory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', '1-uid');
+            const result = RequestOptionsFactory.getDataApiUriFor('test.com', 'Activity', '1-uid');
             assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/1-uid`);
         });
 
         it('by external id', () => {
-            const result = RequestOptionsFactory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', null, '1-external-id');
+            const result = RequestOptionsFactory.getDataApiUriFor('test.com', 'Activity', null, '1-external-id');
             assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/externalId/1-external-id`);
         });
 
         it('should prefer id', () => {
-            const result = RequestOptionsFactory.getDataApiUriFor({ cluster_url: 'test.com' } as any, 'Activity', '1-uid', '1-external-id');
+            const result = RequestOptionsFactory.getDataApiUriFor('test.com', 'Activity', '1-uid', '1-external-id');
             assert.deepStrictEqual(result, `test.com/api/data/v4/Activity/1-uid`);
         });
     });

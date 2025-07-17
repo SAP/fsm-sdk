@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { BatchResponse } from '../core/batch-response';
+import assert from 'assert';
+import { BatchResponse } from '../../core/batch/batch-response';
 
 describe('BatchResponse', () => {
 

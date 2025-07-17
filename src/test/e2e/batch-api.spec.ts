@@ -1,7 +1,7 @@
-import assert = require('assert');
-import { integrationTestConfig } from './integration-test.config';
-import { CoreAPIClient } from '../core-api.client';
-import { CreateAction, DeleteAction } from '../index';
+import assert from 'assert';
+import { integrationTestConfig } from '../integration-test.config';
+import { CoreAPIClient } from '../../core-api.client';
+import { CreateAction, DeleteAction } from '../../index';
 
 describe('BatchApi', () => {
 

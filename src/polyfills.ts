@@ -1,4 +1,4 @@
-import { HttpRequestOptions, HttpResponse } from './core/error-response.model';
+import { HttpRequestOptions, HttpResponse } from './core/http/error-response.model';
 
 declare var globalThis: {
     fetch: (url: string, opt: HttpRequestOptions) => Promise<HttpResponse>,
