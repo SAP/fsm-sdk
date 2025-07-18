@@ -1,6 +1,6 @@
 import { DTOName, DTOModels } from './core/dto-name.model';
 import { ClientConfig } from './core/client-config.model';
-import { OauthTokenResponse } from './core/oauth/oauth-token-response.model';
+import { OAuthTokenResponse } from './core/oauth/oauth-token-response.model';
 import { DataApiResponse } from './core/data/data-api.model';
 import { BatchAction } from './core/batch/batch-action.model';
 import { RequestOptionsFactory } from './core/request-options.factory';
@@ -313,9 +313,9 @@ export class CoreAPIClient {
    * 
    * Note: Explicit login is not required before other actions; the client will auto-login and refresh tokens as needed.
    * 
-   * @returns {Promise<OauthTokenResponse>} Resolves with the OAuth token response.
+   * @returns {Promise<OAuthTokenResponse>} Resolves with the OAuth token response.
    */
-  public async login(): Promise<OauthTokenResponse> {
+  public async login(): Promise<OAuthTokenResponse> {
     return this._auth.ensureToken(this._config);
   }
 
@@ -323,19 +323,19 @@ export class CoreAPIClient {
   /**
    * Retrieves the current OAuth token, if available.
    * 
-   * @returns {Readonly<OauthTokenResponse> | undefined} The current OAuth token or undefined if not logged in.
+   * @returns {Readonly<OAuthTokenResponse> | undefined} The current OAuth token or undefined if not logged in.
    */
-  public getToken(): Readonly<OauthTokenResponse> | undefined {
+  public getToken(): Readonly<OAuthTokenResponse> | undefined {
     return this._auth.getToken();
   }
 
   /**
    * Sets the OAuth token to be used by the client.
    * 
-   * @param {OauthTokenResponse} token - The OAuth token to set.
+   * @param {OAuthTokenResponse} token - The OAuth token to set.
    * @returns {CoreAPIClient} The current client instance for chaining.
    */
-  public setToken(token: OauthTokenResponse): CoreAPIClient {
+  public setToken(token: OAuthTokenResponse): CoreAPIClient {
     this._auth.setToken(token);
     return this;
   }
@@ -352,16 +352,14 @@ export class CoreAPIClient {
     if (!token) {
       throw new Error('No token found. Please login first.');
     }
-    if (!token.companies || token.companies.length === 0) {
-      throw new Error('No companies found in token. Please ensure you have access to at least one company.');
+
+    if (token.contentType === 'user' && !(token.content.companies || []).map(it => it.name).includes(companyName)) {
+      throw new Error(`Company '${companyName}' not found in token. Available companies: ${token.content.companies?.map(it => it.name).join(', ')}`);
     }
-    if (!token.companies.some(it => it.name === companyName)) {
-      throw new Error(`Company '${companyName}' not found in token. Available companies: ${token.companies.map(it => it.name).join(', ')}`);
-    }
+
     this._config.authCompany = companyName;
 
     return this;
-
   }
 
   /**

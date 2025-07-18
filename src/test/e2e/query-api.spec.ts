@@ -1,12 +1,12 @@
 import assert from 'assert';
-import { integrationTestConfig } from '../integration-test.config';
+import { ClientConfigBuilder } from '../integration-test.config';
 import { CoreAPIClient } from '../../core-api.client';
 import { ALL_DTO_VERSIONS } from '../../core/all-dto-versions.constant';
 import { DTOName } from '../../core/dto-name.model';
 
 describe('QueryApi', () => {
 
-  const client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
+  const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
   it('should execute query', done => {
 
     client.query(

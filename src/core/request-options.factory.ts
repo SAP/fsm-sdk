@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { ALL_DTO_VERSIONS } from './all-dto-versions.constant';
 import { DTOName } from './dto-name.model';
+import { OAuthTokenResponse } from './oauth/oauth-token-response.model';
 
 export class RequestOptionsFactory {
 
@@ -12,7 +13,7 @@ export class RequestOptionsFactory {
     return Object.keys(o).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(o[key])}`).join('&');
   }
 
-  public static getDataApiUriFor(baseUrl:string, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
+  public static getDataApiUriFor(baseUrl: string, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
 
     const identifier = [
       (resourceId ? `/${resourceId}` : '').trim(),
@@ -41,11 +42,11 @@ export class RequestOptionsFactory {
       }).join(';');
   }
 
-  public static getRequestXHeaders(config: { clientIdentifier: string, clientVersion: string }) {
+  public static getRequestXHeaders(config: Partial<{ clientIdentifier: string, clientVersion: string }>) {
     const requestId = uuid().replace(/\-/g, '');
     return {
-      'X-Client-Id': config.clientIdentifier,
-      'X-Client-Version': config.clientVersion,
+      'X-Client-Id': config.clientIdentifier || 'unknown',
+      'X-Client-Version': config.clientVersion || 'unknown',
       'X-Request-ID': requestId,
       'X-B3-TraceId': requestId
     }
@@ -59,18 +60,26 @@ export class RequestOptionsFactory {
     }
   }
 
-  public static getRequestAccountQueryParams(token: Partial<{ companies: Partial<{ name: string }>[] }>, config: Partial<{ authAccountName: string, authUserName: string, authCompany: string }>) {
+  public static getRequestAccountQueryParams(token: OAuthTokenResponse,
+    config: Partial<{ authAccountName: string, authUserName: string, authCompany: string }>) {
 
-    const [firstCompany] = token.companies || [];
+    const [firstCompany] = token.contentType === 'user'
+      && token.content.companies || [];
 
-    const company = config.authCompany
+    const company: string | undefined = config.authCompany
       ? config.authCompany
       : firstCompany?.name;
 
+    const user = config.authUserName
+      ? config.authUserName
+      : token.contentType === 'user'
+        ? token.content.user_name
+        : undefined;
+
     return {
+      user,
       company,
       account: config.authAccountName,
-      user: config.authUserName,
     }
   }
 }

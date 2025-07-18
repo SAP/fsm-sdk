@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { integrationTestConfig } from '../integration-test.config';
+import { ClientConfigBuilder } from '../integration-test.config';
 import { CoreAPIClient } from '../../core-api.client';
 import { CreateAction, DeleteAction } from '../..';
 
@@ -8,7 +8,7 @@ describe('DataApi', () => {
   let client: CoreAPIClient
 
   beforeEach(() => {
-    client = new CoreAPIClient(integrationTestConfig);
+    client = new CoreAPIClient(ClientConfigBuilder.getConfig('password'));
   });
 
   function prepareFixture() {

@@ -1,20 +1,9 @@
 import assert from 'assert';
-import fs from 'fs';
-import { integrationTestConfig } from '../integration-test.config';
+import { ClientConfigBuilder } from '../integration-test.config';
 import * as fsm from '../..';
 
 
 describe('compatibility', () => {
-
-    const removeTokenFile = () => {
-        if (!integrationTestConfig.debug || !integrationTestConfig.tokenCacheFilePath) {
-            return;
-        }
-        try {
-            require(integrationTestConfig.tokenCacheFilePath);
-            fs.unlinkSync(integrationTestConfig.tokenCacheFilePath);
-        } catch (error) { }
-    }
 
     describe('fsm', () => {
         it('public API', () => {
@@ -31,10 +20,7 @@ describe('compatibility', () => {
     });
 
     describe('CoreAPIClient', () => {
-
-        // ensure token is fetched
-        removeTokenFile();
-        const client = new fsm.CoreAPIClient({ ...integrationTestConfig, debug: false });
+        const client = new fsm.CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), debug: false });
 
         it('should have public methods defined', () => {
             [

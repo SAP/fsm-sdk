@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { integrationTestConfig } from '../integration-test.config';
+import { ClientConfigBuilder } from '../integration-test.config';
 import { CoreAPIClient } from '../../core-api.client';
 import { CreateAction, DeleteAction } from '../../index';
 
@@ -8,7 +8,7 @@ describe('BatchApi', () => {
   let client: CoreAPIClient
 
   beforeEach(() => {
-    client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
+    client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
   });
 
   function prepareFixture() {

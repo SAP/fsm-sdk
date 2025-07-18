@@ -1,28 +1,50 @@
 
-export type OauthTokenBase = {
+export type OAuthToken = {
   access_token: string;
   token_type: string;
   expires_in: number;
+  refresh_token?: string;
 }
 
-export type OauthTokenResponse = OauthTokenBase & Partial<{
-  scope: string;
-  account: string;
-  account_id: number;
-  tenant_id?: null | number;
-  user: string;
-  user_id: number;
+type UserTokenContent = Partial<{
+  auth_type: 'PASSWORD';
   user_email: string;
-
+  user_name: string;
+  rti: string;
+  authorities: string[];
+  client_id: string;
+  user_uuid: null;
   companies: {
     id: number;
     name: string;
-    description: string | null;
+    description: string;
     strictEncryptionPolicy: boolean;
-    personId?: string;
-    permissionGroupId?: number;
+    permissionGroupId: number;
+    personId: string;
   }[];
-
-  authorities: string[]; // USER
-  // cluster_url: string;
+  account_id: number,
+  user_id: number,
+  permission_group_id: null,
+  exp: number,
+  user: string;
+  account: string;
 }>
+
+type ClientTokenContent = Partial<{
+  permission_group_id: number;
+  exp: number;
+  authorities: string[];
+  jti: string;
+  client_id: string;
+}>
+
+
+type TOAuthTokenResponse<T extends 'client' | 'user', U extends (ClientTokenContent | UserTokenContent)> = OAuthToken & {
+  contentType: T,
+  content: U
+}
+
+export type ClientOAuthTokenResponse = TOAuthTokenResponse<'client', ClientTokenContent>;
+export type UserOAuthTokenResponse = TOAuthTokenResponse<'user', UserTokenContent>;
+
+export type OAuthTokenResponse = ClientOAuthTokenResponse | UserOAuthTokenResponse;
