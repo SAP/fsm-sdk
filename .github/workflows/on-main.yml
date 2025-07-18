@@ -9,6 +9,7 @@ env:
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
   CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
   OAUTH_ENDPOINT: ${{ secrets.OAUTH_ENDPOINT }}
+  BASE_URL: ${{ secrets.BASE_URL }}
   NPM_TOKEN: 'N/A'
 
 on:
@@ -22,7 +23,7 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [23.x]
     
     steps:
       - uses: actions/checkout@v2

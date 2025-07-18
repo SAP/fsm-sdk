@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
 - (breaking change) Updated Support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed. 
 - (breaking change) Removed support browser based bundle.
+- (breaking change) NodeJs v23 LTS is now required.
 - Updated Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
 - Adding `getAccounts()` and `getCompaniesByAccount(accountId)` to interact with the AccountAPI
 
