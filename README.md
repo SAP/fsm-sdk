@@ -71,15 +71,6 @@ const client = new fsm.CoreAPIClient({
 });
 ```
 
-for in browser usage using the umd bundle via unpkg for example:
-```html
-  <script src="https://unpkg.com/fsm-sdk/release/umd/fsm-sdk.bundle"></script>
-  <script>
-        const client = new fsm.CoreAPIClient({ ... });
-        // ...
-  </script>
-```
-
 related doc's:
 - [Field Service Management - Integration Guidelines](https://help.sap.com/viewer/fsm_integration_guidelines/Cloud/en-US/integration-guidelines-intro.html)
 - [Access API (OAuth 2.0)](https://help.sap.com/viewer/fsm_access_api/Cloud/en-US)

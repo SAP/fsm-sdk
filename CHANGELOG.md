@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.0] 2025-06-18
 ### Updated & Added
-- (breaking change) ClientConfig now supports setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
-- (breaking change) Support for OAuth API v2, client credential and password flows
-- Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
+- (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
+- (breaking change) Updated Support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed. 
+- (breaking change) Removed support browser based bundle.
+- Updated Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
 - Adding `getAccounts()` and `getCompaniesByAccount(accountId)` to interact with the AccountAPI
 
 ## [2.1.1] 2021-10-13
