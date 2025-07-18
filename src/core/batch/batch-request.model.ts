@@ -21,7 +21,7 @@ export class BatchRequest {
       bodyPart += [
         action.method.toUpperCase(),
         ' ',
-        RequestOptionsFactory.getDataApiUriFor(this._config.baseUrl, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
+        RequestOptionsFactory.getDataApiUriFor(this._config, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
         '?',
         RequestOptionsFactory.stringify({
           clientIdentifier: this._config.clientIdentifier,

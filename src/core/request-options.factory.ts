@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { ALL_DTO_VERSIONS } from './all-dto-versions.constant';
 import { DTOName } from './dto-name.model';
 import { OAuthTokenResponse } from './oauth/oauth-token-response.model';
+import { ClientConfig } from './client-config.model';
 
 export class RequestOptionsFactory {
 
@@ -13,14 +14,18 @@ export class RequestOptionsFactory {
     return Object.keys(o).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(o[key])}`).join('&');
   }
 
-  public static getDataApiUriFor(baseUrl: string, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
+  private static getBaseUrl(config: Readonly<ClientConfig>) {
+    return config.baseUrl;
+  }
+
+  public static getDataApiUriFor(config: Readonly<ClientConfig>, resourceName: DTOName, resourceId: string | null = null, externalId: string | null = null) {
 
     const identifier = [
       (resourceId ? `/${resourceId}` : '').trim(),
       (externalId && !resourceId ? `/externalId/${externalId}` : '').trim()
     ].join('').trim();
 
-    return `${baseUrl}/api/data/v4/${resourceName}${identifier}`;
+    return `${this.getBaseUrl(config)}/api/data/v4/${resourceName}${identifier}`;
   }
 
   /**

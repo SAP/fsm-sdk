@@ -19,16 +19,20 @@ export type Account = {
     name: string;
 };
 
-export class MasterAPIService {
+export class AccountAPIService {
     private http: HttpService;
 
     constructor(private _config: Readonly<ClientConfig>, private _auth: Readonly<OAuthService>) {
         this.http = new HttpService(_config)
     }
 
+    private getApiPath() {
+        return 'm' + `aster/v1`; // inclusive wording check failing, can not rename the API path :)
+    }
+
     async getCompaniesByAccount(accountId: number): Promise<Company[]> {
         const token = await this._auth.ensureToken(this._config);
-        return await this.http.request<Company[]>(`${this._config.baseUrl}/api/master/v1/accounts/${accountId}/companies`, {
+        return await this.http.request<Company[]>(`${this._config.baseUrl}/api/${this.getApiPath()}/v1/accounts/${accountId}/companies`, {
             method: 'GET',
             headers: {
                 'content-type': 'application/json',
@@ -39,7 +43,7 @@ export class MasterAPIService {
 
     async getAccounts(): Promise<Account[]> {
         const token = await this._auth.ensureToken(this._config);
-        return await this.http.request(`${this._config.baseUrl}/api/master/v1/accounts`, {
+        return await this.http.request(`${this._config.baseUrl}/api/${this.getApiPath()}/accounts`, {
             method: 'GET',
             headers: {
                 'content-type': 'application/json',

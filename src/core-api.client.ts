@@ -9,7 +9,7 @@ import { BatchResponseJson } from './core/batch/batch-response';
 import { OAuthService } from './core/oauth/oauth.service';
 import { HttpService } from './core/http/http-service';
 import { DataApiService } from './core/data/data-api.service';
-import { MasterAPIService } from './core/master/master-api.service';
+import { Account, AccountAPIService, Company } from './core/account/account-api.service';
 import { QueryApiService } from './core/query/query-api.service';
 import { BatchAPIService } from './core/batch/batch-api.service';
 
@@ -17,7 +17,7 @@ export class CoreAPIClient {
 
   private _auth: OAuthService;
   private _dataApi: DataApiService;
-  private _masterApi: MasterAPIService;
+  private _accountApi: AccountAPIService;
   private _queryAPi: QueryApiService;
   private _batchApi: BatchAPIService;
   private _config_default: ClientConfig = {
@@ -87,7 +87,7 @@ export class CoreAPIClient {
     this._auth = new OAuthService(_http);
     this._queryAPi = new QueryApiService(this._config, _http, this._auth);
     this._batchApi = new BatchAPIService(this._config, _http, this._auth);
-    this._masterApi = new MasterAPIService(this._config, this._auth);
+    this._accountApi = new AccountAPIService(this._config, this._auth);
     this._dataApi = new DataApiService(this._config, _http, this._auth);
   }
 
@@ -363,12 +363,22 @@ export class CoreAPIClient {
   }
 
   /**
-   * Provides access to the MasterAPIService for master data operations.
+   * Retrieves all accounts accessible to the authenticated user/client.
    * 
-   * @returns {MasterAPIService} The master API service instance.
+   * @returns {Promise<Account[]>} A promise resolving to an array of accounts.
    */
-  public get masterApi(): MasterAPIService {
-    return this._masterApi;
+  public async getAccounts(): Promise<Account[]> {
+    return this._accountApi.getAccounts()
+  }
+
+  /**
+   * Retrieves all companies associated with a specific account.
+   * 
+   * @param {number} accountId - The ID of the account.
+   * @returns {Promise<Company[]>} A promise resolving to an array of companies for the given account.
+   */
+  public async getCompaniesByAccount(accountId: number): Promise<Company[]> {
+    return this._accountApi.getCompaniesByAccount(accountId);
   }
 
 }

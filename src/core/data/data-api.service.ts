@@ -32,7 +32,7 @@ export class DataApiService {
             additionalQs
         ) as { [key: string]: string });
 
-        const uri = `${RequestOptionsFactory.getDataApiUriFor(this._config.baseUrl, resourceName, resourceId, externalId)}?${queryParams}`;
+        const uri = `${RequestOptionsFactory.getDataApiUriFor(this._config, resourceName, resourceId, externalId)}?${queryParams}`;
 
         return await this._http.request<T>(
             uri,
