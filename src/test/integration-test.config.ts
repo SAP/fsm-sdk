@@ -42,7 +42,7 @@ export class ClientConfigBuilder {
     });
 
   public static getConfig(gradtype: OAuthGrantType): Partial<ClientConfig> {
-    const config = this.configs.get(gradtype) || this.configs.get('client_credentials') || {};
+    const config = { ...this.configs.get(gradtype) || this.configs.get('client_credentials') || {} };
 
     Object.keys(config).forEach((key) => {
       const missingMandatoryValue = [

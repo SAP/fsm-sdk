@@ -353,7 +353,7 @@ export class CoreAPIClient {
       throw new Error('No token found. Please login first.');
     }
 
-    if (token.contentType === 'user' && !(token.content.companies || []).map(it => it.name).includes(companyName)) {
+    if (token.contentType === 'user' && (token.content.companies || []).map(it => it.name.toLocaleLowerCase()).includes(companyName.toLocaleLowerCase()) === false) {
       throw new Error(`Company '${companyName}' not found in token. Available companies: ${token.content.companies?.map(it => it.name).join(', ')}`);
     }
 
@@ -377,7 +377,7 @@ export class CoreAPIClient {
    * @param {number} accountId - The ID of the account.
    * @returns {Promise<Company[]>} A promise resolving to an array of companies for the given account.
    */
-  public async getCompaniesByAccount(accountId: number): Promise<Company[]> {
+  public async getCompaniesByAccountId(accountId: number): Promise<Company[]> {
     return this._accountApi.getCompaniesByAccount(accountId);
   }
 

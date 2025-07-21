@@ -28,7 +28,7 @@ describe('OAuthService', () => {
 
       const auth = new OAuthService({ request: () => Promise.resolve(tokenMock) } as any as HttpService);
 
-      auth.ensureToken(ClientConfigBuilder.getConfig('client_credentials') as ClientConfig)
+      auth.ensureToken({ ...ClientConfigBuilder.getConfig('client_credentials'), oauthEndpoint: undefined, debug: true, tokenCacheFilePath: 'coresystems-oauth2-token.json' } as ClientConfig)
         .then(token => assert.deepStrictEqual(token, tokenMock))
         .then(() => done())
         .catch(e => done(e));

@@ -2,19 +2,28 @@ import assert from 'assert';
 import { ClientConfigBuilder } from '../integration-test.config';
 import { CoreAPIClient } from '../../core-api.client';
 
-describe.skip('AccountApi', () => {
+describe('AccountApi', () => {
 
-  const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), debug: false });
-  it('should getAccounts', done => {
+  describe('getAccounts', () => {
+    const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
+    it('should throw if no access', done => {
 
-    client.getAccounts()
-      .then(data => {
-        assert(Array.isArray(data));
-        assert(data.length > 0);
-      })
-      .then(_ => done())
-      .catch(e => done(e));
+      client.getAccounts()
+        .then(_ => done(new Error('should throw')))
+        .catch(e => done());
 
-  }).timeout(ClientConfigBuilder.getTestTimeout());
+    }).timeout(ClientConfigBuilder.getTestTimeout());
+  });
+
+  describe('getCompaniesByAccount', () => {
+    const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
+    it('should throw if no access', done => {
+
+      client.getCompaniesByAccountId(1)
+        .then(_ => done(new Error('should throw')))
+        .catch(e => done());
+
+    }).timeout(ClientConfigBuilder.getTestTimeout());
+  })
 
 });
