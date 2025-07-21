@@ -31,7 +31,7 @@ describe('DataApi', () => {
       })
       .then(_ => done())
       .catch(error => done(error));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('POST serviceCall Id', done => {
 
@@ -54,7 +54,7 @@ describe('DataApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('POST serviceCall ExternalId', done => {
     const MyExternalID = CoreAPIClient.createUUID();
@@ -73,7 +73,7 @@ describe('DataApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('GET serviceCall by Id', done => {
 
@@ -86,7 +86,7 @@ describe('DataApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('GET serviceCall by ExternalId', done => {
     Promise.all([
@@ -102,7 +102,7 @@ describe('DataApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('PUT serviceCall by Id', done => {
     client.getById<{ id: string, subject: string }>('ServiceCall', THE_ID)
@@ -118,7 +118,7 @@ describe('DataApi', () => {
       })
       .then(_ => done())
       .catch(e => done(e));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('PUT serviceCall by ExternalId', done => {
     client.getByExternalId<{ id: string, subject: string, lastChanged: number }>('ServiceCall', THE_EXTERNAL_ID)
@@ -134,7 +134,7 @@ describe('DataApi', () => {
       })
       .then(_ => done())
       .catch(e => done(e));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('PATCH serviceCall by Id', done => {
     client.getById<{ id: string, lastChanged: number }>('ServiceCall', THE_ID)
@@ -154,7 +154,7 @@ describe('DataApi', () => {
       })
       .then(_ => done())
       .catch(e => done(e));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('PATCH serviceCall by ExternalId', done => {
     client.getByExternalId<{ id: string, lastChanged: number, }>('ServiceCall', THE_EXTERNAL_ID)
@@ -174,7 +174,7 @@ describe('DataApi', () => {
       })
       .then(_ => done())
       .catch(e => done(e));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('DELETE serviceCall by Id', done => {
     client.getById<{ id: string, lastChanged: number }>('ServiceCall', THE_ID)
@@ -186,7 +186,7 @@ describe('DataApi', () => {
       .then(fromDB => assert.strictEqual(fromDB.data.length, 0))
       .then(_ => done())
       .catch(e => done(e));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('DELETE serviceCall by externalId', done => {
     const id = CoreAPIClient.createUUID();
@@ -207,7 +207,7 @@ describe('DataApi', () => {
       .then(fromDB => assert.strictEqual(fromDB.data.length, 0))
       .then(_ => done())
       .catch(e => done(e));
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('External Id E2E', done => {
 
@@ -244,6 +244,6 @@ describe('DataApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
 });

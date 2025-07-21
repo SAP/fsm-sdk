@@ -38,7 +38,7 @@ describe('BatchApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('batch delete', done => {
     new Promise<void>(async (ok, fail) => {
@@ -63,6 +63,6 @@ describe('BatchApi', () => {
       }
     }).then(_ => done()).catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
 });

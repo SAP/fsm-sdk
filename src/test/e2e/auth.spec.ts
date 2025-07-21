@@ -19,7 +19,7 @@ describe('Auth', () => {
         .then(() => done())
         .catch(e => done(e))
 
-    }).timeout(5000);
+    }).timeout(ClientConfigBuilder.getTestTimeout());
 
     it('should do login via [password]', done => {
       const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), tokenCacheFilePath: undefined });
@@ -33,7 +33,7 @@ describe('Auth', () => {
         .then(() => done())
         .catch(e => done(e))
 
-    }).timeout(5000);
+    }).timeout(ClientConfigBuilder.getTestTimeout());
 
   });
 
@@ -48,7 +48,7 @@ describe('Auth', () => {
           done();
         });
 
-    }).timeout(5000);
+    }).timeout(ClientConfigBuilder.getTestTimeout());
 
     it('should forward error for password', done => {
       const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), tokenCacheFilePath: undefined, authGrantType: 'password', authUserName: 'i/n/v/a/l/i/d', authPassword: '******' });
@@ -58,7 +58,7 @@ describe('Auth', () => {
           assert.strictEqual(errorResp.statusCode, 400); // this should be 401, not 400
           done();
         });
-    }).timeout(5000);
+    }).timeout(ClientConfigBuilder.getTestTimeout());
 
 
     it('should forward error unknown endpoints', done => {
@@ -71,7 +71,7 @@ describe('Auth', () => {
           done();
         });
 
-    }).timeout(5000);
+    }).timeout(ClientConfigBuilder.getTestTimeout());
 
   });
 

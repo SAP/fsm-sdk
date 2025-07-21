@@ -58,6 +58,10 @@ export class ClientConfigBuilder {
 
     return config;
   }
+
+  public static getTestTimeout() {
+    return parseInt(process.env.TEST_TIMEOUT || '10000', 10);
+  }
 }
 
 // integrationTestConfig
