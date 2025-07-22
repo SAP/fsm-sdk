@@ -1,4 +1,4 @@
-import puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer'
 import { ALL_DTO_VERSIONS } from '../core/all-dto-versions.constant';
 
 const current: { [key: string]: string } = Object.keys(ALL_DTO_VERSIONS)

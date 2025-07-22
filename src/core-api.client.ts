@@ -1,22 +1,30 @@
 import { DTOName, DTOModels } from './core/dto-name.model';
 import { ClientConfig } from './core/client-config.model';
-import { OauthTokenResponse } from './core/oauth-token-response.model';
-import { ClientResponse } from './core/client-response.model';
-import { BatchAction } from './core/batch-action.model';
+import { OAuthTokenResponse } from './core/oauth/oauth-token-response.model';
+import { DataApiResponse } from './core/data/data-api.model';
+import { BatchAction } from './core/batch/batch-action.model';
 import { RequestOptionsFactory } from './core/request-options.factory';
-import { BatchResponseJson } from './core/batch-response';
+import { BatchResponseJson } from './core/batch/batch-response';
 
-import { AuthService } from './core/auth.service';
-import { HttpService } from './core/http-service';
-import { ClientService } from './core/client.service';
+import { OAuthService } from './core/oauth/oauth.service';
+import { HttpService } from './core/http/http-service';
+import { DataApiService } from './core/data/data-api.service';
+import { Account, AccountAPIService, Company } from './core/account/account-api.service';
+import { QueryApiService } from './core/query/query-api.service';
+import { BatchAPIService } from './core/batch/batch-api.service';
 
 export class CoreAPIClient {
 
-  private _client: ClientService;
+  private _auth: OAuthService;
+  private _dataApi: DataApiService;
+  private _accountApi: AccountAPIService;
+  private _queryAPi: QueryApiService;
+  private _batchApi: BatchAPIService;
   private _config_default: ClientConfig = {
     debug: false,
 
-    oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
+    oauthEndpoint: undefined,
+    baseUrl: 'https://eu.fsm.cloud.sap',
     tokenCacheFilePath: undefined,
 
     clientIdentifier: '<your-clientIdentifier>',
@@ -30,6 +38,7 @@ export class CoreAPIClient {
     authPassword: undefined,
     authCompany: undefined
   }
+  private _config: ClientConfig;
 
   /**
    * The CoreAPIClient
@@ -59,8 +68,8 @@ export class CoreAPIClient {
    *	// [optional] provide verbose logs
    *	debug: false,
    *	
-   *	// [optional] enable using custom oauth endpoints
-   *	oauthEndpoint: 'https://ds.coresuite.com/api/oauth2/v1',
+   *	// [optional] enable using custom oauth endpoints see https://api.sap.com/api/cloud_authentication_service_ext/overview
+   *	oauthEndpoint: 'https://eu.fsm.cloud.sap/api/oauth2/v2',
    *	
    *	// [optional] client will cache token (helpful for writing integration tests)
    *	tokenCacheFilePath: './.myToken.json'
@@ -70,11 +79,16 @@ export class CoreAPIClient {
    * @param _config ClientConfig
    * @returns CoreAPIClient
    */
-  constructor(config: ClientConfig) {
-    const _config = Object.assign(this._config_default, config);
-    const _http = new HttpService(_config);
-    const _auth = new AuthService(_http);
-    this._client = new ClientService(_config, _http, _auth);
+  constructor(config: Partial<ClientConfig>) {
+    this._config = Object.assign(this._config_default, config) as ClientConfig
+
+    const _http = new HttpService(this._config);
+
+    this._auth = new OAuthService(_http);
+    this._queryAPi = new QueryApiService(this._config, _http, this._auth);
+    this._batchApi = new BatchAPIService(this._config, _http, this._auth);
+    this._accountApi = new AccountAPIService(this._config, this._auth);
+    this._dataApi = new DataApiService(this._config, _http, this._auth);
   }
 
 
@@ -97,7 +111,7 @@ export class CoreAPIClient {
    * @returns Promise<{ data: DTO[] }>
    */
   public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
-    return this._client.query<T>(coreSQL, dtoNames);
+    return this._queryAPi.query<T>(coreSQL, dtoNames);
   }
 
   /**
@@ -110,8 +124,8 @@ export class CoreAPIClient {
    * @param resourceId uuid as string
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<ClientResponse<T>> {
-    return this._client.getResource<T>(resourceName, { resourceId });
+  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<DataApiResponse<T>> {
+    return this._dataApi.getById<T>(resourceName, { resourceId });
   }
 
   /**
@@ -131,8 +145,8 @@ export class CoreAPIClient {
    * @param externalId externalId as string
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<ClientResponse<T>> {
-    return this._client.getResource<T>(resourceName, { externalId }, { useExternalIds: true });
+  public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<DataApiResponse<T>> {
+    return this._dataApi.getById<T>(resourceName, { externalId }, { useExternalIds: true });
   }
 
   /**
@@ -146,7 +160,7 @@ export class CoreAPIClient {
    */
   public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { id, lastChanged } = resource;
-    return this._client.deleteResource<T>(resourceName, { resourceId: id }, lastChanged);
+    return this._dataApi.deleteById<T>(resourceName, { resourceId: id }, lastChanged);
   }
 
   /**
@@ -160,7 +174,7 @@ export class CoreAPIClient {
    */
   public async deleteByExternalId<T extends Partial<DTOModels> & { externalId: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
     const { externalId, lastChanged } = resource;
-    return this._client.deleteResource<T>(resourceName, { externalId }, lastChanged);
+    return this._dataApi.deleteById<T>(resourceName, { externalId }, lastChanged);
   }
 
   /**
@@ -173,8 +187,8 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.postResource<T>(resourceName, resource);
+  public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+    return this._dataApi.post<T>(resourceName, resource);
   }
 
   /**
@@ -194,10 +208,10 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.postResource<T>(resourceName, resource, { useExternalIds: true });
+  public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+    return this._dataApi.post<T>(resourceName, resource, { useExternalIds: true });
   }
-  
+
   /**
    * Updating Existing Objects by Id
    * 
@@ -208,8 +222,8 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.putResource<T>(resourceName, { resourceId: resource.id as string }, resource);
+  public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+    return this._dataApi.put<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
@@ -229,8 +243,8 @@ export class CoreAPIClient {
    * @param resource should contain in the resource the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.putResource<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
+  public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+    return this._dataApi.put<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
   }
 
   /**
@@ -244,8 +258,8 @@ export class CoreAPIClient {
    * @param resource should contain in the body the [id] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patchResource<T>(resourceName, { resourceId: resource.id as string }, resource);
+  public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+    return this._dataApi.patch<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
   /**
@@ -266,8 +280,8 @@ export class CoreAPIClient {
    * @param resource should contain in the resource the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<ClientResponse<T>> {
-    return this._client.patchResource<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
+  public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+    return this._dataApi.patch<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
   }
 
   /**
@@ -291,43 +305,80 @@ export class CoreAPIClient {
    * @returns Promise<BatchResponseJson<T>[]>
    */
   public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
-    return this._client.batch<T>(actions);
+    return this._batchApi.batch<T>(actions);
   }
 
   /**
-   * Will use provided ClientConfig and perform a Login.
+   * Executes a login using the current client configuration and retrieves an OAuth token.
    * 
-   * Note: that it is **not required** to explicitly call client.login()
-   * before each client action. The CoreAPIClient will login and  **keep a internally token copy**
-   * and will use this **up to its expiration** and **will auto refresh** when needed.
-   * Calling client.login() will NOT result in mutiple http calls to the oauth api.
+   * Note: Explicit login is not required before other actions; the client will auto-login and refresh tokens as needed.
    * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_access_api/Cloud/en-US/oauth-intro.html
-   * 
-   * @returns Promise<OauthTokenResponse>
+   * @returns {Promise<OAuthTokenResponse>} Resolves with the OAuth token response.
    */
-  public async login(): Promise<OauthTokenResponse> {
-    return this._client.login();
+  public async login(): Promise<OAuthTokenResponse> {
+    return this._auth.ensureToken(this._config);
   }
 
 
   /**
-   * get OauthTokenResponse
-   * @returns Readonly<OauthTokenResponse> | undefined
+   * Retrieves the current OAuth token, if available.
+   * 
+   * @returns {Readonly<OAuthTokenResponse> | undefined} The current OAuth token or undefined if not logged in.
    */
-  public getToken(): Readonly<OauthTokenResponse> | undefined {
-    return this._client.getToken();
+  public getToken(): Readonly<OAuthTokenResponse> | undefined {
+    return this._auth.getToken();
   }
 
   /**
-   * set OauthTokenResponse
-   * @param token OauthTokenResponse
-   * @returns CoreAPIClient
+   * Sets the OAuth token to be used by the client.
+   * 
+   * @param {OAuthTokenResponse} token - The OAuth token to set.
+   * @returns {CoreAPIClient} The current client instance for chaining.
    */
-  public setToken(token: OauthTokenResponse): CoreAPIClient {
-    this._client.setToken(token);
+  public setToken(token: OAuthTokenResponse): CoreAPIClient {
+    this._auth.setToken(token);
     return this;
+  }
+
+  /**
+   * Sets the company to use for authentication, if the token contains multiple companies.
+   * 
+   * @param {string} companyName - The name of the company to set for authentication.
+   * @throws {Error} If no token is found, or if the company is not available in the token.
+   * @returns {CoreAPIClient} The current client instance for chaining.
+   */
+  public setAuthCompany(companyName: string): CoreAPIClient {
+    const token = this._auth.getToken();
+    if (!token) {
+      throw new Error('No token found. Please login first.');
+    }
+
+    if (token.contentType === 'user' && (token.content.companies || []).map(it => it.name.toLocaleLowerCase()).includes(companyName.toLocaleLowerCase()) === false) {
+      throw new Error(`Company '${companyName}' not found in token. Available companies: ${token.content.companies?.map(it => it.name).join(', ')}`);
+    }
+
+    this._config.authCompany = companyName;
+
+    return this;
+  }
+
+  /**
+   * Retrieves all accounts accessible to the authenticated user/client.
+   * 
+   * @returns {Promise<Account[]>} A promise resolving to an array of accounts.
+   */
+  public async getAccounts(): Promise<Account[]> {
+    return this._accountApi.getAccounts()
+  }
+
+  /**
+   * Retrieves all companies associated with a specific account.
+   * 
+   * @param {number} accountId - The ID of the account.
+   * @returns {Promise<Company[]>} A promise resolving to an array of companies for the given account.
+   */
+  public async getCompaniesByAccountId(accountId: number): Promise<Company[]> {
+    return this._accountApi.getCompaniesByAccount(accountId);
   }
 
 }

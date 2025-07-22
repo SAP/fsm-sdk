@@ -1,14 +1,14 @@
-import assert = require('assert');
-import { integrationTestConfig } from './integration-test.config';
-import { CoreAPIClient } from '../core-api.client';
-import { CreateAction, DeleteAction } from '../index';
+import assert from 'assert';
+import { ClientConfigBuilder } from '../integration-test.config';
+import { CoreAPIClient } from '../../core-api.client';
+import { CreateAction, DeleteAction } from '../../index';
 
 describe('BatchApi', () => {
 
   let client: CoreAPIClient
 
   beforeEach(() => {
-    client = new CoreAPIClient({ ...integrationTestConfig, debug: false });
+    client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
   });
 
   function prepareFixture() {
@@ -38,7 +38,7 @@ describe('BatchApi', () => {
       .then(_ => done())
       .catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
   it('batch delete', done => {
     new Promise<void>(async (ok, fail) => {
@@ -63,6 +63,6 @@ describe('BatchApi', () => {
       }
     }).then(_ => done()).catch(e => done(e));
 
-  }).timeout(5000);
+  }).timeout(ClientConfigBuilder.getTestTimeout());
 
 });

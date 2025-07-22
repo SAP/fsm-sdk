@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] 2025-06-18
+### Updated & Added
+- (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
+- (breaking change) Updated Support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed. 
+- (breaking change) Removed support browser based bundle.
+- (breaking change) NodeJs v23 LTS is now required.
+- Updated Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
+- Adding `getAccounts()` and `getCompaniesByAccount(accountId)` to interact with the AccountAPI
+
 ## [2.1.1] 2021-10-13
 ### Updated & Added
 - Updated DTOs versions [ [ref](https://github.com/SAP/fsm-sdk/pull/17) ]

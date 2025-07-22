@@ -1,12 +1,12 @@
 import { BatchAction } from './batch-action.model';
-import { ClientConfig } from './client-config.model';
-import { OauthTokenResponse } from './oauth-token-response.model';
-import { RequestOptionsFactory } from './request-options.factory';
+import { ClientConfig } from '../client-config.model';
+import { OAuthTokenResponse } from '../oauth/oauth-token-response.model';
+import { RequestOptionsFactory } from '../request-options.factory';
 
 export class BatchRequest {
 
   constructor(
-    private _token: OauthTokenResponse,
+    private _token: OAuthTokenResponse,
     private _config: ClientConfig,
     private _actions: BatchAction[]) {
   }
@@ -21,7 +21,7 @@ export class BatchRequest {
       bodyPart += [
         action.method.toUpperCase(),
         ' ',
-        RequestOptionsFactory.getDataApiUriFor(this._token, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
+        RequestOptionsFactory.getDataApiUriFor(this._config, action.dtoName, (action.method !== 'POST' ? action.dtoData.id : undefined)),
         '?',
         RequestOptionsFactory.stringify({
           clientIdentifier: this._config.clientIdentifier,

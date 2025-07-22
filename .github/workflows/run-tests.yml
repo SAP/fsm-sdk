@@ -4,7 +4,7 @@
 name: integration test
 
 env:
-  AUTH_ACCOUNTNAME: ${{ secrets.AUTH_ACCOUNTNAME }}
+  AUTH_ACCOUNT_NAME: ${{ secrets.AUTH_ACCOUNT_NAME }}
   AUTH_GRANT_TYPE: ${{ secrets.AUTH_GRANT_TYPE }}
   AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
   AUTH_USERNAME: ${{ secrets.AUTH_USERNAME }}
@@ -12,6 +12,7 @@ env:
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
   CLIENT_VERSION: ${{ secrets.CLIENT_VERSION }}
   OAUTH_ENDPOINT: ${{ secrets.OAUTH_ENDPOINT }}
+  BASE_URL: ${{ secrets.BASE_URL }}
   NPM_TOKEN: 'N/A'
 
 on:
@@ -27,7 +28,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [16.x, 23.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:

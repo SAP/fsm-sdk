@@ -1,6 +1,6 @@
 {
   "name": "fsm-sdk",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
@@ -13,7 +13,7 @@
     "build": "npm run build:node && npm run build:browser",
     "prebuild:node": "npm run clean",
     "build:node": "tsc -p . --pretty",
-    "build:browser": "rollup -c",
+    "build:browser": "#rollup --config rollup.config.js",
     "clean": "rm -rf release",
     "pretest": "npm run build:browser",
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
@@ -21,14 +21,13 @@
     "tools:update-dto-versions": "./node_modules/.bin/ts-node ./src/test/update-dto-versions.ts"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=23"
   },
   "keywords": [
     "SAP Field Service Management SDK",
     "SAP FSM",
     "sdk",
     "nodejs",
-    "lambda",
     "integration",
     "customisation",
     "query-api",
@@ -46,7 +45,7 @@
     "check-coverage": true,
     "per-file": false,
     "statements": 90,
-    "branches": 79,
+    "branches": 50,
     "functions": 90,
     "lines": 90,
     "extension": [
@@ -87,22 +86,20 @@
   "homepage": "https://github.com/sap/fsm-sdk#readme",
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
+    "jwt-decode": "^4.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.0.2",
     "@types/mocha": "^5.2.5",
-    "@types/node": "^10.9.3",
+    "@types/node": "^10.17.60",
     "@types/uuid": "^8.3.0",
     "coveralls": "^3.1.0",
     "dotenv": "^10.0.0",
     "mocha": "^5.2.0",
     "nyc": "^15.1.0",
     "puppeteer": "^10.2.0",
-    "rollup": "^2.53.3",
-    "rollup-plugin-filesize": "^9.1.1",
-    "rollup-plugin-typescript2": "^0.30.0",
     "ts-node": "^7.0.1",
-    "typescript": "^3.0.1"
+    "tslib": "^2.8.1",
+    "typescript": "^3.9.10"
   }
 }

@@ -1,6 +1,6 @@
-import { ClientConfig } from './client-config.model';
+import { ClientConfig } from '../client-config.model';
 import { ErrorResponse, HttpRequestOptions, HttpResponse } from './error-response.model';
-import { fetch } from '../polyfills';
+import { fetch } from '../../polyfills';
 
 export class HttpService {
 
@@ -10,6 +10,10 @@ export class HttpService {
     ) { }
 
     public request<T>(uri: string, options: HttpRequestOptions): Promise<T | string | null> {
+
+        if (!uri) {
+            throw new Error('URI is required for HTTP request');
+        }
 
         if (this._config.debug) {
             this._logger.log(`[httpRequest] outgoing ${uri} options[${JSON.stringify(options, null, 2)}]`);
@@ -22,7 +26,7 @@ export class HttpService {
                 const isJson = contentType && contentType.includes('application/json');
 
                 const content: T | string | null = await (!!response.json && !!response.text
-                    ? isJson
+                    ? isJson && options.method !== 'DELETE' // some APIs return text/plain for DELETE requests, as a workaround don't parse JSON for DELETE
                         ? response.json<T>()
                         : response.text()
                     : Promise.resolve(null)
