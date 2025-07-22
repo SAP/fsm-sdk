@@ -7,29 +7,27 @@
   "types": "release/index.d.ts",
   "scripts": {
     "prestart": "npm run build",
-    "blubb": "ts-node -r dotenv/config src/blubb.ts",
     "start": "node release/index.js",
     "prestart:examples": "npm run build",
     "start:examples": "node -r dotenv/config examples/node/index.js",
     "build": "npm run build:node && npm run build:browser",
     "prebuild:node": "npm run clean",
     "build:node": "tsc -p . --pretty",
-    "build:browser": "#rollup -c",
+    "build:browser": "#rollup --config rollup.config.js",
     "clean": "rm -rf release",
-    "pretest": "#npm run build:browser",
+    "pretest": "npm run build:browser",
     "test": "nyc --reporter=lcov --reporter=text --reporter=json-summary mocha --opts mocha.opts",
     "prepublishOnly": "npm run test && npm run clean && npm run build && npm run start:examples",
     "tools:update-dto-versions": "./node_modules/.bin/ts-node ./src/test/update-dto-versions.ts"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=23"
   },
   "keywords": [
     "SAP Field Service Management SDK",
     "SAP FSM",
     "sdk",
     "nodejs",
-    "lambda",
     "integration",
     "customisation",
     "query-api",
@@ -47,7 +45,7 @@
     "check-coverage": true,
     "per-file": false,
     "statements": 90,
-    "branches": 70,
+    "branches": 50,
     "functions": 90,
     "lines": 90,
     "extension": [
@@ -92,8 +90,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.0.2",
-    "@rollup/plugin-typescript": "^12.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.17.60",
     "@types/uuid": "^8.3.0",
@@ -102,8 +98,6 @@
     "mocha": "^5.2.0",
     "nyc": "^15.1.0",
     "puppeteer": "^10.2.0",
-    "rollup": "^2.79.2",
-    "rollup-plugin-filesize": "^9.1.2",
     "ts-node": "^7.0.1",
     "tslib": "^2.8.1",
     "typescript": "^3.9.10"

@@ -19,7 +19,8 @@ const client = new fsm.CoreAPIClient({
   authPassword: process.env.AUTH_PASSWORD,
 
   authGrantType: process.env.AUTH_GRANT_TYPE,
-  oauthEndpoint: process.env.OAUTH_ENDPOINT
+  oauthEndpoint: process.env.OAUTH_ENDPOINT,
+  baseUrl: process.env.BASE_URL,
 });
 
 // valid serviceCall DTO object
