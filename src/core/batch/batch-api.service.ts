@@ -3,7 +3,7 @@ import { BatchAction } from './batch-action.model';
 import { BatchRequest } from './batch-request.model';
 import { BatchResponse, BatchResponseJson } from './batch-response';
 import { ClientConfig } from '../client-config.model';
-import { DTOModels } from '../dto-name.model';
+import { DataCloudDTOModels } from '../dto-name.model';
 import { HttpService } from '../http/http-service';
 import { OAuthService } from '../oauth/oauth.service';
 import { RequestOptionsFactory } from '../request-options.factory';
@@ -16,7 +16,7 @@ export class BatchAPIService {
         private _auth: Readonly<OAuthService>
     ) { }
 
-    public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
+    public async batch<T extends DataCloudDTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
         const token = await this._auth.ensureToken(this._config);
         const body = new BatchRequest(token, this._config, actions).toString();
 
@@ -29,8 +29,8 @@ export class BatchAPIService {
         const responseBody = await this._http.request<string>(`${this._config.baseUrl}/api/data/batch/v1?${queryParams}`, {
             method: 'POST',
             headers: {
-                'content-type': 'multipart/mixed;boundary="======boundary======"',
                 ...RequestOptionsFactory.getRequestHeaders(token, this._config),
+                'Content-Type': 'multipart/mixed;boundary="======boundary======"'
             },
             body
         });

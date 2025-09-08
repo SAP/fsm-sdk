@@ -9,7 +9,7 @@ export class HttpService {
         private _logger: { log: Function } = console
     ) { }
 
-    public request<T>(uri: string, options: HttpRequestOptions): Promise<T | string | null> {
+    public request<T>(uri: string, options: HttpRequestOptions): Promise<T | null> {
 
         if (!uri) {
             throw new Error('URI is required for HTTP request');

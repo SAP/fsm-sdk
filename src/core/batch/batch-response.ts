@@ -1,4 +1,4 @@
-import { DTOModels } from '../dto-name.model';
+import { DataCloudDTOModels } from '../dto-name.model';
 
 type Maybe<T> = T | undefined;
 
@@ -71,7 +71,7 @@ export class BatchResponse<T> {
 
   }
 
-  public toJson<T extends DTOModels>() {
+  public toJson<T extends DataCloudDTOModels>() {
     return this.body.split('Content-ID')
       .map((it: string) => 'Content-ID' + it)
       .filter((it: string, idx: number) => idx !== 0)

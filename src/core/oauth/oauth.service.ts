@@ -14,7 +14,7 @@ export class OAuthService {
         private _logger: { error: Function } = console
     ) { }
 
-    private async _fetchAndSaveToken(config: Partial<ClientConfig>): Promise<OAuthTokenResponse> {
+    private async _fetchAndSaveToken(config: Readonly<ClientConfig>): Promise<OAuthTokenResponse> {
         const body = new URLSearchParams({
             grant_type: config.authGrantType,
             ...(config.authGrantType === 'password'
@@ -71,7 +71,7 @@ export class OAuthService {
         return tokenResponse;
     }
 
-    private async _readToken(config: Partial<ClientConfig>): Promise<OAuthTokenResponse> {
+    private async _readToken(config: Readonly<ClientConfig>): Promise<OAuthTokenResponse> {
         try {
             return await new Promise<OAuthTokenResponse>((resolve, fail) => {
                 if (config.debug && config.tokenCacheFilePath) {

@@ -1,4 +1,4 @@
-import { DTOName, DTOModels } from './core/dto-name.model';
+import { DataCloudDTOName, DataCloudDTOModels } from './core/dto-name.model';
 import { ClientConfig } from './core/client-config.model';
 import { OAuthTokenResponse } from './core/oauth/oauth-token-response.model';
 import { DataApiResponse } from './core/data/data-api.model';
@@ -12,6 +12,7 @@ import { DataApiService } from './core/data/data-api.service';
 import { Account, AccountAPIService, Company } from './core/account/account-api.service';
 import { QueryApiService } from './core/query/query-api.service';
 import { BatchAPIService } from './core/batch/batch-api.service';
+import { TranslationApiService } from './core/translations/translations-api.service';
 
 export class CoreAPIClient {
 
@@ -20,6 +21,8 @@ export class CoreAPIClient {
   private _accountApi: AccountAPIService;
   private _queryAPi: QueryApiService;
   private _batchApi: BatchAPIService;
+  private _translationApi: TranslationApiService;
+
   private _config_default: ClientConfig = {
     debug: false,
 
@@ -89,15 +92,18 @@ export class CoreAPIClient {
     this._batchApi = new BatchAPIService(this._config, _http, this._auth);
     this._accountApi = new AccountAPIService(this._config, this._auth);
     this._dataApi = new DataApiService(this._config, _http, this._auth);
+    this._translationApi = new TranslationApiService(this._config, _http, this._auth);
   }
 
-
   /**
-   * Creates UUID
-   * @returns a uuid that can be used as an FSM object id
+   * @param o { legacyFormat: boolean }
+   * @description Creates a UUID string.
+   * If `legacyFormat` is true, it returns the UUID without dashes and in uppercase. used by FSM legacy data-cloud APIs APIs.
+   * If `legacyFormat` is false, it returns the UUID in its standard format.
+   * @returns string
    */
-  public static createUUID(): string {
-    return RequestOptionsFactory.getUUID().toUpperCase();
+  public static createUUID(o: { legacyFormat: boolean } | undefined = { legacyFormat: true }): string {
+    return RequestOptionsFactory.getUUID(o?.legacyFormat);
   }
 
   /**
@@ -110,7 +116,7 @@ export class CoreAPIClient {
    * @param dtoNames DTOName[]
    * @returns Promise<{ data: DTO[] }>
    */
-  public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
+  public async query<T extends { [projection: string]: DataCloudDTOModels }>(coreSQL: string, dtoNames: DataCloudDTOName[]): Promise<{ data: T[] }> {
     return this._queryAPi.query<T>(coreSQL, dtoNames);
   }
 
@@ -124,7 +130,7 @@ export class CoreAPIClient {
    * @param resourceId uuid as string
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<DataApiResponse<T>> {
+  public async getById<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, resourceId: string): Promise<DataApiResponse<T>> {
     return this._dataApi.getById<T>(resourceName, { resourceId });
   }
 
@@ -145,7 +151,7 @@ export class CoreAPIClient {
    * @param externalId externalId as string
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<DataApiResponse<T>> {
+  public async getByExternalId<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, externalId: string): Promise<DataApiResponse<T>> {
     return this._dataApi.getById<T>(resourceName, { externalId }, { useExternalIds: true });
   }
 
@@ -158,7 +164,7 @@ export class CoreAPIClient {
    * @param resource { id: string, lastChanged: number }
    * @returns 
    */
-  public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
+  public async deleteById<T extends Partial<DataCloudDTOModels> & { id: string, lastChanged: number }>(resourceName: DataCloudDTOName, resource: T): Promise<undefined> {
     const { id, lastChanged } = resource;
     return this._dataApi.deleteById<T>(resourceName, { resourceId: id }, lastChanged);
   }
@@ -172,7 +178,7 @@ export class CoreAPIClient {
    * @param resource { id: string, lastChanged: number }
    * @returns 
    */
-  public async deleteByExternalId<T extends Partial<DTOModels> & { externalId: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
+  public async deleteByExternalId<T extends Partial<DataCloudDTOModels> & { externalId: string, lastChanged: number }>(resourceName: DataCloudDTOName, resource: T): Promise<undefined> {
     const { externalId, lastChanged } = resource;
     return this._dataApi.deleteById<T>(resourceName, { externalId }, lastChanged);
   }
@@ -187,7 +193,7 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+  public async post<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, resource: T): Promise<DataApiResponse<T>> {
     return this._dataApi.post<T>(resourceName, resource);
   }
 
@@ -208,7 +214,7 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+  public async postByExternalId<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, resource: T): Promise<DataApiResponse<T>> {
     return this._dataApi.post<T>(resourceName, resource, { useExternalIds: true });
   }
 
@@ -222,7 +228,7 @@ export class CoreAPIClient {
    * @param resource should contain in the body the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+  public async put<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, resource: T): Promise<DataApiResponse<T>> {
     return this._dataApi.put<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
@@ -243,7 +249,7 @@ export class CoreAPIClient {
    * @param resource should contain in the resource the ENTIRE updated resource
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+  public async putByExternalId<T extends DataCloudDTOModels & { externalId: string }>(resourceName: DataCloudDTOName, resource: T): Promise<DataApiResponse<T>> {
     return this._dataApi.put<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
   }
 
@@ -258,7 +264,7 @@ export class CoreAPIClient {
    * @param resource should contain in the body the [id] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+  public async patch<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, resource: T): Promise<DataApiResponse<T>> {
     return this._dataApi.patch<T>(resourceName, { resourceId: resource.id as string }, resource);
   }
 
@@ -280,7 +286,7 @@ export class CoreAPIClient {
    * @param resource should contain in the resource the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
    * @returns Promise<ClientResponse<DTO>>
    */
-  public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
+  public async patchByExternalId<T extends DataCloudDTOModels & { externalId: string }>(resourceName: DataCloudDTOName, resource: T): Promise<DataApiResponse<T>> {
     return this._dataApi.patch<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
   }
 
@@ -304,7 +310,7 @@ export class CoreAPIClient {
    * @param actions BatchAction | CreateAction | UpdateAction | DeleteAction
    * @returns Promise<BatchResponseJson<T>[]>
    */
-  public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
+  public async batch<T extends DataCloudDTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
     return this._batchApi.batch<T>(actions);
   }
 
@@ -380,5 +386,4 @@ export class CoreAPIClient {
   public async getCompaniesByAccountId(accountId: number): Promise<Company[]> {
     return this._accountApi.getCompaniesByAccount(accountId);
   }
-
 }

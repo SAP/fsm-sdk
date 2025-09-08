@@ -1,5 +1,5 @@
 // note: to update run -> npm run tools:update-dto-versions
-export type DTOName = 'Activity'
+export type DataCloudDTOName = 'Activity'
   | 'ActivityCode'
   | 'ActivityComposedCode'
   | 'ActivityFeedback'
@@ -166,7 +166,7 @@ export type DTOName = 'Activity'
   | 'WorkTimePattern'
   | 'WorkTimeTask'
 
-export type DTOModels = Partial<{
+export type DataCloudDTOModels = Partial<{
   id: undefined | null | string;
   lastChanged: undefined | null | number;
   externalId: undefined | null | string;
