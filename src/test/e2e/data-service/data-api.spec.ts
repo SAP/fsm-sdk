@@ -1,7 +1,7 @@
 import assert from 'assert';
-import { ClientConfigBuilder } from '../integration-test.config';
-import { CoreAPIClient } from '../../core-api.client';
-import { CreateAction, DeleteAction } from '../..';
+import { ClientConfigBuilder } from '../../integration-test.config';
+import { CoreAPIClient } from '../../../core-api.client';
+import { CreateAction, DeleteAction } from '../../..';
 
 describe('DataApi', () => {
 

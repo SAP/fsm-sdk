@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { ClientConfigBuilder } from '../integration-test.config';
-import { CoreAPIClient } from '../../core-api.client';
-import { ALL_DTO_VERSIONS } from '../../core/all-dto-versions.constant';
-import { DataCloudDTOName } from '../../core/dto-name.model';
+import { ClientConfigBuilder } from '../../integration-test.config';
+import { CoreAPIClient } from '../../../core-api.client';
+import { ALL_DTO_VERSIONS } from '../../../core/all-dto-versions.constant';
+import { DataCloudDTOName } from '../../../core/dto-name.model';
 
 describe('QueryApi', () => {
 
