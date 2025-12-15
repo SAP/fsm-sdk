@@ -5,9 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### [3.0.1] 2025-08-19
+### [3.0.1] 2025-12-19
 ### Added
+- Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
+- Public `masterApi` getter on `CoreAPIClient` for accessing master data operations via `MasterAPIService`.
+- Public `getAccounts()` and `getCompaniesByAccount(accountId)` methods to interact with the Account API.
+- New `authCompany` property in `ClientConfig` type for specifying the company to use for authentication when the token contains multiple companies.
+- Service Management API 
 - Translation API Label and Value
+
+### Changed
+- Updated TypeScript and Rollup configuration for modern JavaScript output and improved bundling.
+
+### Fixed
+- Fixed Mocha test discovery to include all `.spec.ts` files in subfolders.
+
 
 ## [3.0.0] 2025-06-18
 ### Updated & Added

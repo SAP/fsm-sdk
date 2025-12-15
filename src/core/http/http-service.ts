@@ -34,11 +34,18 @@ export class HttpService {
 
                 if (!response.ok && [304, 302].indexOf(response.status || -1) === -1) {
                     throw <ErrorResponse<any, HttpRequestOptions>>{
+                        uri: uri,
                         statusCode: response.status,
                         message: response.statusText,
                         error: content,
                         response: response,
-                        options: options
+                        options: {
+                            ...options,
+                            headers: {
+                                ...options.headers,
+                                Authorization: '<<hidden>>'
+                            }
+                        }
                     };
                 }
 

@@ -1,6 +1,6 @@
 
-export type ServiceCallTree = UnifiedIdentifier & Partial<{
-    activities: ActivityTree[]
+export type ServiceCall = UnifiedIdentifier & Partial<{
+    activities: Activity[]
     address: Address | null;
     attachments: Attachment[]
     businessPartner: BusinessPartner | null;
@@ -40,43 +40,73 @@ export type UnifiedIdentifier = Partial<{
     id: string | null;
 }>
 
-export type ActivityTree = UnifiedIdentifier & Partial<{
+
+export type Activity = UnifiedIdentifier & Partial<{
     activityFeedbacks: ActivityFeedback[]
+    originActivity: OriginActivity | null;
+    businessPartner: BusinessPartner | null;
+    cancellationReason: string | null;
+    changelog: string | null;
+    checkedOut: boolean;
     address: Address | null;
     attachments: Attachment[]
     code: string | null;
     contact: Contact | null;
+    createDateTime: string | null;
     createPerson: CreatePerson | null;
+    crew: Crew | null;
     dueDateTime: string | null;
     durationInMinutes: number | null;
     earliestStartDateTime: string | null;
+    endDateTime: string | null;
     equipment: Equipment | null;
     executionStage: string | null;
+    hazardType: string | null;
     externalId: string | null;
     id: string | null;
     internalRemarks: string | null;
     internalRemarks2: string | null;
     lastChanged: number | null;
+    location: Location | null;
     orgLevelIds: string[];
+    milestone: boolean
+    number: string | null;
+    object: { objectId: string, objectType: string } | null;
     plannedDurationInMinutes: number | null;
+    plannedDurationType: 'AUTOMATIC' | null;
+    predecessorActivities: UnifiedIdentifier[];
+    previousActivity: UnifiedIdentifier | null;
     plannedEndDate: string | null;
     plannedStartDate: string | null;
+    project: UnifiedIdentifier | null;
+    projectOrdinal: number | null;
+    projectPhase: UnifiedIdentifier | null;
     region: Region | null;
     remarks: string | null;
+    reminderDateTime: string | null;
     requirements: Requirement[]
     reservedMaterials: ReservedMaterial[]
-    responsibles: Responsible[]
+    responsibles: Responsible[];
     serviceProduct: ServiceProduct | null;
+    serviceAssignment: UnifiedIdentifier | null;
+    serviceWorkflow: UnifiedIdentifier | null;
+    startDateTime: string | null;
     sourceActivity: SourceActivity | null;
     status: string | null;
     statusChangeReason: string | null;
+    subType: UnifiedIdentifier | null;
     subject: string | null;
+    supportingPersons: UnifiedIdentifier[]
+    team: UnifiedIdentifier | null;
+    timeZoneId: string | null;
+    topic: UnifiedIdentifier | null;
     travelTimeFromInMinutes: number | null;
     travelTimeToInMinutes: number | null;
     type: string | null;
     udfValues: UdfValue[]
     workflowStep: WorkflowStep | null;
-    workflowSteps: WorkflowStep[]
+    workflowSteps: WorkflowStep[];
+    useAllEquipments: boolean
 }>
 
 type ActivityFeedback = Partial<{
@@ -161,7 +191,8 @@ type Attachment = Partial<{
     type: string | null;
 }>
 
-type UdfValue = Partial<{
+export type UdfValue = Partial<{
+    key: string | null;
     udfMeta: UdfMeta
     value: string | null;
 }>
@@ -194,5 +225,8 @@ type ServiceProduct = UnifiedIdentifier;
 
 type SourceActivity = UnifiedIdentifier;
 
+type OriginActivity = UnifiedIdentifier;
+
 type BusinessPartner = UnifiedIdentifier;
 
+type Crew = UnifiedIdentifier;

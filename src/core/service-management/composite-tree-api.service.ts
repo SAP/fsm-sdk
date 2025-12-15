@@ -3,7 +3,7 @@ import { ClientConfig } from '../client-config.model';
 import { HttpService } from '../http/http-service';
 import { OAuthService } from '../oauth/oauth.service';
 import { RequestOptionsFactory } from '../request-options.factory';
-import { ActivityTree, ServiceCallTree } from './service-management.model';
+import { Activity, ServiceCall } from './service-management.model';
 
 export class CompositeTreeAPI {
 
@@ -13,7 +13,7 @@ export class CompositeTreeAPI {
         private _auth: Readonly<OAuthService>
     ) { }
 
-    // https://api.sap.com/api/cloud_translation_service_ext/overview
+    // https://api.sap.com/api/service_management_ext/resource/Service_API_V2
     public getApiUrl(path: string): string {
         return `${this._config.baseUrl}/service-management/api/v2/composite-tree/service-calls${path}`;
     }
@@ -26,35 +26,35 @@ export class CompositeTreeAPI {
         }> = {}
     ) {
         const token = await this._auth.ensureToken(this._config)
-        return this._http.request<ServiceCallTree>(this.getApiUrl(`/${id}${(params ? `?${new URLSearchParams(params)}` : '')}`), {
+        return this._http.request<ServiceCall>(this.getApiUrl(`/${id}${(params ? `?${new URLSearchParams(params)}` : '')}`), {
             method: 'GET',
             headers: RequestOptionsFactory.getRequestHeaders(token, this._config)
-        }) as Promise<ServiceCallTree>;
+        }) as Promise<ServiceCall>;
     }
 
     public async postServiceCall(
-        data: Partial<ServiceCallTree>,
+        data: Partial<ServiceCall>,
         params: Partial<{
             autoCreateActivity: boolean,
         }> = {}
     ) {
         const token = await this._auth.ensureToken(this._config)
-        return this._http.request<ServiceCallTree>(this.getApiUrl(`${(params ? `?${new URLSearchParams(params)}` : '')}`), {
+        return this._http.request<ServiceCall>(this.getApiUrl(`${(params ? `?${new URLSearchParams(params)}` : '')}`), {
             method: 'POST',
             headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
             body: JSON.stringify(data)
-        }) as Promise<ServiceCallTree>;
+        }) as Promise<ServiceCall>;
     }
 
     public async patchServiceCall(
-        data: Partial<ServiceCallTree>
+        data: Partial<ServiceCall>
     ) {
         const token = await this._auth.ensureToken(this._config)
-        return this._http.request<ServiceCallTree>(this.getApiUrl(`/${data.id}`), {
+        return this._http.request<ServiceCall>(this.getApiUrl(`/${data.id}`), {
             method: 'PATCH',
             headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
             body: JSON.stringify(data)
-        }) as Promise<ServiceCallTree>;
+        }) as Promise<ServiceCall>;
     }
 
     public async getServiceCallActivity(
@@ -66,9 +66,9 @@ export class CompositeTreeAPI {
         }> = {}
     ) {
         const token = await this._auth.ensureToken(this._config)
-        return this._http.request<ActivityTree>(this.getApiUrl(`/${serviceCallId}/activities/${activityId}${(params ? `?${new URLSearchParams(params)}` : '')}`), {
+        return this._http.request<Activity>(this.getApiUrl(`/${serviceCallId}/activities/${activityId}${(params ? `?${new URLSearchParams(params)}` : '')}`), {
             method: 'GET',
             headers: RequestOptionsFactory.getRequestHeaders(token, this._config)
-        }) as Promise<ActivityTree>;
+        }) as Promise<Activity>;
     }
 }
