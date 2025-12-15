@@ -11,7 +11,7 @@ import ServiceCallTreeFixture from './service-call-tree.fixture.json';
 import { BulkResponse } from '../../../core/service-management/composite-bulk-api.service';
 
 
-describe.only('ServiceManagementAPI', () => {
+describe('ServiceManagementAPI', () => {
 
     const config = { ...ClientConfigBuilder.getConfig('password'), tokenCacheFilePath: undefined, debug: false } as ClientConfig
     const https = new HttpService(config);
@@ -304,7 +304,6 @@ describe.only('ServiceManagementAPI', () => {
 
             }).timeout(ClientConfigBuilder.getTestTimeout());
 
-
             it('plan', done => {
                 prepare()
                     .then(({ person }) => {
@@ -326,6 +325,28 @@ describe.only('ServiceManagementAPI', () => {
                         assert(response.results.length === 1, 'should have 1 results');
                         assert(response.results.every(r => r.status === 200), 'all should have status 200');
                         assert(response.results.every(r => (r.newActivity.responsibles as string[]).some((pId) => pId === person?.id)), 'should have the planned technician')
+                    })
+                    .then(_ => done())
+                    .catch(e => done(e));
+
+            }).timeout(ClientConfigBuilder.getTestTimeout());
+
+
+            it('cancel', done => {
+                getFreshDubplicateActivity
+                    .then((activity) => {
+                        return service.activity.bulk.cancel([{
+                            id: activity.id!,
+                            cancellationReason: 'Not needed anymore',
+                            cancelServiceCallConfirmed: true,
+                        }])
+                    })
+                    .then((response) => {
+                        assert(response.results, 'should return a result');
+                        assert(response.hasErrors === false, 'should not have errors');
+                        assert(response.results.length === 1, 'should have 1 results');
+                        assert(response.results.every(r => r.status === 200), 'all should have status 200');
+                        assert(response.results.every(r => r.newActivity.cancellationReason === 'Not needed anymore'), 'originActivity should point to the original activity')
                     })
                     .then(_ => done())
                     .catch(e => done(e));
