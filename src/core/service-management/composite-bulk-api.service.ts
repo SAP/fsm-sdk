@@ -14,7 +14,10 @@ export type BulkResponse<T> = {
     }[];
 }
 
-
+/**
+ * Service for performing composite bulk operations on service calls.
+ * Allows creating, updating, and managing multiple service calls in a single request.
+ */
 export class CompositeBulkAPI {
 
     constructor(
@@ -23,11 +26,25 @@ export class CompositeBulkAPI {
         private _auth: Readonly<OAuthService>
     ) { }
 
-    // https://api.sap.com/api/service_management_ext/resource/Service_API_V2
+    /**
+     * Constructs the API URL for composite bulk service call operations.
+     * 
+     * @param {string} path - Optional path to append to the base URL.
+     * @returns {string} The complete API URL.
+     * @see https://api.sap.com/api/service_management_ext/resource/Service_API_V2
+     */
     public getApiUrl(path: string = ''): string {
         return `${this._config.baseUrl}/service-management/api/v2/composite-bulk/service-calls${path}`;
     }
 
+    /**
+     * Creates multiple service calls in a single bulk operation.
+     * 
+     * @param {Partial<ServiceCall>[]} data - Array of service call objects to create.
+     * @param {object} params - Optional query parameters.
+     * @param {boolean} params.autoCreateActivity - Whether to automatically create activities for the service calls.
+     * @returns {Promise<BulkResponse<ServiceCall>>} A promise resolving to the bulk operation results.
+     */
     public async postServiceCalls(
         data: Partial<ServiceCall>[],
         params: Partial<{
@@ -42,6 +59,12 @@ export class CompositeBulkAPI {
         }) as Promise<BulkResponse<ServiceCall>>;
     }
 
+    /**
+     * Updates multiple service calls in a single bulk operation.
+     * 
+     * @param {Partial<ServiceCall>[]} data - Array of service call objects with updates. Each must include an id.
+     * @returns {Promise<BulkResponse<ServiceCall>>} A promise resolving to the bulk operation results.
+     */
     public async patchServiceCalls(
         data: Partial<ServiceCall>[],
     ) {
@@ -53,6 +76,13 @@ export class CompositeBulkAPI {
         }) as Promise<BulkResponse<ServiceCall>>
     }
 
+    /**
+     * Marks multiple service calls as technically complete in a single bulk operation.
+     * 
+     * @param {object} data - Request data.
+     * @param {Partial<UnifiedIdentifier>[]} data.serviceCallIds - Array of service call identifiers to mark as technically complete.
+     * @returns {Promise<BulkResponse<ServiceCall>>} A promise resolving to the bulk operation results.
+     */
     public async postServiceCallsTechnicallyComplete(
         data: { serviceCallIds: Partial<UnifiedIdentifier>[] }
     ) {

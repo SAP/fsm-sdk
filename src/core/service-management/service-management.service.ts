@@ -10,6 +10,7 @@ import { CompositeTreeAPI } from './composite-tree-api.service';
 export class ServiceManagementAPIService {
 
     public activity: ActivityAPI;
+
     public composite: {
         tree: CompositeTreeAPI,
         bulk: CompositeBulkAPI,

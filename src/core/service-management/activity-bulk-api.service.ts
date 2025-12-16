@@ -25,6 +25,13 @@ export class ActivityBulkAPI {
         private _auth: Readonly<OAuthService>
     ) { }
 
+    /**
+     * Constructs the API URL for activity bulk operations.
+     * 
+     * @param {string} path - Path to append to the base URL.
+     * @returns {string} The complete API URL.
+     * @see https://api.sap.com/api/service_management_ext/resource/Service_API_V2
+     */
     public getApiUrl(path: string = ''): string {
         return `${this._config.baseUrl}/service-management/v2/bulk/activities/${path}`;
     }

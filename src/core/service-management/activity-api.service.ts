@@ -16,11 +16,17 @@ export class ActivityAPI {
         private _config: Readonly<ClientConfig>,
         private _http: Readonly<HttpService>,
         private _auth: Readonly<OAuthService>
-    ) { 
+    ) {
         this.bulk = new ActivityBulkAPI(this._config, this._http, this._auth);
     }
 
-    // https://api.sap.com/api/service_management_ext/resource/Activity_Business_Actions
+    /**
+     * Constructs the API URL for activity bulk operations.
+     * 
+     * @param {string} path - Path to append to the base URL.
+     * @returns {string} The complete API URL.
+     * @see https://api.sap.com/api/service_management_ext/resource/Activity_Business_Actions
+     */
     public getApiUrl(path: string = ''): string {
         return `${this._config.baseUrl}/service-management/v2/activities/${path}`; // note: "api/" segment is missing on the routing.
     }
