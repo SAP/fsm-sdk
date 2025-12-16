@@ -124,7 +124,6 @@ describe('Optimization API - Job Slots', () => {
                     },
                     options: {
                         maxResults: 3,
-                        considerTravelTime: true,
                         considerWorkingHours: true,
                         defaultDrivingTimeMinutes: 20
                     },

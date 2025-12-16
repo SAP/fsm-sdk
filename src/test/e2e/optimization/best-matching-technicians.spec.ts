@@ -120,7 +120,6 @@ describe('Optimization API - Best Matching Technicians', () => {
                     },
                     schedulingOptions: {
                         maxResults: 5,
-                        considerTravelTime: true,
                         considerWorkingHours: true
                     }
                 });
