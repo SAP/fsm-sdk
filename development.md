@@ -112,3 +112,11 @@ When implementing a new API service:
 - Follow existing patterns in service-management and rules APIs
 - Add JSDoc comments for all public methods
 - Include TypeScript types for all parameters and return values
+
+
+## Ensure SAP E-Mail on commits 
+
+```bash
+git rebase -i HEAD~15 -x "git commit --amend --author='Firstname Lastname <email@sap.com>' --no-edit"
+git push --force-with-lease
+```
