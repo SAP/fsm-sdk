@@ -18,15 +18,19 @@ Find more documentation and related information at [SAP Field Service Management
     - [Service Management API](#service-management-api)
       - [Activity Business Actions](#activity-business-actions)
       - [Activity Bulk Business Actions](#activity-bulk-business-actions)
-    - [Query for objects using CoreSQL](#query-for-objects-using-coresql)
-    - [CRUD object](#crud-object)
-      - [Create a new object](#create-a-new-object)
-      - [Read object by id](#read-object-by-id)
-      - [Update object (providing full new version)](#update-object-providing-full-new-version)
-      - [Update object (providing only fields to change)](#update-object-providing-only-fields-to-change)
-      - [Delete object](#delete-object)
-        - [lastChanged](#lastchanged)
-      - [Batch Actions (Transactions)](#batch-actions-transactions)
+    - [Translation API](#translation-api)
+    - [Rules API](#rules-api)
+    - [Optimization API](#optimization-api)
+    - [Legacy Data Cloud API (Deprecated)](#legacy-data-cloud-api-deprecated)
+      - [Query for objects using CoreSQL](#query-for-objects-using-coresql)
+      - [CRUD object](#crud-object)
+        - [Create a new object](#create-a-new-object)
+        - [Read object by id](#read-object-by-id)
+        - [Update object (providing full new version)](#update-object-providing-full-new-version)
+        - [Update object (providing only fields to change)](#update-object-providing-only-fields-to-change)
+        - [Delete object](#delete-object)
+          - [lastChanged](#lastchanged)
+        - [Batch Actions (Transactions)](#batch-actions-transactions)
   - [Support](#support)
   - [License](#license)
 
@@ -300,6 +304,78 @@ const executionRecords = await client.rulesAPI.getRuleExecutionRecords('rule-id'
   status: 'FAILED',
   executionDateFrom: '2025-01-01',
   executionDateTo: '2025-12-31'
+});
+```
+
+### Optimization API
+
+The Optimization API provides automated scheduling and technician assignment operations:
+
+```typescript
+// List available optimization plugins (policies)
+const plugins = await client.optimizationAPI.plugins.list();
+
+// Find best matching technicians for an activity
+const technicians = await client.optimizationAPI.bestMatchingTechnicians.find('activity-id', {
+  policy: 'DistanceAndSkills',
+  start: '2025-01-15T08:00:00Z',
+  end: '2025-01-15T18:00:00Z',
+  schedulingOptions: {
+    maxResults: 10
+  }
+});
+
+// Search for available time slots
+const slots = await client.optimizationAPI.jobSlots.search({
+  activityId: 'activity-id',
+  slots: [
+    { start: '2025-01-15T08:00:00Z', end: '2025-01-15T10:00:00Z' }
+  ],
+  resources: {
+    personIds: ['person-1', 'person-2']
+  },
+  options: {
+    maxResults: 10,
+    defaultDrivingTimeMinutes: 30
+  },
+  policy: 'DistanceAndSkills'
+});
+
+// Execute re-optimization
+const result = await client.optimizationAPI.reOptimization.execute({
+  activityIds: ['activity-1', 'activity-2'],
+  optimizationPlugin: 'DistanceAndSkills',
+  start: '2025-01-15T06:00:00Z',
+  end: '2025-01-15T18:00:00Z',
+  simulation: false,
+  resources: {
+    includeNonSchedulable: false
+  }
+});
+
+// Get optimization task status
+const task = await client.optimizationAPI.tasks.get('task-id');
+
+// Cancel an optimization task
+await client.optimizationAPI.tasks.cancel('task-id', {
+  reason: 'User requested cancellation'
+});
+
+// List optimization executions
+const executions = await client.optimizationAPI.executions.list({
+  filter: {
+    status: 'SUCCESS',
+    policyName: 'DistanceAndSkills'
+  },
+  page: 0,
+  size: 20
+});
+
+// List processed jobs from optimization
+const processedJobs = await client.optimizationAPI.processedJobs.list({
+  taskId: 'task-id',
+  page: 0,
+  size: 50
 });
 ```
 
