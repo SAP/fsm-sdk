@@ -77,9 +77,9 @@ await client.accountAPI.getCompaniesByAccount(accountId);
 ## [3.0.0] 2025-06-18
 ### Updated & Added
 - (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
-- (breaking change) Updated Support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed. 
+- (breaking change) Updated support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed. 
 - (breaking change) Removed support browser based bundle.
-- (breaking change) NodeJs v23 LTS is now required.
+- (breaking change) Node.js v23 LTS is now required.
 - Updated Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
 - Adding `getAccounts()` and `getCompaniesByAccount(accountId)` to interact with the AccountAPI
 
@@ -90,32 +90,32 @@ await client.accountAPI.getCompaniesByAccount(accountId);
 ## [2.1.0] 2021-09-16
 ### Added
 - Support `getByExternalId`, `postByExternalId`, `patchByExternalId`, `putByExternalId`, `deleteByExternalId`  for working with external ids
-- `login()` to used oauth api stand alone
+- `login()` to use oauth api stand alone
 - More links to docs 
 - Adding missing DTOs
 
 ### Updated 
 - DTO versions updates
-- Updating down stream npm packages - High vulnerability [ [ref](https://npmjs.com/advisories/1781 ]
+- Updating down stream NPM packages - High vulnerability [ [ref](https://npmjs.com/advisories/1781) ]
 
 ## [2.0.1] 2021-08-05
 ### Added
 - Adding token expiration and refresh as proposed by Tobias Wymer ( [@tswymer](https://github.com/tswymer) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/11) ]
 - Adding `tenant_id`, `personId` and `permissionGroupId` to `OauthTokenResponse`
 ### Changed 
-- Internal refactoring facade public client API
+- Internal refactoring of facade public client API
 ### Updated 
-- Updating down stream npm packages - High vulnerability [ [ref](https://npmjs.com/advisories/1770) ]
+- Updating down stream NPM packages - High vulnerability [ [ref](https://npmjs.com/advisories/1770) ]
 
 ## [2.0.0] 2021-07-26
 ### Changed
-- **BREAKING** Dropping support for Node.js < v12, sdk now requires Node.js v12 or newer 
+- **BREAKING** Dropping support for Node.js < v12, SDK now requires Node.js v12 or newer 
 ### Added
-- Adding support for using client in browser (isomorphic), migrate from `node-fetch` to `isomorphic-fetch` as proposed by Andrei Vishnevsky ( [@VishnAndr](https://github.com/VishnAndr) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/9) ]
+- Adding support for using client in browser (isomorphic), migrated from `node-fetch` to `isomorphic-fetch` as proposed by Andrei Vishnevsky ( [@VishnAndr](https://github.com/VishnAndr) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/9) ]
 - **BREAKING** Adding `user_id` to `OauthTokenResponse`
 - Adding compatibility tests
 ### Updated 
-- Updating down stream npm packages 
+- Updating down stream NPM packages 
 
 
 ## [1.2.4] 2021-03-24
