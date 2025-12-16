@@ -25,6 +25,19 @@ export class ActivityAPI {
         return `${this._config.baseUrl}/service-management/v2/activities/${path}`; // note: "api/" segment is missing on the routing.
     }
 
+    /**
+     * Cancels an activity by its ID.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional cancellation parameters.
+     * @param {boolean} options.cancelServiceCallConfirmed - Whether service call cancellation is confirmed.
+     * @param {string} options.cancellationReason - Reason for cancellation.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the cancelled activity.
+     */
     public async cancel(
         id: string, // also support code=$ or externalId=$,
         options: Partial<{
@@ -46,6 +59,17 @@ export class ActivityAPI {
 
     }
 
+    /**
+     * Closes an activity by its ID.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional closing parameters.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the closed activity.
+     */
     public async close(
         id: string, // also support code=$ or externalId=$,
         options: Partial<{
@@ -65,6 +89,21 @@ export class ActivityAPI {
 
     }
 
+    /**
+     * Duplicates an activity by its ID.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional duplication parameters.
+     * @param {string} options.crew - Crew identifier.
+     * @param {string[]} options.responsibles - Array of responsible person identifiers.
+     * @param {string} options.startDateTime - Start date and time in ISO 8601 format.
+     * @param {string} options.unit - Unit identifier.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the duplicated activity.
+     */
     public async duplicate(
         id: string, // also support code=$ or externalId=$,
         options: Partial<{
@@ -88,6 +127,26 @@ export class ActivityAPI {
 
     }
 
+    /**
+     * Plans an activity by its ID.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional planning parameters.
+     * @param {string} options.crew - Crew identifier.
+     * @param {UnifiedIdentifier} options.technician - Technician identifier.
+     * @param {string} options.startDateTime - Start date and time in ISO 8601 format.
+     * @param {boolean} options.startDateTimeFixed - Whether start date/time is fixed.
+     * @param {number} options.plannedDurationInMinutes - Planned duration in minutes.
+     * @param {number} options.travelTimeFromInMinutes - Travel time from in minutes.
+     * @param {number} options.travelTimeToInMinutes - Travel time to in minutes.
+     * @param {string} options.endDateTime - End date and time in ISO 8601 format.
+     * @param {boolean} options.endDateTimeFixed - Whether end date/time is fixed.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the planned activity.
+     */
     public async plan(
         id: string, // also support code=$ or externalId=$,
         options: Partial<{

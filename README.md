@@ -13,6 +13,11 @@ Find more documentation and related information at [SAP Field Service Management
   - [Getting started](#getting-started)
     - [Examples](#examples)
   - [CoreAPIClient](#coreapiclient)
+    - [Authentication & Token Management](#authentication--token-management)
+    - [Account API](#account-api)
+    - [Service Management API](#service-management-api)
+      - [Activity Business Actions](#activity-business-actions)
+      - [Activity Bulk Business Actions](#activity-bulk-business-actions)
     - [Query for objects using CoreSQL](#query-for-objects-using-coresql)
     - [CRUD object](#crud-object)
       - [Create a new object](#create-a-new-object)
@@ -85,6 +90,105 @@ Some illustrative cases are provided in the [examples](./examples) folder.
 ## CoreAPIClient
 
 The CoreAPIClient API actions will return a Promise and is asynchronous by default.
+
+### Authentication & Token Management
+
+```typescript
+// Login explicitly (optional - auto-login happens on first API call)
+await client.login();
+
+// Get current OAuth token
+const token = client.getToken();
+
+// Set OAuth token manually
+client.setToken(token);
+
+// Set authentication company (for multi-company tokens)
+client.setAuthCompany('COMPANY_NAME');
+```
+
+### Account API
+
+```typescript
+// Get all accessible accounts
+const accounts = await client.getAccounts();
+
+// Get companies by account ID
+const companies = await client.getCompaniesByAccount(accountId);
+```
+### Service Management API
+
+#### Activity Business Actions
+
+Perform business actions on individual activities:
+
+```typescript
+// Cancel an activity
+await client.activityApi.cancel('activity-id', {
+  cancelServiceCallConfirmed: true,
+  cancellationReason: 'Customer request'
+});
+
+// Close an activity
+await client.activityApi.close('activity-id', {
+  udfValues: [{ name: 'customField', value: 'completed' }]
+});
+
+// Duplicate an activity
+await client.activityApi.duplicate('activity-id', {
+  crew: 'crew-id',
+  responsibles: ['tech-1', 'tech-2'],
+  startDateTime: '2025-01-15T09:00:00Z'
+});
+
+// Plan an activity
+await client.activityApi.plan('activity-id', {
+  technician: { id: 'technician-id' },
+  startDateTime: '2025-01-15T09:00:00Z',
+  plannedDurationInMinutes: 120,
+  travelTimeFromInMinutes: 15,
+  travelTimeToInMinutes: 15
+});
+```
+
+#### Activity Bulk Business Actions
+
+Perform business actions on multiple activities at once:
+
+```typescript
+// Cancel multiple activities in bulk
+await client.activityApi.bulk.cancel([
+  { activityId: 'activity-1', cancellationReason: 'Weather conditions' },
+  { activityId: 'activity-2', cancellationReason: 'Customer cancellation' }
+]);
+
+// Plan multiple activities in bulk
+await client.activityApi.bulk.plan([
+  {
+    activityId: 'activity-1',
+    technician: { id: 'tech-1' },
+    startDateTime: '2025-01-15T09:00:00Z',
+    plannedDurationInMinutes: 90
+  },
+  {
+    activityId: 'activity-2',
+    technician: { id: 'tech-2' },
+    startDateTime: '2025-01-15T11:00:00Z',
+    plannedDurationInMinutes: 120
+  }
+]);
+
+// Duplicate multiple activities in bulk
+await client.activityApi.bulk.duplicate([
+  {
+    activityId: 'activity-1',
+    duplicateActivityRequest: {
+      startDateTime: '2025-01-20T09:00:00Z',
+      crew: 'crew-id'
+    }
+  }
+]);
+```
 
 ### Query for objects using CoreSQL
 
