@@ -1,18 +1,20 @@
-const fsm = require('../../../release/index');
+const fsm = require('../../release');
 
 const client = new fsm.CoreAPIClient({
   clientIdentifier: process.env.CLIENT_IDENTIFIER,
   clientSecret: process.env.CLIENT_SECRET,
   clientVersion: '4.0.0',
 
-  authGrantType: 'password',
+  // put your auth config here
+  oauthEndpoint: process.env.OAUTH_ENDPOINT,
   authAccountName: process.env.AUTH_ACCOUNT_NAME,
+  authCompany: process.env.AUTH_COMPANY_NAME,
   authUserName: process.env.AUTH_USERNAME,
   authPassword: process.env.AUTH_PASSWORD,
-  authCompany: process.env.AUTH_COMPANY_NAME,
 
+  authGrantType: process.env.AUTH_GRANT_TYPE,
+  oauthEndpoint: process.env.OAUTH_ENDPOINT,
   baseUrl: process.env.BASE_URL,
-  debug: false
 });
 
 async function queryRules() {
