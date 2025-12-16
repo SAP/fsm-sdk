@@ -42,7 +42,8 @@ const client = new fsm.CoreAPIClient({
     unifiedPerson.plannableResource = true
   `;
 
-    const result = await client.query(coreSQL, ['UnifiedPerson']);
+    // v4.0.0: Use dataServiceAPI accessor (deprecated - consider migrating to Service Management API)
+    const result = await client.dataServiceAPI.query(coreSQL, ['UnifiedPerson']);
 
     console.log(`Total ${result.data.length} technicians found`);
 
