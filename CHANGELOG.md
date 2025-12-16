@@ -11,8 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Public `masterApi` getter on `CoreAPIClient` for accessing master data operations via `MasterAPIService`.
 - Public `getAccounts()` and `getCompaniesByAccount(accountId)` methods to interact with the Account API.
 - New `authCompany` property in `ClientConfig` type for specifying the company to use for authentication when the token contains multiple companies.
-- Service Management API 
+- Service Management API support with `ActivityAPI`, `ServiceCallAPI`, `CompositeTreeAPI`, and `CompositeBulkAPI` services.
+  - Activity business actions: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`
+  - Activity bulk actions: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`, and more (19 bulk operations total)
+  - Service Call business actions: `cancel`, `technicallyComplete`
+  - Composite tree operations for service calls with nested activities
+  - Composite bulk operations for service calls
 - Translation API Label and Value
+- Comprehensive JSDoc documentation for all public methods in Service Management APIs
 
 ### Changed
 - Updated TypeScript and Rollup configuration for modern JavaScript output and improved bundling.

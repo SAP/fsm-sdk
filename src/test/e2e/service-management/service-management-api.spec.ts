@@ -403,4 +403,60 @@ describe('ServiceManagementAPI', () => {
 
         });
     })
+
+    describe('ServiceCall', () => {
+
+        const prepare = async () => {
+            const [{ businessPartner }] = await new CoreAPIClient(config)
+                .query(`select businessPartner FROM BusinessPartner businessPartner LIMIT 1`, ['BusinessPartner'])
+                .then(r => r.data);
+
+            // Create a service call with activity for testing
+            const serviceCall = await service.composite.tree.postServiceCall({
+                ...ServiceCallTreeFixture,
+                id: CoreAPIClient.createUUID(),
+                subject: 'Test Service Call for Business Actions',
+                businessPartner: { id: businessPartner?.id || '' },
+            }, { autoCreateActivity: true });
+
+            return { serviceCall };
+        }
+
+        it('cancel', done => {
+            prepare()
+                .then(({ serviceCall }) => {
+                    return service.serviceCall.cancel(serviceCall.id!, {
+                        cancellationReason: 'Service no longer needed',
+                    })
+                })
+                .then(({ activity }) => {
+                    assert(activity, 'should return a result');
+                    assert(activity!.id, 'should have an id');
+                })
+                .then(_ => done())
+                .catch(e => done(e));
+
+        }).timeout(ClientConfigBuilder.getTestTimeout());
+
+        it('technically complete', done => {
+            prepare()
+                .then(({ serviceCall }) => {
+                    // First cancel the activities
+                    return service.activity.bulk.cancel(
+                        serviceCall.activities!.map(a => ({
+                            id: a.id!,
+                            cancellationReason: 'Cancelled for technically complete test',
+                            cancelServiceCallConfirmed: false,
+                        }))
+                    ).then(() => serviceCall);
+                })
+                .then((serviceCall) => {
+                    return service.serviceCall.technicallyComplete(serviceCall.id!)
+                })
+                .then(_ => done())
+                .catch(e => done(e));
+
+        }).timeout(ClientConfigBuilder.getTestTimeout());
+
+    })
 })
