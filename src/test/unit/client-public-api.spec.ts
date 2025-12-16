@@ -24,13 +24,48 @@ describe('compatibility', () => {
 
         it('should have public methods defined', () => {
             const client = new fsm.CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), debug: false });
+            // v4.0.0: Direct token methods remain on client
+            [
+                'getToken',
+                'setToken',
+            ].forEach(fn => assert((client as any)[fn], `${fn} to be defined`));
+        });
+
+        it('should have service accessor properties', () => {
+            const client = new fsm.CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), debug: false });
+            // v4.0.0: Service accessor pattern
+            [
+                'serviceManagementAPI',
+                'dataServiceAPI',
+                'accountAPI',
+                'translationAPI',
+            ].forEach(accessor => {
+                assert((client as any)[accessor], `${accessor} to be defined`);
+                assert.strictEqual(typeof (client as any)[accessor], 'object', `${accessor} should be an object`);
+            });
+        });
+
+        it('should have Service Management API methods', () => {
+            const client = new fsm.CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), debug: false });
+            const serviceManagementAPI = (client as any).serviceManagementAPI;
+
+            assert(serviceManagementAPI.activity, 'activity API should be defined');
+            assert(serviceManagementAPI.serviceCall, 'serviceCall API should be defined');
+            assert(serviceManagementAPI.compositeBulk, 'compositeBulk API should be defined');
+            assert(serviceManagementAPI.compositeTree, 'compositeTree API should be defined');
+        });
+
+        it('should have Data Service API methods (deprecated)', () => {
+            const client = new fsm.CoreAPIClient({ ...ClientConfigBuilder.getConfig('client_credentials'), debug: false });
+            const dataServiceAPI = (client as any).dataServiceAPI;
+
+            // v4.0.0: These methods moved to dataServiceAPI accessor (deprecated)
             [
                 'batch',
                 'deleteById',
                 'deleteByExternalId',
                 'getById',
                 'getByExternalId',
-                'getToken',
                 'patch',
                 'patchByExternalId',
                 'post',
@@ -38,8 +73,9 @@ describe('compatibility', () => {
                 'put',
                 'putByExternalId',
                 'query',
-                'setToken',
-            ].forEach(fn => assert((client as any)[fn], `${fn} to be defined`));
+            ].forEach(method => {
+                assert.strictEqual(typeof dataServiceAPI[method], 'function', `${method} should be a function`);
+            });
         });
 
         describe('getToken', () => {
