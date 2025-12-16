@@ -13,6 +13,11 @@ Find more documentation and related information at [SAP Field Service Management
   - [Getting started](#getting-started)
     - [Examples](#examples)
   - [CoreAPIClient](#coreapiclient)
+    - [Authentication & Token Management](#authentication--token-management)
+    - [Account API](#account-api)
+    - [Service Management API](#service-management-api)
+      - [Activity Business Actions](#activity-business-actions)
+      - [Activity Bulk Business Actions](#activity-bulk-business-actions)
     - [Query for objects using CoreSQL](#query-for-objects-using-coresql)
     - [CRUD object](#crud-object)
       - [Create a new object](#create-a-new-object)
@@ -86,13 +91,228 @@ Some illustrative cases are provided in the [examples](./examples) folder.
 
 The CoreAPIClient API actions will return a Promise and is asynchronous by default.
 
-### Query for objects using CoreSQL
+### Authentication & Token Management
+
+```typescript
+// Login explicitly (optional - auto-login happens on first API call)
+await client.login();
+
+// Get current OAuth token
+const token = client.getToken();
+
+// Set OAuth token manually
+client.setToken(token);
+
+// Set authentication company (for multi-company tokens)
+client.setAuthCompany('COMPANY_NAME');
+```
+
+### Account API
+
+Access account and company information:
+
+```typescript
+// Get all accessible accounts
+const accounts = await client.accountAPI.getAccounts();
+
+// Get companies by account ID
+const companies = await client.accountAPI.getCompaniesByAccount(accountId);
+```
+
+### Service Management API
+
+The Service Management API provides access to activities, service calls, and composite operations.
+
+#### Activity Business Actions
+
+Perform business actions on individual activities:
+
+```typescript
+// Cancel an activity
+await client.serviceManagementAPI.activity.cancel('activity-id', {
+  cancelServiceCallConfirmed: true,
+  cancellationReason: 'Customer request'
+});
+
+// Close an activity
+await client.serviceManagementAPI.activity.close('activity-id', {
+  udfValues: [{ name: 'customField', value: 'completed' }]
+});
+
+// Duplicate an activity
+await client.serviceManagementAPI.activity.duplicate('activity-id', {
+  crew: 'crew-id',
+  responsibles: ['tech-1', 'tech-2'],
+  startDateTime: '2025-01-15T09:00:00Z'
+});
+
+// Plan an activity
+await client.serviceManagementAPI.activity.plan('activity-id', {
+  technician: { id: 'technician-id' },
+  startDateTime: '2025-01-15T09:00:00Z',
+  plannedDurationInMinutes: 120,
+  travelTimeFromInMinutes: 15,
+  travelTimeToInMinutes: 15
+});
+
+// Release an activity
+await client.serviceManagementAPI.activity.release('activity-id', {
+  udfValues: []
+});
+
+// Replan an activity
+await client.serviceManagementAPI.activity.replan('activity-id', {
+  technician: { id: 'technician-id' },
+  startDateTime: '2025-01-16T09:00:00Z',
+  plannedDurationInMinutes: 90
+});
+
+// Reschedule an activity
+await client.serviceManagementAPI.activity.reschedule('activity-id', {
+  technician: { id: 'technician-id' },
+  startDateTime: '2025-01-17T09:00:00Z',
+  plannedDurationInMinutes: 120
+});
+```
+
+#### Activity Bulk Business Actions
+
+Perform business actions on multiple activities at once:
+
+```typescript
+// Cancel multiple activities in bulk
+await client.serviceManagementAPI.activity.bulk.cancel([
+  { id: 'activity-1', cancellationReason: 'Weather conditions' },
+  { id: 'activity-2', cancellationReason: 'Customer cancellation' }
+]);
+
+// Plan multiple activities in bulk
+await client.serviceManagementAPI.activity.bulk.plan([
+  {
+    id: 'activity-1',
+    technician: { id: 'tech-1' },
+    startDateTime: '2025-01-15T09:00:00Z',
+    plannedDurationInMinutes: 90
+  },
+  {
+    id: 'activity-2',
+    technician: { id: 'tech-2' },
+    startDateTime: '2025-01-15T11:00:00Z',
+    plannedDurationInMinutes: 120
+  }
+]);
+
+// Duplicate multiple activities in bulk
+await client.serviceManagementAPI.activity.bulk.duplicate([
+  {
+    id: 'activity-1',
+    startDateTime: '2025-01-20T09:00:00Z',
+    crew: 'crew-id'
+  }
+]);
+```
+
+#### Service Call Business Actions
+
+Perform business actions on service calls:
+
+```typescript
+// Cancel a service call
+await client.serviceManagementAPI.serviceCall.cancel('service-call-id', {
+  cancellationReason: 'Customer request'
+});
+
+// Mark service call as technically complete
+await client.serviceManagementAPI.serviceCall.technicallyComplete('service-call-id');
+```
+
+#### Composite Operations
+
+Work with service calls and their nested activities:
+
+```typescript
+// Create service call with activities (tree structure)
+const serviceCall = await client.serviceManagementAPI.composite.tree.postServiceCall({
+  subject: 'Installation Service',
+  businessPartner: { id: 'bp-id' },
+  activities: [{
+    subject: 'Installation',
+    type: 'INSTALL'
+  }]
+}, { autoCreateActivity: true });
+
+// Get service call with nested structure
+const serviceCallTree = await client.serviceManagementAPI.composite.tree.getServiceCall('service-call-id');
+
+// Bulk create service calls
+const bulkResult = await client.serviceManagementAPI.composite.bulk.postServiceCalls([
+  { subject: 'Service 1', businessPartner: { id: 'bp-id' } },
+  { subject: 'Service 2', businessPartner: { id: 'bp-id' } }
+], { autoCreateActivity: true });
+```
+
+### Translation API
+
+Access translation labels and values:
+
+```typescript
+// Get translation labels
+const labels = await client.translationAPI.getLabels();
+
+// Get translation values
+const values = await client.translationAPI.getValues('label-id');
+```
+
+### Rules API
+
+Manage business rules, monitor execution, and track rule health:
+
+```typescript
+// Get all rules with filtering and pagination
+const rulesPage = await client.rulesAPI.getRules({
+  page: 0,
+  size: 10,
+});
+
+// Get a specific rule by ID
+const rule = await client.rulesAPI.getRule('rule-id');
+
+// Create a new rule
+const newRule = await client.rulesAPI.createRule({
+  // <RuleDTO> 
+});
+
+// Update an existing rule (partial update)
+const updatedRule = await client.rulesAPI.updateRule('rule-id', {
+  enabled: false,
+  description: 'Updated description'
+});
+
+// Create or replace a rule
+const upsertedRule = await client.rulesAPI.createOrUpdateRule('rule-id', {
+  // <RuleDTO> 
+});
+
+// Get execution records for a rule
+const executionRecords = await client.rulesAPI.getRuleExecutionRecords('rule-id', {
+  page: 0,
+  size: 20,
+  status: 'FAILED',
+  executionDateFrom: '2025-01-01',
+  executionDateTo: '2025-12-31'
+});
+```
+
+### Legacy Data Cloud API (Deprecated)
+
+> ⚠️ **Note**: The Data Service API (Data Cloud) is deprecated. For service calls and activities, use the Service Management API instead.
+
+#### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
 see [Field Service Management - Query API](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
 
 ```typescript
-
 const coreSQL =
   `SELECT
     sc.id,
@@ -103,10 +323,10 @@ const coreSQL =
    sc.id = '36A5626F65A54FE7911F536C501D151A'
   `;
 
-await client.query(coreSQL, ['ServiceCall']);
+await client.dataServiceAPI.query(coreSQL, ['ServiceCall']);
 ```
 
-### CRUD object
+#### CRUD object
 
 related doc's:
 - [Data API v4 Docs](https://help.sap.com/viewer/fsm_data_api/Cloud/en-US)

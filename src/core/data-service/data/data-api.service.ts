@@ -1,10 +1,10 @@
-import { URLSearchParams } from '../../polyfills';
-import { ClientConfig } from '../client-config.model';
+import { URLSearchParams } from '../../../polyfills';
+import { ClientConfig } from '../../client-config.model';
 import { DataApiResponse } from './data-api.model';
-import { DTOModels, DTOName } from '../dto-name.model';
-import { HttpService } from '../http/http-service';
-import { OAuthService } from '../oauth/oauth.service';
-import { RequestOptionsFactory } from '../request-options.factory';
+import { DataCloudDTOModels, DataCloudDTOName } from '../dto-name.model';
+import { HttpService } from '../../http/http-service';
+import { OAuthService } from '../../oauth/oauth.service';
+import { RequestOptionsFactory } from '../../request-options.factory';
 
 type IdOrExternalId = Partial<{ resourceId: string | null | undefined, externalId: string | null | undefined }>;
 
@@ -16,9 +16,9 @@ export class DataApiService {
         private _auth: Readonly<OAuthService>
     ) { }
 
-    private async _requestDataApi<T extends DTOModels>(
+    private async _requestDataApi<T extends DataCloudDTOModels>(
         method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
-        resourceName: DTOName,
+        resourceName: DataCloudDTOName,
         resourceData: T | null | any,
         { resourceId, externalId }: IdOrExternalId = { resourceId: null, externalId: null },
         additionalQs: { [k: string]: string | number | boolean } = {}
@@ -44,24 +44,24 @@ export class DataApiService {
         );
     }
 
-    public async getById<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async getById<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, id: IdOrExternalId, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         const response = await this._requestDataApi('GET', resourceName, null, id, queryParams);
         return typeof response === 'string' ? JSON.parse(response) : response;
     }
 
-    public async deleteById<T extends Partial<DTOModels>>(resourceName: DTOName, id: IdOrExternalId, lastChanged: number): Promise<undefined> {
+    public async deleteById<T extends Partial<DataCloudDTOModels>>(resourceName: DataCloudDTOName, id: IdOrExternalId, lastChanged: number): Promise<undefined> {
         return this._requestDataApi('DELETE', resourceName, null, id, { lastChanged }) as any as Promise<undefined>;
     }
 
-    public async post<T extends DTOModels>(resourceName: DTOName, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async post<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         return this._requestDataApi('POST', resourceName, resource, undefined, queryParams) as Promise<DataApiResponse<T>>;
     }
 
-    public async put<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async put<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         return this._requestDataApi('PUT', resourceName, resource, id, queryParams) as Promise<DataApiResponse<T>>;
     }
 
-    public async patch<T extends DTOModels>(resourceName: DTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
+    public async patch<T extends DataCloudDTOModels>(resourceName: DataCloudDTOName, id: IdOrExternalId, resource: T, queryParams: { useExternalIds: true } | undefined = undefined): Promise<DataApiResponse<T>> {
         return this._requestDataApi('PATCH', resourceName, resource, id, queryParams) as Promise<DataApiResponse<T>>;
     }
 }

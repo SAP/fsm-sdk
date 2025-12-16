@@ -83,7 +83,8 @@ const serviceCall = {
 
 (async () => {
   try {
-    const result = await client.post('ServiceCall', serviceCall);
+    // v4.0.0: Use dataServiceAPI accessor (deprecated - consider migrating to Service Management API)
+    const result = await client.dataServiceAPI.post('ServiceCall', serviceCall);
     console.log(JSON.stringify(result, null, 2));  // => { data: [ { serviceCall: [Object] } ] }
 
   } catch (error) {

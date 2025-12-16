@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { BatchResponse } from '../../core/batch/batch-response';
+import { BatchResponse } from '../../core/data-service/batch/batch-response';
 
 describe('BatchResponse', () => {
 

@@ -30,14 +30,11 @@ export class AccountAPIService {
         return 'm' + `aster/v1`; // inclusive wording check failing, can not rename the API path :)
     }
 
-    async getCompaniesByAccount(accountId: number): Promise<Company[]> {
+    async getCompaniesByAccountId(accountId: number): Promise<Company[]> {
         const token = await this._auth.ensureToken(this._config);
         return await this.http.request<Company[]>(`${this._config.baseUrl}/api/${this.getApiPath()}/v1/accounts/${accountId}/companies`, {
             method: 'GET',
-            headers: {
-                'content-type': 'application/json',
-                ...RequestOptionsFactory.getRequestHeaders(token, this._config)
-            },
+            headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
         }) as Company[]
     }
 
@@ -45,10 +42,7 @@ export class AccountAPIService {
         const token = await this._auth.ensureToken(this._config);
         return await this.http.request(`${this._config.baseUrl}/api/${this.getApiPath()}/accounts`, {
             method: 'GET',
-            headers: {
-                'content-type': 'application/json',
-                ...RequestOptionsFactory.getRequestHeaders(token, this._config)
-            },
+            headers: RequestOptionsFactory.getRequestHeaders(token, this._config)
         }) as Account[]
     }
 

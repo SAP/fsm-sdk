@@ -1,4 +1,5 @@
 export type ErrorResponse<TError, TOptions> = {
+  uri: string;
   statusCode: number,
   message: string,
   error: TError,

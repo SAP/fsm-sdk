@@ -9,7 +9,7 @@ export class HttpService {
         private _logger: { log: Function } = console
     ) { }
 
-    public request<T>(uri: string, options: HttpRequestOptions): Promise<T | string | null> {
+    public request<T>(uri: string, options: HttpRequestOptions): Promise<T | null> {
 
         if (!uri) {
             throw new Error('URI is required for HTTP request');
@@ -34,11 +34,18 @@ export class HttpService {
 
                 if (!response.ok && [304, 302].indexOf(response.status || -1) === -1) {
                     throw <ErrorResponse<any, HttpRequestOptions>>{
+                        uri: uri,
                         statusCode: response.status,
                         message: response.statusText,
                         error: content,
                         response: response,
-                        options: options
+                        options: {
+                            ...options,
+                            headers: {
+                                ...options.headers,
+                                Authorization: '<<hidden>>'
+                            }
+                        }
                     };
                 }
 

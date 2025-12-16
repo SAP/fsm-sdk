@@ -1,25 +1,27 @@
-import { DTOName, DTOModels } from './core/dto-name.model';
 import { ClientConfig } from './core/client-config.model';
 import { OAuthTokenResponse } from './core/oauth/oauth-token-response.model';
-import { DataApiResponse } from './core/data/data-api.model';
-import { BatchAction } from './core/batch/batch-action.model';
 import { RequestOptionsFactory } from './core/request-options.factory';
-import { BatchResponseJson } from './core/batch/batch-response';
-
 import { OAuthService } from './core/oauth/oauth.service';
 import { HttpService } from './core/http/http-service';
-import { DataApiService } from './core/data/data-api.service';
-import { Account, AccountAPIService, Company } from './core/account/account-api.service';
-import { QueryApiService } from './core/query/query-api.service';
-import { BatchAPIService } from './core/batch/batch-api.service';
+import {  AccountAPIService } from './core/account/account-api.service';
+import { TranslationApiService } from './core/translations/translations-api.service';
+import { ServiceManagementAPIService } from './core/service-management/service-management.service';
+import { DataServiceAPIService } from './core/data-service/data-service.service';
+import { RulesAPIService } from './core/rules/rules-api.service';
+
 
 export class CoreAPIClient {
 
   private _auth: OAuthService;
-  private _dataApi: DataApiService;
+  private _serviceManagementApi: ServiceManagementAPIService;
+
   private _accountApi: AccountAPIService;
-  private _queryAPi: QueryApiService;
-  private _batchApi: BatchAPIService;
+  private _translationApi: TranslationApiService;
+  private _rulesApi: RulesAPIService;
+
+  private _dataServiceAPI: DataServiceAPIService
+
+
   private _config_default: ClientConfig = {
     debug: false,
 
@@ -83,229 +85,68 @@ export class CoreAPIClient {
     this._config = Object.assign(this._config_default, config) as ClientConfig
 
     const _http = new HttpService(this._config);
-
     this._auth = new OAuthService(_http);
-    this._queryAPi = new QueryApiService(this._config, _http, this._auth);
-    this._batchApi = new BatchAPIService(this._config, _http, this._auth);
     this._accountApi = new AccountAPIService(this._config, this._auth);
-    this._dataApi = new DataApiService(this._config, _http, this._auth);
-  }
-
-
-  /**
-   * Creates UUID
-   * @returns a uuid that can be used as an FSM object id
-   */
-  public static createUUID(): string {
-    return RequestOptionsFactory.getUUID().toUpperCase();
+    this._dataServiceAPI = new DataServiceAPIService(this._config, _http, this._auth);
+    this._translationApi = new TranslationApiService(this._config, _http, this._auth);
+    this._rulesApi = new RulesAPIService(this._config, _http, this._auth);
+    this._serviceManagementApi = new ServiceManagementAPIService(this._config, _http, this._auth);
   }
 
   /**
-   * Here, you can input and execute the CoreSQL query.
-   * 
-   * related api docs:  
-   * https://help.sap.com/viewer/fsm_query_api/Cloud/en-US/query-api-intro.html
-   * 
-   * @param coreSQL valid CoreSQL
-   * @param dtoNames DTOName[]
-   * @returns Promise<{ data: DTO[] }>
+   * @param o { legacyFormat: boolean }
+   * @description Creates a UUID string.
+   * If `legacyFormat` is true, it returns the UUID without dashes and in uppercase. used by FSM legacy data-cloud APIs APIs.
+   * If `legacyFormat` is false, it returns the UUID in its standard format.
+   * @returns string
    */
-  public async query<T extends { [projection: string]: DTOModels }>(coreSQL: string, dtoNames: DTOName[]): Promise<{ data: T[] }> {
-    return this._queryAPi.query<T>(coreSQL, dtoNames);
+  public static createUUID(o: { legacyFormat: boolean } | undefined = { legacyFormat: true }): string {
+    return RequestOptionsFactory.getUUID(o?.legacyFormat);
   }
 
   /**
-   * Retrieving Lists of Objects by Id
+   * Provides access to the Service Management API for managing service calls and activities.
    * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName DTOName 
-   * @param resourceId uuid as string
-   * @returns Promise<ClientResponse<DTO>>
+   * @returns {ServiceManagementAPIService} Service management API instance with activity, service call, and composite operations.
    */
-  public async getById<T extends DTOModels>(resourceName: DTOName, resourceId: string): Promise<DataApiResponse<T>> {
-    return this._dataApi.getById<T>(resourceName, { resourceId });
+  public get serviceManagementAPI(): ServiceManagementAPIService {
+    return this._serviceManagementApi;
   }
 
   /**
-   * Retrieving Lists of Objects by ExternalId
+   * Provides access to the legacy Data Service API (Data Cloud).
    * 
-   * Note: [useExternalIds=true] option will be used
-   * referenced resources will not be a uid-string or null but of object or null
-   * containing id and externalId if present
-   * ```typescript
-   *  [referenced-resource] : { id: string, externalId? : string } | null
-   * ```
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName DTOName 
-   * @param externalId externalId as string
-   * @returns Promise<ClientResponse<DTO>>
+   * @returns {DataServiceAPIService} Data service API instance for legacy data cloud operations.
    */
-  public async getByExternalId<T extends DTOModels>(resourceName: DTOName, externalId: string): Promise<DataApiResponse<T>> {
-    return this._dataApi.getById<T>(resourceName, { externalId }, { useExternalIds: true });
+  public get dataServiceAPI(): DataServiceAPIService {
+    return this._dataServiceAPI;
   }
 
   /**
-   * Deletes Existing Object by Id
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * Provides access to the Account API for retrieving account and company information.
    * 
-   * @param resourceName DTOName
-   * @param resource { id: string, lastChanged: number }
-   * @returns 
+   * @returns {AccountAPIService} Account API instance for account and company operations.
    */
-  public async deleteById<T extends Partial<DTOModels> & { id: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
-    const { id, lastChanged } = resource;
-    return this._dataApi.deleteById<T>(resourceName, { resourceId: id }, lastChanged);
+  public get accountAPI(): AccountAPIService {
+    return this._accountApi;
   }
 
   /**
-   * Deletes Existing Object by ExternalId
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
+   * Provides access to the Translation API for managing labels and translations.
    * 
-   * @param resourceName DTOName
-   * @param resource { id: string, lastChanged: number }
-   * @returns 
+   * @returns {TranslationApiService} Translation API instance for label and value operations.
    */
-  public async deleteByExternalId<T extends Partial<DTOModels> & { externalId: string, lastChanged: number }>(resourceName: DTOName, resource: T): Promise<undefined> {
-    const { externalId, lastChanged } = resource;
-    return this._dataApi.deleteById<T>(resourceName, { externalId }, lastChanged);
+  public get translationAPI(): TranslationApiService {
+    return this._translationApi;
   }
 
   /**
-   * Creating Objects by Id
+   * Provides access to the Rules API for managing business rules.
    * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName DTOName
-   * @param resource should contain in the body the ENTIRE updated resource
-   * @returns Promise<ClientResponse<DTO>>
+   * @returns {RulesAPIService} Rules API instance for business rule operations.
    */
-  public async post<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.post<T>(resourceName, resource);
-  }
-
-  /**
-   * Creating Objects by ExternalId
-   * 
-   * Note: [useExternalIds=true] option will be used
-   * referenced resources will not be a uid-string or null but of object or null
-   * containing id and externalId if present
-   * ```typescript
-   *  [referenced-resource] : { id: string, externalId? : string } | null
-   * ```
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName DTOName
-   * @param resource should contain in the body the ENTIRE updated resource
-   * @returns Promise<ClientResponse<DTO>>
-   */
-  public async postByExternalId<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.post<T>(resourceName, resource, { useExternalIds: true });
-  }
-
-  /**
-   * Updating Existing Objects by Id
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName resourceName
-   * @param resource should contain in the body the ENTIRE updated resource
-   * @returns Promise<ClientResponse<DTO>>
-   */
-  public async put<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.put<T>(resourceName, { resourceId: resource.id as string }, resource);
-  }
-
-  /**
-   * Updating Existing Objects by ExternalId
-   * 
-   * Note: [useExternalIds=true] option will be used
-   * referenced resources will not be a uid-string or null but of object or null
-   * containing id and externalId if present
-   * ```typescript
-   *  [referenced-resource] : { id: string, externalId? : string } | null
-   * ```
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName resourceName
-   * @param resource should contain in the resource the ENTIRE updated resource
-   * @returns Promise<ClientResponse<DTO>>
-   */
-  public async putByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.put<T>(resourceName, { externalId: resource.externalId as string }, resource, { useExternalIds: true });
-  }
-
-  /**
-   * Updating Existing Objects by Id
-   * should contain [id] in the body the entire updated resource
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName resourceName
-   * @param resource should contain in the body the [id] & [FIELDS THAT YOU WANT TO UPDATE]
-   * @returns Promise<ClientResponse<DTO>>
-   */
-  public async patch<T extends DTOModels>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.patch<T>(resourceName, { resourceId: resource.id as string }, resource);
-  }
-
-  /**
-   * Updating Existing Objects by ExternalId
-   * should contain [ExternalId] in the resource the entire updated resource
-   * 
-   * Note: [useExternalIds=true] option will be used
-   * referenced resources will not be a uid-string or null but of object or null
-   * containing id and externalId if present
-   * ```typescript
-   *  [referenced-resource] : { id: string, externalId? : string } | null
-   * ```
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US
-   * 
-   * @param resourceName resourceName
-   * @param resource should contain in the resource the [externalId] & [FIELDS THAT YOU WANT TO UPDATE]
-   * @returns Promise<ClientResponse<DTO>>
-   */
-  public async patchByExternalId<T extends DTOModels & { externalId: string }>(resourceName: DTOName, resource: T): Promise<DataApiResponse<T>> {
-    return this._dataApi.patch<T>(resourceName, { externalId: resource.externalId }, resource, { useExternalIds: true });
-  }
-
-  /**
-   * Batch request with transational support
-   * requests will be executed in oder of the actions array.
-   * 
-   * Example:
-   * ```typescript
-   *  const actions = [ 
-   *    new CreateAction('ServiceCall', { ... }), 
-   *    new UpdateAction('ServiceCall', { id, lastChanged ... }),
-   *    new DeleteAction('ServiceCall', { id, lastChanged ... }) 
-   *  ];
-   *  await client.batch(actions)
-   * ```
-   * 
-   * related api docs: 
-   * https://help.sap.com/viewer/fsm_data_api/Cloud/en-US/batch-api-intro.html
-   * 
-   * @param actions BatchAction | CreateAction | UpdateAction | DeleteAction
-   * @returns Promise<BatchResponseJson<T>[]>
-   */
-  public async batch<T extends DTOModels>(actions: BatchAction[]): Promise<BatchResponseJson<T>[]> {
-    return this._batchApi.batch<T>(actions);
+  public get rulesAPI(): RulesAPIService {
+    return this._rulesApi;
   }
 
   /**
@@ -360,25 +201,6 @@ export class CoreAPIClient {
     this._config.authCompany = companyName;
 
     return this;
-  }
-
-  /**
-   * Retrieves all accounts accessible to the authenticated user/client.
-   * 
-   * @returns {Promise<Account[]>} A promise resolving to an array of accounts.
-   */
-  public async getAccounts(): Promise<Account[]> {
-    return this._accountApi.getAccounts()
-  }
-
-  /**
-   * Retrieves all companies associated with a specific account.
-   * 
-   * @param {number} accountId - The ID of the account.
-   * @returns {Promise<Company[]>} A promise resolving to an array of companies for the given account.
-   */
-  public async getCompaniesByAccountId(accountId: number): Promise<Company[]> {
-    return this._accountApi.getCompaniesByAccount(accountId);
   }
 
 }

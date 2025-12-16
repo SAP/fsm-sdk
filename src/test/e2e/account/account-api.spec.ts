@@ -1,6 +1,5 @@
-import assert from 'assert';
-import { ClientConfigBuilder } from '../integration-test.config';
-import { CoreAPIClient } from '../../core-api.client';
+import { ClientConfigBuilder } from '../../integration-test.config';
+import { CoreAPIClient } from '../../../core-api.client';
 
 describe('AccountApi', () => {
 
@@ -8,7 +7,7 @@ describe('AccountApi', () => {
     const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
     it('should throw if no access', done => {
 
-      client.getAccounts()
+      client.accountAPI.getAccounts()
         .then(_ => done(new Error('should throw')))
         .catch(e => done());
 
@@ -19,7 +18,7 @@ describe('AccountApi', () => {
     const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
     it('should throw if no access', done => {
 
-      client.getCompaniesByAccountId(1)
+      client.accountAPI.getCompaniesByAccountId(1)
         .then(_ => done(new Error('should throw')))
         .catch(e => done());
 

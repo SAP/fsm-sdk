@@ -1,15 +1,15 @@
 import assert from 'assert';
-import { ClientConfigBuilder } from '../integration-test.config';
-import { CoreAPIClient } from '../../core-api.client';
-import { ALL_DTO_VERSIONS } from '../../core/all-dto-versions.constant';
-import { DTOName } from '../../core/dto-name.model';
+import { ClientConfigBuilder } from '../../integration-test.config';
+import { CoreAPIClient } from '../../../core-api.client';
+import { ALL_DTO_VERSIONS } from '../../../core/data-service/all-dto-versions.constant';
+import { DataCloudDTOName } from '../../../core/data-service/dto-name.model';
 
 describe('QueryApi', () => {
 
   const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
   it('should execute query', done => {
 
-    client.query(
+    client.dataServiceAPI.query(
       `SELECT
           bp.id,
           bp.name,
@@ -18,7 +18,7 @@ describe('QueryApi', () => {
           BusinessPartner bp
           JOIN ServiceCall sc ON bp=sc.businessPartner
         LIMIT 3`,
-      Object.keys(ALL_DTO_VERSIONS) as DTOName[]
+      Object.keys(ALL_DTO_VERSIONS) as DataCloudDTOName[]
     )
       .then(result => {
         assert(Array.isArray(result.data));

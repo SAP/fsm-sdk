@@ -33,7 +33,8 @@ const client = new fsm.CoreAPIClient({
     Equipment it
   `;
 
-    const result1 = await client.query(coreSQL1, ['Equipment']);
+    // v4.0.0: Use dataServiceAPI accessor (deprecated - consider migrating to Service Management API)
+    const result1 = await client.dataServiceAPI.query(coreSQL1, ['Equipment']);
     console.log(JSON.stringify(result1, null, 2)); // => { "data": [ { "it": { ... } } ... ] ...
   } catch (error) {
     console.log('ERROR');

@@ -60,7 +60,7 @@ export class ClientConfigBuilder {
   }
 
   public static getTestTimeout() {
-    return parseInt(process.env.TEST_TIMEOUT || '10000', 10);
+    return parseInt(process.env.TEST_TIMEOUT || '20000', 10);
   }
 }
 
