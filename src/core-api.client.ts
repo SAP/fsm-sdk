@@ -113,7 +113,6 @@ export class CoreAPIClient {
   /**
    * Provides access to the legacy Data Service API (Data Cloud).
    * 
-   * @deprecated The Data Service API (Data Cloud) is in deprecation. Use other APIs like Service Management API instead.
    * @returns {DataServiceAPIService} Data service API instance for legacy data cloud operations.
    */
   public get dataServiceAPI(): DataServiceAPIService {

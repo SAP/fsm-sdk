@@ -51,8 +51,8 @@ describe('compatibility', () => {
 
             assert(serviceManagementAPI.activity, 'activity API should be defined');
             assert(serviceManagementAPI.serviceCall, 'serviceCall API should be defined');
-            assert(serviceManagementAPI.compositeBulk, 'compositeBulk API should be defined');
-            assert(serviceManagementAPI.compositeTree, 'compositeTree API should be defined');
+            assert(serviceManagementAPI.composite.bulk, 'compositeBulk API should be defined');
+            assert(serviceManagementAPI.composite.tree, 'compositeTree API should be defined');
         });
 
         it('should have Data Service API methods (deprecated)', () => {

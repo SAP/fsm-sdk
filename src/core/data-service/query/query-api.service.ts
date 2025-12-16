@@ -1,6 +1,6 @@
 import { URLSearchParams } from '../../../polyfills';
 import { ClientConfig } from '../../client-config.model';
-import { DataCloudDTOModels, DataCloudDTOName } from '../../dto-name.model';
+import { DataCloudDTOModels, DataCloudDTOName } from '../dto-name.model';
 import { HttpService } from '../../http/http-service';
 import { OAuthService } from '../../oauth/oauth.service';
 import { RequestOptionsFactory } from '../../request-options.factory';

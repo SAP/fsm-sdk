@@ -84,8 +84,6 @@ describe('TranslationAPI', () => {
   describe('Values', () => {
     const THE_ID = CoreAPIClient.createUUID({ legacyFormat: false });
     const prepare = async (id: string) => {
-
-      const client = new CoreAPIClient(config);
       const [{ equipment }] = await client.dataServiceAPI.post('Equipment', {
         id: CoreAPIClient.createUUID({ legacyFormat: true }),
         name: `MY-TEST-EQUIPMENT-${Date.now()}`,
@@ -115,7 +113,8 @@ describe('TranslationAPI', () => {
       return { dto, THE_ID: id, equipment, cleanup };
     }
 
-    it('POST, GET(with params/filter), PUT, DELETE', done => {
+    // todo: API is not GA yet - enable when it is
+    xit('POST, GET(with params/filter), PUT, DELETE', done => {
 
       prepare(THE_ID)
         .then(({ dto, equipment, cleanup }) => {

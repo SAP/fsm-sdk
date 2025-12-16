@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
-import { ALL_DTO_VERSIONS } from './all-dto-versions.constant';
-import { DataCloudDTOName } from './dto-name.model';
+import { ALL_DTO_VERSIONS } from './data-service/all-dto-versions.constant';
+import { DataCloudDTOName } from './data-service/dto-name.model';
 import { OAuthTokenResponse } from './oauth/oauth-token-response.model';
 import { ClientConfig } from './client-config.model';
 

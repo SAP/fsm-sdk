@@ -1,5 +1,5 @@
 import { ClientConfig } from "../client-config.model";
-import { DataCloudDTOModels, DataCloudDTOName } from "../dto-name.model";
+import { DataCloudDTOModels, DataCloudDTOName } from "./dto-name.model";
 import { HttpService } from "../http/http-service";
 import { OAuthService } from "../oauth/oauth.service";
 import { BatchAction } from "./batch/batch-action.model";
@@ -11,8 +11,6 @@ import { QueryApiService } from "./query/query-api.service";
 
 /**
  * Data Service API (Data Cloud) - Legacy service for CRUD operations.
- * 
- * @deprecated The Data Service API (Data Cloud) is deprecated. Use Service Management API instead for service calls and activities.
  */
 export class DataServiceAPIService {
 
