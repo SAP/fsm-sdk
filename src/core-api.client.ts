@@ -8,6 +8,7 @@ import { TranslationApiService } from './core/translations/translations-api.serv
 import { ServiceManagementAPIService } from './core/service-management/service-management.service';
 import { DataServiceAPIService } from './core/data-service/data-service.service';
 import { RulesAPIService } from './core/rules/rules-api.service';
+import { OptimizationAPIService } from './core/optimization/optimization-api.service';
 
 
 export class CoreAPIClient {
@@ -18,6 +19,7 @@ export class CoreAPIClient {
   private _accountApi: AccountAPIService;
   private _translationApi: TranslationApiService;
   private _rulesApi: RulesAPIService;
+  private _optimizationApi: OptimizationAPIService;
 
   private _dataServiceAPI: DataServiceAPIService
 
@@ -91,6 +93,7 @@ export class CoreAPIClient {
     this._translationApi = new TranslationApiService(this._config, _http, this._auth);
     this._rulesApi = new RulesAPIService(this._config, _http, this._auth);
     this._serviceManagementApi = new ServiceManagementAPIService(this._config, _http, this._auth);
+    this._optimizationApi = new OptimizationAPIService(this._config, _http, this._auth);
   }
 
   /**
@@ -147,6 +150,15 @@ export class CoreAPIClient {
    */
   public get rulesAPI(): RulesAPIService {
     return this._rulesApi;
+  }
+
+  /**
+   * Provides access to the Optimization API for automated scheduling and technician assignment.
+   * 
+   * @returns {OptimizationAPIService} Optimization API instance for optimization operations.
+   */
+  public get optimizationAPI(): OptimizationAPIService {
+    return this._optimizationApi;
   }
 
   /**

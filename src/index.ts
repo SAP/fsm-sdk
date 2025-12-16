@@ -15,3 +15,6 @@ export {
 
 // Export Rules API types
 export * from './core/rules/rules.model';
+
+// Export Optimization API types
+export * from './core/optimization/optimization.model';
