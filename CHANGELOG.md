@@ -44,6 +44,15 @@ await client.accountAPI.getCompaniesByAccount(accountId);
    - `client.getById()` → `client.dataServiceAPI.getById()`
    - All other CRUD operations now use `client.dataServiceAPI.*`
 ### Added
+- **Rules API** support with new service accessor `rulesAPI` on `CoreAPIClient`.
+  - `getRules()` - Query business rules with filtering, pagination, and sorting
+  - `createRule()` - Create new business rules
+  - `getRule()` - Get specific rule by ID
+  - `updateRule()` - Partial update of existing rules (PATCH)
+  - `createOrUpdateRule()` - Full replace or create rules (PUT)
+  - `getRuleExecutionRecords()` - Get execution history with filtering
+  - Full TypeScript type definitions for `RuleDto`, `Action`, `Variable`, `CustomRuleExecutionRecordDto`
+  - Support for filtering by event type, object type, health state
 - Service Management API support with new service accessor `serviceManagementAPI` on `CoreAPIClient`.
   - `ActivityAPI` with business actions: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`
   - `ActivityBulkAPI` with 19 bulk operations including: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`, and more

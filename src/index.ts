@@ -12,3 +12,6 @@ export {
 
     ALL_DTO_VERSIONS
 };
+
+// Export Rules API types
+export * from './core/rules/rules.model';

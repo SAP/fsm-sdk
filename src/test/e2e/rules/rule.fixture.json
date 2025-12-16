@@ -1,0 +1,30 @@
+{
+  "name": "E2E Test - Attach specific checklist report to activity as soon as the checklist was closed",
+  "actions": [
+    {
+      "name": "ChecklistInstance",
+      "parameters": {
+        "templateName": "checklist"
+      }
+    }
+  ],
+  "conditions": "(${fsmEvent.closed} == true)",
+  "description": "<h1>Test</h1>",
+  "eventType": "KAFKA_EVENT",
+  "kafkaEventName": "com.sap.fsm.data.domain.event.ChecklistInstanceChangedEvent",
+  "permissionsType": "MAXIMUM",
+  "responsible": "",
+  "type": "THREE",
+  "variables": [
+    {
+      "name": "checklistInstance",
+      "type": "ChecklistInstance",
+      "value": "checklistInstance.id = ${fsmEvent.checklistInstanceId}",
+      "variableType": "OBJECT",
+      "version": 19
+    }
+  ],
+  "delay": 30,
+  "skippedLogs": false,
+  "useCompanyTimeZone": false
+}

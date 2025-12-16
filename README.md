@@ -263,6 +263,46 @@ const labels = await client.translationAPI.getLabels();
 const values = await client.translationAPI.getValues('label-id');
 ```
 
+### Rules API
+
+Manage business rules, monitor execution, and track rule health:
+
+```typescript
+// Get all rules with filtering and pagination
+const rulesPage = await client.rulesAPI.getRules({
+  page: 0,
+  size: 10,
+});
+
+// Get a specific rule by ID
+const rule = await client.rulesAPI.getRule('rule-id');
+
+// Create a new rule
+const newRule = await client.rulesAPI.createRule({
+  // <RuleDTO> 
+});
+
+// Update an existing rule (partial update)
+const updatedRule = await client.rulesAPI.updateRule('rule-id', {
+  enabled: false,
+  description: 'Updated description'
+});
+
+// Create or replace a rule
+const upsertedRule = await client.rulesAPI.createOrUpdateRule('rule-id', {
+  // <RuleDTO> 
+});
+
+// Get execution records for a rule
+const executionRecords = await client.rulesAPI.getRuleExecutionRecords('rule-id', {
+  page: 0,
+  size: 20,
+  status: 'FAILED',
+  executionDateFrom: '2025-01-01',
+  executionDateTo: '2025-12-31'
+});
+```
+
 ### Legacy Data Cloud API (Deprecated)
 
 > ⚠️ **Note**: The Data Service API (Data Cloud) is deprecated. For service calls and activities, use the Service Management API instead.
