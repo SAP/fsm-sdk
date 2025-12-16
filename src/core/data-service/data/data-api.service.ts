@@ -1,10 +1,10 @@
-import { URLSearchParams } from '../../polyfills';
-import { ClientConfig } from '../client-config.model';
+import { URLSearchParams } from '../../../polyfills';
+import { ClientConfig } from '../../client-config.model';
 import { DataApiResponse } from './data-api.model';
-import { DataCloudDTOModels, DataCloudDTOName } from '../dto-name.model';
-import { HttpService } from '../http/http-service';
-import { OAuthService } from '../oauth/oauth.service';
-import { RequestOptionsFactory } from '../request-options.factory';
+import { DataCloudDTOModels, DataCloudDTOName } from '../../dto-name.model';
+import { HttpService } from '../../http/http-service';
+import { OAuthService } from '../../oauth/oauth.service';
+import { RequestOptionsFactory } from '../../request-options.factory';
 
 type IdOrExternalId = Partial<{ resourceId: string | null | undefined, externalId: string | null | undefined }>;
 

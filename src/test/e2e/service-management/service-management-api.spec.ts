@@ -2,11 +2,7 @@ import assert from 'assert';
 import { CoreAPIClient } from '../../../core-api.client';
 import { ClientConfigBuilder } from '../../integration-test.config';
 import { ClientConfig } from '../../../core/client-config.model';
-import { HttpService } from '../../../core/http/http-service';
-import { OAuthService } from '../../../core/oauth/oauth.service';
-import { ServiceManagementAPIService } from '../../../core/service-management/service-management.service';
 import { Activity, ServiceCall } from '../../../core/service-management/service-management.model';
-
 import ServiceCallTreeFixture from './service-call-tree.fixture.json';
 import { BulkResponse } from '../../../core/service-management/composite-bulk-api.service';
 
@@ -14,8 +10,7 @@ import { BulkResponse } from '../../../core/service-management/composite-bulk-ap
 describe('ServiceManagementAPI', () => {
 
     const config = { ...ClientConfigBuilder.getConfig('password'), tokenCacheFilePath: undefined, debug: false } as ClientConfig
-    const https = new HttpService(config);
-    const service = new ServiceManagementAPIService(config, https, new OAuthService(https));
+    const client = new CoreAPIClient(config);
 
     let onActivityCreated: (object: Activity) => void;
     let getFreshActivity = new Promise<Activity>((resolve, reject) => {
@@ -25,7 +20,8 @@ describe('ServiceManagementAPI', () => {
     describe('Composite', () => {
 
         const prepare = async () => {
-            const [{ businessPartner }] = await new CoreAPIClient(config)
+            const [{ businessPartner }] = await client
+                .dataServiceAPI
                 .query(`select businessPartner FROM BusinessPartner businessPartner LIMIT 1`, ['BusinessPartner'])
                 .then(r => r.data);
 
@@ -39,7 +35,7 @@ describe('ServiceManagementAPI', () => {
             it('POST ServiceCall - autoCreateActivity: true', done => {
                 prepare()
                     .then(({ businessPartner }) => {
-                        return service.composite.tree.postServiceCall({
+                        return client.serviceManagementAPI.composite.tree.postServiceCall({
                             ...ServiceCallTreeFixture,
                             id: SC_ID,
                             subject: 'my test',
@@ -55,7 +51,7 @@ describe('ServiceManagementAPI', () => {
             }).timeout(ClientConfigBuilder.getTestTimeout());
 
             it('GET ServiceCall', done => {
-                service.composite.tree.getServiceCall(SC_ID)
+                client.serviceManagementAPI.composite.tree.getServiceCall(SC_ID)
                     .then(serviceCall => {
                         assert(serviceCall, 'should return a result');
                         assert(serviceCall.id === SC_ID, 'should return the same id');
@@ -66,9 +62,9 @@ describe('ServiceManagementAPI', () => {
             }).timeout(ClientConfigBuilder.getTestTimeout());
 
             it('GET Activity', done => {
-                service.composite.tree.getServiceCall(SC_ID)
+                client.serviceManagementAPI.composite.tree.getServiceCall(SC_ID)
                     .then(serviceCall => {
-                        return service.composite.tree.getServiceCallActivity(SC_ID, serviceCall?.activities?.[0].id || '');
+                        return client.serviceManagementAPI.composite.tree.getServiceCallActivity(SC_ID, serviceCall?.activities?.[0].id || '');
                     })
                     .then(activity => {
                         assert(activity, 'should return a result');
@@ -79,7 +75,7 @@ describe('ServiceManagementAPI', () => {
             }).timeout(ClientConfigBuilder.getTestTimeout());
 
             it('PATCH ServiceCall', done => {
-                service.composite.tree.patchServiceCall({
+                client.serviceManagementAPI.composite.tree.patchServiceCall({
                     id: SC_ID,
                     subject: 'my test - updated'
                 })
@@ -110,7 +106,7 @@ describe('ServiceManagementAPI', () => {
             it('POST ServiceCalls', done => {
                 prepare()
                     .then(({ businessPartner }) => {
-                        return service.composite.bulk.postServiceCalls([
+                        return client.serviceManagementAPI.composite.bulk.postServiceCalls([
                             {
                                 ...ServiceCallTreeFixture,
                                 id: THE_IDs[0],
@@ -141,7 +137,7 @@ describe('ServiceManagementAPI', () => {
             }).timeout(ClientConfigBuilder.getTestTimeout());
 
             it('PATCH ServiceCalls', done => {
-                service.composite.bulk.patchServiceCalls([
+                client.serviceManagementAPI.composite.bulk.patchServiceCalls([
                     {
                         id: THE_IDs[0],
                         subject: 'my test - updated bulk'
@@ -165,11 +161,11 @@ describe('ServiceManagementAPI', () => {
                 getFreshBulkServiceCalls.then(bulk => {
                     const activities = bulk.results.map(it => it.resource.activities!)
                         .reduce((all, activities) => [...all, ...activities], [] as Activity[])
-                    return service.activity.bulk.cancel(activities.map(a => ({ activityId: a.id!, cancellationReason: 'Some-Reason-For' + a.id! })))
+                    return client.serviceManagementAPI.activity.bulk.cancel(activities.map(a => ({ activityId: a.id!, cancellationReason: 'Some-Reason-For' + a.id! })))
                 })
                     .then(response => {
                         const serviceCallIds = response.results.map(it => it.newActivity?.object?.objectId).filter(it => !!it);
-                        return service.composite.bulk.postServiceCallsTechnicallyComplete({
+                        return client.serviceManagementAPI.composite.bulk.postServiceCallsTechnicallyComplete({
                             serviceCallIds: serviceCallIds.map(id => ({ id }))
                         })
                     })
@@ -203,7 +199,8 @@ describe('ServiceManagementAPI', () => {
             ] = await Promise.all([
                 getFreshActivity, // reusing from other test
 
-                new CoreAPIClient(config)
+                client
+                    .dataServiceAPI
                     .query(`select person FROM UnifiedPerson person WHERE person.plannableResource=true LIMIT 1`, ['UnifiedPerson'])
                     .then(r => r.data)
 
@@ -215,7 +212,7 @@ describe('ServiceManagementAPI', () => {
         it('duplicate', done => {
             prepare()
                 .then(({ activity }) => {
-                    return service.activity.duplicate(activity.id!).then(response => ({ response, activity })); // pass activity along for next then
+                    return client.serviceManagementAPI.activity.duplicate(activity.id!).then(response => ({ response, activity })); // pass activity along for next then
                 })
                 .then(({ response, activity }) => {
                     assert(response, 'should return a result');
@@ -234,7 +231,7 @@ describe('ServiceManagementAPI', () => {
         it('plan', done => {
             prepare()
                 .then(({ activity, person }) => {
-                    return service.activity.plan(activity.id!, {
+                    return client.serviceManagementAPI.activity.plan(activity.id!, {
                         startDateTime: new Date('2030-01-01').toISOString(),
                         plannedDurationInMinutes: 60,
                         technician: { id: person?.id || '' },
@@ -252,7 +249,7 @@ describe('ServiceManagementAPI', () => {
         it('release', done => {
             prepare()
                 .then(({ activity }) => {
-                    return service.activity.release(activity.id!, {
+                    return client.serviceManagementAPI.activity.release(activity.id!, {
                         udfValues: []
                     })
                 })
@@ -267,7 +264,7 @@ describe('ServiceManagementAPI', () => {
         it('replan', done => {
             prepare()
                 .then(({ activity, person }) => {
-                    return service.activity.replan(activity.id!, {
+                    return client.serviceManagementAPI.activity.replan(activity.id!, {
                         startDateTime: new Date('2030-02-01').toISOString(),
                         plannedDurationInMinutes: 90,
                         technician: { id: person?.id || '' },
@@ -285,7 +282,7 @@ describe('ServiceManagementAPI', () => {
         it('reschedule', done => {
             prepare()
                 .then(({ activity, person }) => {
-                    return service.activity.reschedule(activity.id!, {
+                    return client.serviceManagementAPI.activity.reschedule(activity.id!, {
                         startDateTime: new Date('2030-03-01').toISOString(),
                         plannedDurationInMinutes: 120,
                         technician: { id: person?.id || '' },
@@ -300,7 +297,7 @@ describe('ServiceManagementAPI', () => {
         it('cancel', done => {
             prepare()
                 .then(({ activity }) => {
-                    return service.activity.cancel(activity.id!, {
+                    return client.serviceManagementAPI.activity.cancel(activity.id!, {
                         cancellationReason: 'Not needed anymore',
                         cancelServiceCallConfirmed: true,
                     })
@@ -320,7 +317,7 @@ describe('ServiceManagementAPI', () => {
 
                     console.log('Closing activity', activity);
 
-                    return service.activity.close(activity.id!)
+                    return client.serviceManagementAPI.activity.close(activity.id!)
                 })
                 .then(({ activity }) => {
                     assert(activity, 'should return a result');
@@ -336,7 +333,7 @@ describe('ServiceManagementAPI', () => {
             it('duplicate', done => {
                 prepare()
                     .then(({ activity }) => {
-                        return service.activity.bulk.duplicate([{ id: activity.id! }]).then(response => ({ response, activity })); // pass activity along for next then
+                        return client.serviceManagementAPI.activity.bulk.duplicate([{ id: activity.id! }]).then(response => ({ response, activity })); // pass activity along for next then
                     })
                     .then(({ response, activity }) => {
                         assert(response.results, 'should return a result');
@@ -358,7 +355,7 @@ describe('ServiceManagementAPI', () => {
                         return getFreshDubplicateActivity.then(activity => ({ activity, person }))
                     })
                     .then(({ activity, person }) => {
-                        return service.activity.bulk.plan([
+                        return client.serviceManagementAPI.activity.bulk.plan([
                             {
                                 id: activity.id!,
                                 startDateTime: new Date('2030-01-01').toISOString(),
@@ -383,7 +380,7 @@ describe('ServiceManagementAPI', () => {
             it('cancel', done => {
                 getFreshDubplicateActivity
                     .then((activity) => {
-                        return service.activity.bulk.cancel([{
+                        return client.serviceManagementAPI.activity.bulk.cancel([{
                             id: activity.id!,
                             cancellationReason: 'Not needed anymore',
                             cancelServiceCallConfirmed: true,
@@ -407,12 +404,13 @@ describe('ServiceManagementAPI', () => {
     describe('ServiceCall', () => {
 
         const prepare = async () => {
-            const [{ businessPartner }] = await new CoreAPIClient(config)
+            const [{ businessPartner }] = await client
+                .dataServiceAPI
                 .query(`select businessPartner FROM BusinessPartner businessPartner LIMIT 1`, ['BusinessPartner'])
                 .then(r => r.data);
 
             // Create a service call with activity for testing
-            const serviceCall = await service.composite.tree.postServiceCall({
+            const serviceCall = await client.serviceManagementAPI.composite.tree.postServiceCall({
                 ...ServiceCallTreeFixture,
                 id: CoreAPIClient.createUUID(),
                 subject: 'Test Service Call for Business Actions',
@@ -425,7 +423,7 @@ describe('ServiceManagementAPI', () => {
         it('cancel', done => {
             prepare()
                 .then(({ serviceCall }) => {
-                    return service.serviceCall.cancel(serviceCall.id!, {
+                    return client.serviceManagementAPI.serviceCall.cancel(serviceCall.id!, {
                         cancellationReason: 'Service no longer needed',
                     })
                 })
@@ -442,7 +440,7 @@ describe('ServiceManagementAPI', () => {
             prepare()
                 .then(({ serviceCall }) => {
                     // First cancel the activities
-                    return service.activity.bulk.cancel(
+                    return client.serviceManagementAPI.activity.bulk.cancel(
                         serviceCall.activities!.map(a => ({
                             id: a.id!,
                             cancellationReason: 'Cancelled for technically complete test',
@@ -451,7 +449,7 @@ describe('ServiceManagementAPI', () => {
                     ).then(() => serviceCall);
                 })
                 .then((serviceCall) => {
-                    return service.serviceCall.technicallyComplete(serviceCall.id!)
+                    return client.serviceManagementAPI.serviceCall.technicallyComplete(serviceCall.id!)
                 })
                 .then(_ => done())
                 .catch(e => done(e));

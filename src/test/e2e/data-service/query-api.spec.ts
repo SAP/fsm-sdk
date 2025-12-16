@@ -9,7 +9,7 @@ describe('QueryApi', () => {
   const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
   it('should execute query', done => {
 
-    client.query(
+    client.dataServiceAPI.query(
       `SELECT
           bp.id,
           bp.name,

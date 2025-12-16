@@ -7,7 +7,7 @@ describe('AccountApi', () => {
     const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
     it('should throw if no access', done => {
 
-      client.getAccounts()
+      client.accountAPI.getAccounts()
         .then(_ => done(new Error('should throw')))
         .catch(e => done());
 
@@ -18,7 +18,7 @@ describe('AccountApi', () => {
     const client = new CoreAPIClient({ ...ClientConfigBuilder.getConfig('password'), debug: false });
     it('should throw if no access', done => {
 
-      client.getCompaniesByAccountId(1)
+      client.accountAPI.getCompaniesByAccountId(1)
         .then(_ => done(new Error('should throw')))
         .catch(e => done());
 

@@ -30,7 +30,7 @@ describe('BatchApi', () => {
       })
     ];
 
-    client.batch<{ id: string }>(actions)
+    client.dataServiceAPI.batch<{ id: string }>(actions)
       .then(responses => {
         assert.deepStrictEqual(responses[0].body.data[0]['serviceCall'].id, actions[0].dtoData.id);
         assert.deepStrictEqual(responses[1].body.data[0]['serviceCall'].id, actions[1].dtoData.id);
@@ -45,13 +45,13 @@ describe('BatchApi', () => {
       try {
 
         const query = `select x from ServiceCall x where x.subject='auto-cleanup'`;
-        const toDelete = await client.query<{ x: { id: string, lastChanged: number } }>(query, ['ServiceCall'])
+        const toDelete = await client.dataServiceAPI.query<{ x: { id: string, lastChanged: number } }>(query, ['ServiceCall'])
           .then(r => r.data.map(it => it.x))
 
         // for each object one action with only { id, lastChanged } to not force delete
         const actions = toDelete.map(({ id, lastChanged }) => new DeleteAction('ServiceCall', { id, lastChanged }));
 
-        const result = await client.batch<{}>(actions);
+        const result = await client.dataServiceAPI.batch<{}>(actions);
 
         result.forEach(r => {
           assert.strictEqual(r.statusCode, 200);

@@ -13,7 +13,6 @@ import { ServiceCallAPI } from './service-call-api.service';
 export class ServiceManagementAPIService {
 
     public activity: ActivityAPI;
-
     public serviceCall: ServiceCallAPI;
 
     public composite: {

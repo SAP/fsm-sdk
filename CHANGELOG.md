@@ -5,23 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### [3.0.1] 2025-12-19
+## [4.0.0] 2025-12-19
+
+### BREAKING CHANGES
+
+#### CoreAPIClient API Structure
+The SDK has been restructured with dedicated service accessors to improve organization and maintainability:
+
+**Before (v3.x):**
+```typescript
+await client.getAccounts();
+await client.getCompaniesByAccount(accountId);
+```
+
+**After (v4.x):**
+```typescript
+await client.accountAPI.getAccounts();
+await client.accountAPI.getCompaniesByAccount(accountId);
+```
+
+#### Migration Guide from v3 to v4
+
+1. **Account Operations** - Now accessed via `accountAPI`:
+   - `client.getAccounts()` → `client.accountAPI.getAccounts()`
+   - `client.getCompaniesByAccount(id)` → `client.accountAPI.getCompaniesByAccount(id)`
+
+2. **Service Management Operations** - Now accessed via `serviceManagementAPI`:
+   - Use `client.serviceManagementAPI.activity.*` for activity operations
+   - Use `client.serviceManagementAPI.serviceCall.*` for service call operations
+   - Use `client.serviceManagementAPI.composite.*` for composite operations
+
+3. **Translation Operations** - Now accessed via `translationAPI`:
+   - Use `client.translationAPI.*` for translation label and value operations
+
+4. **Data Cloud (Legacy)** - Now accessed via `dataServiceAPI` (deprecated):
+   - `client.query()` → `client.dataServiceAPI.query()`
+   - `client.post()` → `client.dataServiceAPI.post()`
+   - `client.getById()` → `client.dataServiceAPI.getById()`
+   - All other CRUD operations now use `client.dataServiceAPI.*`
 ### Added
+- Service Management API support with new service accessor `serviceManagementAPI` on `CoreAPIClient`.
+  - `ActivityAPI` with business actions: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`
+  - `ActivityBulkAPI` with 19 bulk operations including: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`, and more
+  - `ServiceCallAPI` with business actions: `cancel`, `technicallyComplete`
+  - `CompositeTreeAPI` for service calls with nested activities
+  - `CompositeBulkAPI` for bulk service call operations
+- Account API support with new service accessor `accountAPI` on `CoreAPIClient`.
+  - `getAccounts()` - Retrieve all accessible accounts
+  - `getCompaniesByAccount(accountId)` - Retrieve companies by account ID
+- Translation API support with new service accessor `translationAPI` on `CoreAPIClient`.
+  - Label and value operations for managing translations
 - Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
-- Public `masterApi` getter on `CoreAPIClient` for accessing master data operations via `MasterAPIService`.
-- Public `getAccounts()` and `getCompaniesByAccount(accountId)` methods to interact with the Account API.
 - New `authCompany` property in `ClientConfig` type for specifying the company to use for authentication when the token contains multiple companies.
-- Service Management API support with `ActivityAPI`, `ServiceCallAPI`, `CompositeTreeAPI`, and `CompositeBulkAPI` services.
-  - Activity business actions: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`
-  - Activity bulk actions: `cancel`, `close`, `duplicate`, `plan`, `release`, `replan`, `reschedule`, and more (19 bulk operations total)
-  - Service Call business actions: `cancel`, `technicallyComplete`
-  - Composite tree operations for service calls with nested activities
-  - Composite bulk operations for service calls
-- Translation API Label and Value
-- Comprehensive JSDoc documentation for all public methods in Service Management APIs
+- Comprehensive JSDoc documentation for all public methods and APIs.
 
 ### Changed
+- **BREAKING**: Replaced direct CRUD methods on `CoreAPIClient` with dedicated service accessors:
+  - Use `client.serviceManagementAPI.*` for Service Management operations (replaces legacy data cloud methods)
+  - Use `client.accountAPI.*` for Account operations
+  - Use `client.translationAPI.*` for Translation operations
+  - Legacy `client.dataServiceAPI` is now deprecated (see Deprecated section)
 - Updated TypeScript and Rollup configuration for modern JavaScript output and improved bundling.
+
+### Deprecated
+- `dataServiceAPI` - The Data Service API (Data Cloud) is deprecated. Migrate to Service Management API for service call and activity operations.
 
 ### Fixed
 - Fixed Mocha test discovery to include all `.spec.ts` files in subfolders.

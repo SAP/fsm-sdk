@@ -1,4 +1,4 @@
-import { DataCloudDTOModels, DataCloudDTOName } from '../dto-name.model';
+import { DataCloudDTOModels, DataCloudDTOName } from '../../dto-name.model';
 
 type Method = 'PATCH' | 'POST' | 'DELETE'
 

@@ -1,12 +1,12 @@
-import { URLSearchParams } from '../../polyfills';
+import { URLSearchParams } from '../../../polyfills';
 import { BatchAction } from './batch-action.model';
 import { BatchRequest } from './batch-request.model';
 import { BatchResponse, BatchResponseJson } from './batch-response';
-import { ClientConfig } from '../client-config.model';
-import { DataCloudDTOModels } from '../dto-name.model';
-import { HttpService } from '../http/http-service';
-import { OAuthService } from '../oauth/oauth.service';
-import { RequestOptionsFactory } from '../request-options.factory';
+import { ClientConfig } from '../../client-config.model';
+import { DataCloudDTOModels } from '../../dto-name.model';
+import { HttpService } from '../../http/http-service';
+import { OAuthService } from '../../oauth/oauth.service';
+import { RequestOptionsFactory } from '../../request-options.factory';
 
 export class BatchAPIService {
 

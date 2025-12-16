@@ -1,4 +1,4 @@
-import { DataCloudDTOModels } from '../dto-name.model';
+import { DataCloudDTOModels } from '../../dto-name.model';
 
 type Maybe<T> = T | undefined;
 

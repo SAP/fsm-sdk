@@ -1,7 +1,7 @@
 import { BatchAction } from './batch-action.model';
-import { ClientConfig } from '../client-config.model';
-import { OAuthTokenResponse } from '../oauth/oauth-token-response.model';
-import { RequestOptionsFactory } from '../request-options.factory';
+import { ClientConfig } from '../../client-config.model';
+import { OAuthTokenResponse } from '../../oauth/oauth-token-response.model';
+import { RequestOptionsFactory } from '../../request-options.factory';
 
 export class BatchRequest {
 
