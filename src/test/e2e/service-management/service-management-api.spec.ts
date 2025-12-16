@@ -248,6 +248,58 @@ describe('ServiceManagementAPI', () => {
 
         }).timeout(ClientConfigBuilder.getTestTimeout());
 
+
+        it('release', done => {
+            prepare()
+                .then(({ activity }) => {
+                    return service.activity.release(activity.id!, {
+                        udfValues: []
+                    })
+                })
+                .then(({ activity }) => {
+                    assert(activity, 'should return a result');
+                })
+                .then(_ => done())
+                .catch(e => done(e));
+
+        }).timeout(ClientConfigBuilder.getTestTimeout());
+
+        it('replan', done => {
+            prepare()
+                .then(({ activity, person }) => {
+                    return service.activity.replan(activity.id!, {
+                        startDateTime: new Date('2030-02-01').toISOString(),
+                        plannedDurationInMinutes: 90,
+                        technician: { id: person?.id || '' },
+                    }).then(({ activity }) => ({ activity, person }));
+                })
+                .then(({ activity, person }) => {
+                    assert(activity, 'should return a result');
+                    assert((activity.responsibles as string[]).some((pId) => pId === person?.id), 'should have the replanned technician');
+                })
+                .then(_ => done())
+                .catch(e => done(e));
+
+        }).timeout(ClientConfigBuilder.getTestTimeout());
+
+        it('reschedule', done => {
+            prepare()
+                .then(({ activity, person }) => {
+                    return service.activity.reschedule(activity.id!, {
+                        startDateTime: new Date('2030-03-01').toISOString(),
+                        plannedDurationInMinutes: 120,
+                        technician: { id: person?.id || '' },
+                    }).then(({ activity }) => ({ activity, person }));
+                })
+                .then(({ activity, person }) => {
+                    assert(activity, 'should return a result');
+                    assert((activity.responsibles as string[]).some((pId) => pId === person?.id), 'should have the rescheduled technician');
+                })
+                .then(_ => done())
+                .catch(e => done(e));
+
+        }).timeout(ClientConfigBuilder.getTestTimeout());
+
         it('cancel', done => {
             prepare()
                 .then(({ activity }) => {
@@ -281,7 +333,6 @@ describe('ServiceManagementAPI', () => {
                 .catch(e => done(e));
 
         }).timeout(ClientConfigBuilder.getTestTimeout());
-
 
         describe('Bulk', () => {
 

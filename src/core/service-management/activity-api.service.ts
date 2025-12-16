@@ -179,4 +179,138 @@ export class ActivityAPI {
 
     }
 
+    /**
+     * Releases an activity by its ID.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional release parameters.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the released activity.
+     */
+    public async release(
+        id: string, // also support code=$ or externalId=$,
+        options: Partial<{
+            udfValues: UdfValue[]
+        }> = {},
+        params: Partial<{
+            fieldsMode: 'INCLUDE' | 'EXCLUDE' | 'ADD',
+            fields: string[]
+        }> = {}
+    ) {
+        const token = await this._auth.ensureToken(this._config)
+        return this._http.request<{ activity: Activity }>(this.getApiUrl(`${id}/actions/release${(Object.keys(params || {}).length ? `?${new URLSearchParams(params)}` : '')}`), {
+            method: 'POST',
+            headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
+            body: JSON.stringify(options)
+        }) as Promise<{ activity: Activity }>;
+
+    }
+
+    /**
+     * Replans an activity to a different technician.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional replanning parameters.
+     * @param {string} options.crew - Crew identifier.
+     * @param {UnifiedIdentifier} options.technician - New technician identifier.
+     * @param {string} options.startDateTime - New start date and time in ISO 8601 format.
+     * @param {boolean} options.startDateTimeFixed - Whether start date/time is fixed.
+     * @param {number} options.plannedDurationInMinutes - Planned duration in minutes.
+     * @param {number} options.travelTimeFromInMinutes - Travel time from in minutes.
+     * @param {number} options.travelTimeToInMinutes - Travel time to in minutes.
+     * @param {string} options.endDateTime - End date and time in ISO 8601 format.
+     * @param {boolean} options.endDateTimeFixed - Whether end date/time is fixed.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the replanned activity.
+     */
+    public async replan(
+        id: string, // also support code=$ or externalId=$,
+        options: Partial<{
+            crew: string,
+            technician: UnifiedIdentifier,
+
+            startDateTime: string,
+            startDateTimeFixed: boolean,
+
+            plannedDurationInMinutes: number,
+            travelTimeFromInMinutes: number,
+            travelTimeToInMinutes: number,
+
+            endDateTime: string,
+            endDateTimeFixed: boolean,
+
+            udfValues: UdfValue[]
+        }> = {},
+        params: Partial<{
+            fieldsMode: 'INCLUDE' | 'EXCLUDE' | 'ADD',
+            fields: string[]
+        }> = {}
+    ) {
+        const token = await this._auth.ensureToken(this._config)
+        return this._http.request<{ activity: Activity }>(this.getApiUrl(`${id}/actions/replan${(Object.keys(params || {}).length ? `?${new URLSearchParams(params)}` : '')}`), {
+            method: 'POST',
+            headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
+            body: JSON.stringify(options)
+        }) as Promise<{ activity: Activity }>;
+
+    }
+
+    /**
+     * Reschedules an activity to a different time slot and/or technician.
+     * 
+     * @param {string} id - Activity ID (also supports code=$ or externalId=$ format).
+     * @param {object} options - Optional rescheduling parameters.
+     * @param {string} options.crew - Crew identifier.
+     * @param {UnifiedIdentifier} options.technician - New technician identifier.
+     * @param {string} options.startDateTime - New start date and time in ISO 8601 format.
+     * @param {boolean} options.startDateTimeFixed - Whether start date/time is fixed.
+     * @param {number} options.plannedDurationInMinutes - Planned duration in minutes.
+     * @param {number} options.travelTimeFromInMinutes - Travel time from in minutes.
+     * @param {number} options.travelTimeToInMinutes - Travel time to in minutes.
+     * @param {string} options.endDateTime - End date and time in ISO 8601 format.
+     * @param {boolean} options.endDateTimeFixed - Whether end date/time is fixed.
+     * @param {UdfValue[]} options.udfValues - User-defined field values.
+     * @param {object} params - Optional query parameters.
+     * @param {string} params.fieldsMode - Fields mode: 'INCLUDE', 'EXCLUDE', or 'ADD'.
+     * @param {string[]} params.fields - Fields to include/exclude/add.
+     * @returns {Promise<{ activity: Activity }>} A promise resolving to the rescheduled activity.
+     */
+    public async reschedule(
+        id: string, // also support code=$ or externalId=$,
+        options: Partial<{
+            crew: string,
+            technician: UnifiedIdentifier,
+
+            startDateTime: string,
+            startDateTimeFixed: boolean,
+
+            plannedDurationInMinutes: number,
+            travelTimeFromInMinutes: number,
+            travelTimeToInMinutes: number,
+
+            endDateTime: string,
+            endDateTimeFixed: boolean,
+
+            udfValues: UdfValue[]
+        }> = {},
+        params: Partial<{
+            fieldsMode: 'INCLUDE' | 'EXCLUDE' | 'ADD',
+            fields: string[]
+        }> = {}
+    ) {
+        const token = await this._auth.ensureToken(this._config)
+        return this._http.request<{ activity: Activity }>(this.getApiUrl(`${id}/actions/reschedule${(Object.keys(params || {}).length ? `?${new URLSearchParams(params)}` : '')}`), {
+            method: 'POST',
+            headers: RequestOptionsFactory.getRequestHeaders(token, this._config),
+            body: JSON.stringify(options)
+        }) as Promise<{ activity: Activity }>;
+
+    }
+
 }
