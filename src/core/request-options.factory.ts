@@ -90,8 +90,7 @@ export class RequestOptionsFactory {
 
   private static resolveContext(token: Readonly<OAuthTokenResponse>, config: Readonly<ClientConfig>) {
 
-    const companies = token.contentType === 'user'
-      && token.content.companies || []; // todo: find a way to provide companies for other content types
+    const companies = token.content.companies; // todo: find a way to provide companies for other content types
 
     // will pick company by config.authCompany or first company in the list 
     const selcetedCompany = !!config.authCompany
@@ -118,9 +117,7 @@ export class RequestOptionsFactory {
 
     const accountName = config.authAccountName;
 
-    const accountId = token.contentType === 'user'
-      ? token.content.account_id
-      : undefined; // todo find a way to provide accountId for other content types
+    const accountId = token.content.account_id; // todo find a way to provide accountId for other content types
 
     return {
       accountId,
