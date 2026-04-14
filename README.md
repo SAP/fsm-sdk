@@ -303,9 +303,9 @@ const executionRecords = await client.rulesAPI.getRuleExecutionRecords('rule-id'
 });
 ```
 
-### Legacy Data Cloud API (Deprecated)
+### Data Cloud API
 
-> ⚠️ **Note**: The Data Service API (Data Cloud) is deprecated. For service calls and activities, use the Service Management API instead.
+> ⚠️ **Note**: For service calls and activities, we strongly recommend to use the Service Management API instead of the Data Service API.
 
 #### Query for objects using CoreSQL
 
