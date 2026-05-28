@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.1] 2026-05-27
+
+### Changed
+
+- Adjusted permission for GITHUB_TOKEN
+
 ## [4.0.0] 2025-12-19
 
 ### BREAKING CHANGES
@@ -86,7 +92,7 @@ await client.accountAPI.getCompaniesByAccount(accountId);
 ## [3.0.0] 2025-06-18
 ### Updated & Added
 - (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
-- (breaking change) Updated support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed. 
+- (breaking change) Updated support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed.
 - (breaking change) Removed support browser based bundle.
 - (breaking change) Node.js v23 LTS is now required.
 - Updated Public `getToken()`, `setToken(token)`, and `setAuthCompany(companyName)` methods to `CoreAPIClient` for improved token management and multi-company support.
@@ -100,10 +106,10 @@ await client.accountAPI.getCompaniesByAccount(accountId);
 ### Added
 - Support `getByExternalId`, `postByExternalId`, `patchByExternalId`, `putByExternalId`, `deleteByExternalId`  for working with external ids
 - `login()` to use oauth api stand alone
-- More links to docs 
+- More links to docs
 - Adding missing DTOs
 
-### Updated 
+### Updated
 - DTO versions updates
 - Updating down stream NPM packages - High vulnerability [ [ref](https://npmjs.com/advisories/1781) ]
 
@@ -111,34 +117,34 @@ await client.accountAPI.getCompaniesByAccount(accountId);
 ### Added
 - Adding token expiration and refresh as proposed by Tobias Wymer ( [@tswymer](https://github.com/tswymer) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/11) ]
 - Adding `tenant_id`, `personId` and `permissionGroupId` to `OauthTokenResponse`
-### Changed 
+### Changed
 - Internal refactoring of facade public client API
-### Updated 
+### Updated
 - Updating down stream NPM packages - High vulnerability [ [ref](https://npmjs.com/advisories/1770) ]
 
 ## [2.0.0] 2021-07-26
 ### Changed
-- **BREAKING** Dropping support for Node.js < v12, SDK now requires Node.js v12 or newer 
+- **BREAKING** Dropping support for Node.js < v12, SDK now requires Node.js v12 or newer
 ### Added
 - Adding support for using client in browser (isomorphic), migrated from `node-fetch` to `isomorphic-fetch` as proposed by Andrei Vishnevsky ( [@VishnAndr](https://github.com/VishnAndr) ) on [ [ref](https://github.com/SAP/fsm-sdk/pull/9) ]
 - **BREAKING** Adding `user_id` to `OauthTokenResponse`
 - Adding compatibility tests
-### Updated 
-- Updating down stream NPM packages 
+### Updated
+- Updating down stream NPM packages
 
 
 ## [1.2.4] 2021-03-24
-### Updated 
-- Fix error handling, http errors `4xx/5xx` status throw `ErrorResponse`, `304` and `302` do not throw 
+### Updated
+- Fix error handling, http errors `4xx/5xx` status throw `ErrorResponse`, `304` and `302` do not throw
 
 ## [1.2.3] 2021-03-16
-### Changed 
+### Changed
 - Replace the deprecated `request` library with `node-fetch`
 
 ## [1.2.2] 2021-01-15
 ### Added
-- Batch api support 
-### Updated 
+- Batch api support
+### Updated
 - DTO versions, removed `CrowdBusinessPartner`, `CrowdAssignment`, `CrowdPerson` DTO
 ### Changed
 - internal refactoring
