@@ -8,6 +8,7 @@ import { TranslationApiService } from './core/translations/translations-api.serv
 import { ServiceManagementAPIService } from './core/service-management/service-management.service';
 import { DataServiceAPIService } from './core/data-service/data-service.service';
 import { RulesAPIService } from './core/rules/rules-api.service';
+import { AttachmentsAPIService } from './core/attachments/attachment-api.service';
 
 
 export class CoreAPIClient {
@@ -18,6 +19,7 @@ export class CoreAPIClient {
   private _accountApi: AccountAPIService;
   private _translationApi: TranslationApiService;
   private _rulesApi: RulesAPIService;
+  private _attachmentApi: AttachmentsAPIService;
 
   private _dataServiceAPI: DataServiceAPIService
 
@@ -90,6 +92,7 @@ export class CoreAPIClient {
     this._dataServiceAPI = new DataServiceAPIService(this._config, _http, this._auth);
     this._translationApi = new TranslationApiService(this._config, _http, this._auth);
     this._rulesApi = new RulesAPIService(this._config, _http, this._auth);
+    this._attachmentApi = new AttachmentsAPIService(this._config, _http, this._auth);
     this._serviceManagementApi = new ServiceManagementAPIService(this._config, _http, this._auth);
   }
 
@@ -142,11 +145,20 @@ export class CoreAPIClient {
 
   /**
    * Provides access to the Rules API for managing business rules.
-   * 
+   *
    * @returns {RulesAPIService} Rules API instance for business rule operations.
    */
   public get rulesAPI(): RulesAPIService {
     return this._rulesApi;
+  }
+
+  /**
+   * Provides access to the Attachment Download API for downloading, checking, and deleting attachment content.
+   *
+   * @returns {AttachmentsAPIService} Attachment download API instance.
+   */
+  public get attachmentAPI(): AttachmentsAPIService {
+    return this._attachmentApi;
   }
 
   /**

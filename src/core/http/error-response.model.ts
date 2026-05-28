@@ -25,6 +25,6 @@ export type HttpRequestOptions = {
   | NodeJS.ReadableStream
   | string
   | any;
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD',
   headers: { [key: string]: string }
 }

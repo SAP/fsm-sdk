@@ -21,7 +21,6 @@ export class HttpService {
 
         return fetch(uri, options)
             .then(async (response: HttpResponse) => {
-
                 const contentType = response.headers.get('content-type');
                 const isJson = contentType && contentType.includes('application/json');
 
@@ -32,8 +31,15 @@ export class HttpService {
                     : Promise.resolve(null)
                 );
 
+                return { response, content };
+            })
+            .then(async ({ response, content }) => {
+
+
+
                 if (!response.ok && [304, 302].indexOf(response.status || -1) === -1) {
-                    throw <ErrorResponse<any, HttpRequestOptions>>{
+
+                    const error = <ErrorResponse<any, HttpRequestOptions>>{
                         uri: uri,
                         statusCode: response.status,
                         message: response.statusText,
@@ -47,6 +53,8 @@ export class HttpService {
                             }
                         }
                     };
+
+                    throw error;
                 }
 
                 if (this._config.debug) {
@@ -54,6 +62,12 @@ export class HttpService {
                 }
 
                 return content as T;
+            })
+            .catch(error => {
+                if (this._config.debug && error) {
+                    this._logger.log(`[httpRequest] ERROR on ${uri} [${error instanceof Error ? error : JSON.stringify(error, null, 2)}]`);
+                }
+                throw error;
             });
     }
 }
