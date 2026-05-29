@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.0.1] 2026-05-27
 
+### Added
+- **Attachment API** support with new service accessor `attachmentAPI` on `CoreAPIClient`.
+  - `downloadContent(attachmentId)` - Download binary attachment content
+  - `checkExists(attachmentId)` - Check if attachment content exists (HTTP HEAD)
+  - `deleteContent(attachmentId)` - Delete attachment content
+
 ### Changed
 
 - Adjusted permission for GITHUB_TOKEN
