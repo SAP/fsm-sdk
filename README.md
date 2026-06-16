@@ -1,15 +1,15 @@
-# SAP Field Service Management SDK 
+# SAP Field Service and Asset Management SDK 
 
 [![npm version](https://badge.fury.io/js/fsm-sdk.svg)](https://badge.fury.io/js/fsm-sdk) ![integration test](https://github.com/SAP/fsm-sdk/workflows/integration%20test/badge.svg) [![REUSE status](https://api.reuse.software/badge/github.com/SAP/fsm-sdk)](https://api.reuse.software/info/github.com/SAP/fsm-sdk) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/GauSim/ef8d97285399b9ccfd8acf9e0796cd16/raw/fsm-sdk-badge.json) 
 
 ---
 
-## JavaScript SDK to Interface with SAP Field Service Management APIs and Services.
-Find more documentation and related information at [SAP Field Service Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
+## JavaScript SDK to Interface with SAP Field Service and Asset Management APIs and Services.
+Find more documentation and related information at [SAP Field Service and Asset Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
 
 
-- [SAP Field Service Management SDK](#sap-field-service-management-sdk)
-  - [JavaScript SDK to Interface with SAP Field Service Management APIs and Services.](#javascript-sdk-to-interface-with-sap-field-service-management-apis-and-services)
+- [SAP Field Service and Asset Management SDK](#sap-field-service-management-sdk)
+  - [JavaScript SDK to Interface with SAP Field Service and Asset Management APIs and Services.](#javascript-sdk-to-interface-with-sap-field-service-management-apis-and-services)
   - [Getting started](#getting-started)
     - [Examples](#examples)
   - [CoreAPIClient](#coreapiclient)
@@ -77,7 +77,7 @@ const client = new fsm.CoreAPIClient({
 ```
 
 related doc's:
-- [Field Service Management - Integration Guidelines](https://help.sap.com/viewer/fsm_integration_guidelines/Cloud/en-US/integration-guidelines-intro.html)
+- [Field Service and Asset Management - Integration Guidelines](https://help.sap.com/viewer/fsm_integration_guidelines/Cloud/en-US/integration-guidelines-intro.html)
 - [Access API (OAuth 2.0)](https://help.sap.com/viewer/fsm_access_api/Cloud/en-US)
 - [Generating Client ID and Secret](https://help.sap.com/viewer/fsm_admin/Cloud/en-US/generating-client-id.html)
 
@@ -310,7 +310,7 @@ const executionRecords = await client.rulesAPI.getRuleExecutionRecords('rule-id'
 #### Query for objects using CoreSQL
 
 Provides the [coreSQL] and the [dtos] used in the query
-see [Field Service Management - Query API](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
+see [Field Service and Asset Management - Query API](https://help.sap.com/viewer/fsm_query_api/LATEST/en-US/query-api-intro.html)
 
 ```typescript
 const coreSQL =
@@ -408,7 +408,7 @@ const [[{ serviceCall }], [{ businessPartner }], ] = response.map(it => it.body.
 
 ## Support
 
-In case you need further help, check out the [SAP Field Service Management Help Portal](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US/) or report and incident in [SAP Support Portal](https://support.sap.com) with the component "CEC-SRV-FSM".
+In case you need further help, check out the [SAP Field Service and Asset Management Help Portal](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US/) or report and incident in [SAP Support Portal](https://support.sap.com) with the component "CEC-SRV-FSM".
 
 
 ## License
