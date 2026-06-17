@@ -6,7 +6,7 @@
 npm install
 ```
 
-For local development, provide a `.env` file containing valid FSM account credentials.
+For local development, provide a `.env` file containing valid SAP Field Service and Asset Management account credentials.
 
 ### Environment Configuration
 
