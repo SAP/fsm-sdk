@@ -97,7 +97,7 @@ await client.accountAPI.getCompaniesByAccount(accountId);
 
 ## [3.0.0] 2025-06-18
 ### Updated & Added
-- (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSM cluster, the cluster is not determined by the FSM token.
+- (breaking change) Updated ClientConfig to support setting `baseUrl` that is used to determine the FSA cluster, the cluster is not determined by the FSA token.
 - (breaking change) Updated support for OAuth API v2, client credential and password flows, default `oauthEndpoint` changed.
 - (breaking change) Removed support browser based bundle.
 - (breaking change) Node.js v23 LTS is now required.

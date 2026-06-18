@@ -1,7 +1,7 @@
 {
   "name": "fsm-sdk",
   "version": "4.0.1",
-  "description": "Node.JS sdk to interface with SAP Field Service Management APIs.",
+  "description": "Node.JS sdk to interface with SAP Field Service and Asset Management APIs.",
   "readme": "./README.md",
   "main": "release/index.js",
   "types": "release/index.d.ts",
@@ -24,8 +24,9 @@
     "node": ">=23"
   },
   "keywords": [
-    "SAP Field Service Management SDK",
+    "SAP Field Service and Asset Management SDK",
     "SAP FSM",
+    "SAP FSA",
     "sdk",
     "nodejs",
     "integration",

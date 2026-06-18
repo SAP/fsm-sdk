@@ -1,8 +1,8 @@
-# FSM SDK Copilot Instructions
+# SAP Field Service and Asset Management SDK Copilot Instructions
 
 ## Project Overview
 
-This is a TypeScript SDK for SAP Field Service Management (FSM) APIs. It provides a Node.js client library that interfaces with FSM's REST APIs for managing service calls, activities, and other field service operations. The SDK supports both browser and Node.js environments (isomorphic).
+This is a TypeScript SDK for SAP Field Service and Asset Management (FSA) APIs. It provides a Node.js client library that interfaces with FSA's REST APIs for managing service calls, activities, and other field service operations. The SDK supports both browser and Node.js environments (isomorphic).
 
 ## Architecture
 
@@ -42,7 +42,7 @@ This is a TypeScript SDK for SAP Field Service Management (FSM) APIs. It provide
 
 ### UUID Generation
 
-Use `CoreAPIClient.createUUID({ legacyFormat: true })` for FSM object IDs:
+Use `CoreAPIClient.createUUID({ legacyFormat: true })` for FSA object IDs:
 - `legacyFormat: true` (default): uppercase without dashes (e.g., `A1B2C3D4E5F6...`)
 - `legacyFormat: false`: standard UUID format with dashes
 
@@ -74,7 +74,7 @@ Delete and update operations require `lastChanged` timestamp to prevent concurre
 
 ### Environment Setup
 
-Create `.env` file with FSM credentials (see [development.md](../development.md)):
+Create `.env` file with FSA credentials (see [development.md](../development.md)):
 ```bash
 CLIENT_IDENTIFIER=<value>
 CLIENT_SECRET=<value>
@@ -116,19 +116,19 @@ npm run start:examples # Run node examples with dotenv
 
 3. **Grant type mismatch**: Ensure `authGrantType` matches your credentials. User credentials require `password` grant with `authUserName`/`authPassword`. Service accounts use `client_credentials`.
 
-4. **DTO version updates**: When FSM APIs update, run `npm run tools:update-dto-versions` and manually copy values into `all-dto-versions.constant.ts` and batch request models.
+4. **DTO version updates**: When FSA APIs update, run `npm run tools:update-dto-versions` and manually copy values into `all-dto-versions.constant.ts` and batch request models.
 
 5. **Isomorphic compatibility**: Avoid Node.js-specific APIs in core services. Use conditional requires (e.g., `require('fs')` inline) or polyfills in [src/polyfills.ts](../src/polyfills.ts).
 
 ## Testing Strategy
 
-- E2E tests hit real FSM APIs using credentials from `.env`
+- E2E tests hit real FSA APIs using credentials from `.env`
 - Tests create objects with `subject: 'auto-cleanup'` for easy test data removal
 - Use `ClientConfigBuilder.getTestTimeout()` for API call timeouts
 - Clean up test data via batch delete querying by subject name
 
 ## References
 
-- [SAP FSM Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
+- [SAP Field Service and Asset Management Documentation](https://help.sap.com/viewer/product/SAP_FIELD_SERVICE_MANAGEMENT/Cloud/en-US)
 - [Integration Guidelines](https://help.sap.com/viewer/fsm_integration_guidelines/Cloud/en-US/integration-guidelines-intro.html)
 - API Explorer: `https://api.sap.com/api/service_management_ext`
